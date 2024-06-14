@@ -205,7 +205,7 @@ if(isset($_POST['login-btn'])){
 <center>
     <footer>
         <div class="copyright">
-            <p>2024 &#169; All Rights Reserved</p><p>Designed and Maintained by <b>Manu </b>and <b>Srisha</b></p>
+            <p>2024 &#169; All Rights Reserved</p><p>Developed and Maintained by <b>Pentagon</b></p>
         </div>
     
     </footer></center>
