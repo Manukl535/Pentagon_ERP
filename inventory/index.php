@@ -13,7 +13,7 @@
     
     <section>
         <div class="item">
-            <a href="mail.html" style="text-decoration:none">
+            <a href="mail.php" style="text-decoration:none">
               <i class="fas fa-envelope" style="font-size: 100px; color: black;"></i>
             </a>
 

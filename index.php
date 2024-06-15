@@ -172,6 +172,10 @@ if(isset($_POST['login-btn'])){
     .login-form a {
         color: #4aba70;
     }
+    
+    .copyright{
+        color: #fff;
+    }
 </style>
 
 </head>
@@ -197,11 +201,7 @@ if(isset($_POST['login-btn'])){
         <input type="submit" class="btn btn-primary btn-block btn-lg" name="login-btn" value="Login">              
     </form>			
     </div><br/>
-<style>
-    .copyright{
-        color: #fff;
-    }
-</style>
+
 <center>
     <footer>
         <div class="copyright">

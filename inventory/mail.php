@@ -1,4 +1,16 @@
 <!-- Designed and Developed by Manu-->
+<?php
+session_start();
+include('../includes/connection.php');
+
+// Check if user is logged in and session variable is set
+if (!isset($_SESSION['email'])) {
+    // Redirect to login page or handle unauthorized access
+    header("Location: .../index.php");
+    exit(); // Ensure script stops executing after redirection
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,20 +63,28 @@
                 <h2>Send Mail</h2>
             </div>
             <div class="w3-panel">
-                <label>To</label>
-                <input class="w3-input w3-border w3-margin-bottom" type="text">
-                <label>CC</label>
-                <input class="w3-input w3-border w3-margin-bottom" type="text">
-                <label>From</label>
-                <input class="w3-input w3-border w3-margin-bottom" type="text">
-                <label>Subject</label>
-                <input class="w3-input w3-border w3-margin-bottom" type="text">
-                <input class="w3-input w3-border w3-margin-bottom" style="height:60px" placeholder="Write Something here!">
-                <div class="w3-section">
-                    <a class="w3-button w3-red" onclick="document.getElementById('id01').style.display='none'">Cancel  <i class="fa fa-remove"></i></a>
-                    <a class="w3-button w3-light-grey w3-right" onclick="document.getElementById('id01').style.display='none'">Send  <i class="fa fa-paper-plane"></i></a> 
-                </div>    
-            </div>
+    <form action="sendmail.php" method="POST" class="w3-container">
+        <label>To</label>
+        <input class="w3-input w3-border w3-margin-bottom" type="email" name="to_email" required>
+        
+        <label>CC</label>
+        <input class="w3-input w3-border w3-margin-bottom" type="email" name="cc_email">
+        
+        <label>From</label>
+        <input class="w3-input w3-border w3-margin-bottom" type="email" name="from_email" value="<?php echo isset($_SESSION['email']) ? $_SESSION['email'] : ''; ?>" readonly>
+        
+        <label>Subject</label>
+        <input class="w3-input w3-border w3-margin-bottom" type="text" name="subject" required>
+        
+        <textarea class="w3-input w3-border w3-margin-bottom" style="height:60px" placeholder="Write Something here!" name="message" required></textarea>
+        
+        <div class="w3-section">
+            <button type="submit" class="w3-button w3-red">Send <i class="fa fa-paper-plane"></i></button>
+            <a class="w3-button w3-red" onclick="document.getElementById('id01').style.display='none'">Cancel <i class="fa fa-remove"></i></a>
+        </div>
+    </form>
+</div>
+
         </div>
     </div>
 
