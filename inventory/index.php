@@ -20,7 +20,7 @@
             <div>Mails</div>
         </div>
         <div class="item">
-            <a href="dashboard.html" style="text-decoration:none"> 
+            <a href="dashboard.php" style="text-decoration:none"> 
                 <i class="fas fa-tachometer-alt" style="font-size: 100px; color: black;"></i>
             </a>
             <div>Dashboard</div>

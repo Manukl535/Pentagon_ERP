@@ -9,14 +9,14 @@ if (!isset($_SESSION['email'])) {
     exit(); // Ensure script stops executing after redirection
 }
 
-// Fetch inbox emails for the logged-in user
 $email = $_SESSION['email'];
-$sqlInbox = "SELECT * FROM mails WHERE to_email = ?";
+$sqlInbox = "SELECT * FROM mails WHERE to_email = ? OR cc_email = ?";
 $stmtInbox = $conn->prepare($sqlInbox);
-$stmtInbox->bind_param('s', $email);
+$stmtInbox->bind_param('ss', $email, $email); // Binding $email twice for both parameters
 $stmtInbox->execute();
 $resultInbox = $stmtInbox->get_result();
 $mailsInbox = $resultInbox->fetch_all(MYSQLI_ASSOC);
+
 
 // Fetch sent emails for the logged-in user
 $sqlSent = "SELECT * FROM mails WHERE from_email = ?";
