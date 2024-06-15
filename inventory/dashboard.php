@@ -1,3 +1,15 @@
+<?php
+session_start();
+include('../includes/connection.php');
+
+// Query to fetch total and available quantities from inv_location table
+$query = "SELECT SUM(available_quantity) AS total_quantity  FROM inv_location";
+$result = mysqli_query($conn,$query);
+$row = mysqli_fetch_assoc($result);
+$totalQuantity = $row['total_quantity'];
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -44,7 +56,7 @@
         <div class="w3-bar-block">
             <a href="#" class="w3-bar-item w3-button w3-padding w3-blue"><i class="material-icons" style="font-size:15px">dashboard</i>&nbsp; Overview</a>
             <div style="margin-top: 10px;"></div>
-            <a href="#" class="w3-bar-item w3-button w3-padding w3-brown"><i class="fa fa-cubes" style="font-size:15px"></i>&nbsp; Stocks</a>
+            <a href="stocks.php" class="w3-bar-item w3-button w3-padding w3-brown"><i class="fa fa-cubes" style="font-size:15px"></i>&nbsp; Stocks(<?php echo $totalQuantity; ?>)</a>
             <div style="margin-top: 10px;"></div>
             <a href="#" class="w3-bar-item w3-button w3-padding w3-green"><i class='fa fa-line-chart' style='font-size:15px'></i>&nbsp; Sales</a>
             <div style="margin-top: 10px;"></div>
@@ -70,7 +82,8 @@
                         <h3></h3>
                     </div>
                     <div class="w3-clear"></div>
-                    <h4>Stocks</h4>
+                    <h4>Stocks (<?php echo $totalQuantity; ?>)</h4>
+                    
                 </div>
             </div>
             <div class="w3-quarter">

@@ -135,3 +135,25 @@ function openMail(personName) {
     event.currentTarget.className += " w3-light-grey";
 }
 
+
+// mail det
+
+function deleteMail(mailId, type) {
+    if (confirm("Are you sure you want to delete this email?")) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var response = this.responseText.trim();
+                if (response == "success") {
+                    document.getElementById(mailId).style.display = 'none'; // Remove mail from UI
+                    alert("Email deleted successfully!");
+                } else {
+                    alert("Failed to delete email. Please try again later.");
+                }
+            }
+        };
+        xhttp.open("POST", "delete_mail.php", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.send("mail_id=" + mailId + "&type=" + type);
+    }
+}
