@@ -134,3 +134,4 @@ function openMail(personName) {
     document.getElementById(personName).style.display = "block";
     event.currentTarget.className += " w3-light-grey";
 }
+
