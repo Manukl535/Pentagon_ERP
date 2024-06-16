@@ -3,55 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pick Pack Department</title>
-    <link rel="stylesheet" href="styles.css"> 
+    <title>Pickpack</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="styles0.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="script.js"></script>
 </head>
 <body>
-    <header>
-        <h1>Pick Pack Department</h1>
-    </header>
-    <nav>
-        <ul>
-            <li><a href="#">Dashboard</a></li>
-            <li><a href="#">Orders</a></li>
-            <li><a href="#">Inventory</a></li>
-            <li><a href="#">Pick Lists</a></li>
-            <li><a href="#">Packaging</a></li>
-            <li><a href="#">Shipping</a></li>
-            <li><a href="#">Reports</a></li>
-            <li><a href="#">Settings</a></li>
-        </ul>
+    
+    <section>
+        <div class="item">
+            <a href="mail.php" style="text-decoration:none">
+              <i class="fas fa-envelope" style="font-size: 100px; color: blue;"></i>
+            </a>
+
+            <div>Mails</div>
+        </div>
+        <div class="item">
+            <a href="dashboard.php" style="text-decoration:none"> 
+                <i class="fas fa-tachometer-alt" style="font-size: 100px; color: blue;"></i>
+            </a>
+            <div>Dashboard</div>
+        </div>
+        <div class="item">
+            <i class="fas fa-tools" style="font-size: 100px; color: blue;"></i>
+            <div class="dropdown">
+                <div>Works <i class="fa" style="font-size: 15px;color: green; ">&#11167;</i></div>
+                <div class="dropdown-content">
+                    <a href="#">Departments</a>
+                    <a href="#">Orders</a>
+                    <a href="#">Orders Delivered</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="item">
+            <a href="#"><i class="fa fa-gear fa-spin" style="font-size:100px;color: blue;"></i></a>
+            <div>Settings</div>
+        </div>
+    </section>
+
+    <nav class="navbar">
+        <div class="nav-item">
+            <i style='font-size:24px' class='fas'>&#xf086;</i>
+        </div>
+        <div class="nav-item">
+            <span id="time"></span>
+        </div>
+        <div class="nav-item">
+            <a href="../logout.php">Logout</a>
+        </div>
     </nav>
-    <section id="quick-links">
-        <h2>Quick Links</h2>
-        <ul>
-            <li><a href="#">Create New Order</a></li>
-            <li><a href="#">Generate Pick List</a></li>
-            <li><a href="#">View Packing Instructions</a></li>
-            <li><a href="#">Update Inventory Levels</a></li>
-        </ul>
-    </section>
-    <section id="recent-activity">
-        <h2>Recent Activity</h2>
-        <p>10 new orders received</p>
-        <p>5 orders packed and shipped</p>
-        <p>3 low inventory alerts</p>
-    </section>
-    <section id="statistics">
-        <h2>Statistics</h2>
-        <p>Total Orders: XXX</p>
-        <p>Orders Picked: XXX</p>
-        <p>Orders Packed: XXX</p>
-        <p>Orders Shipped: XXX</p>
-        <p>Average Order Processing Time: XX hours</p>
-    </section>
-    <section id="announcements">
-        <h2>Announcements</h2>
-        <p>New Packaging Guidelines Effective Immediately</p>
-        <p>Upcoming Maintenance Downtime: May 20th, 10:00 PM - 12:00 AM</p>
-    </section>
-    <footer>
-        <p>Need Help? Contact [Support Email/Phone Number]</p>
-    </footer>
+
+
+
 </body>
 </html>
