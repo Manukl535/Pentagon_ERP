@@ -45,29 +45,62 @@ $mailsTrash = $resultTrash->fetch_all(MYSQLI_ASSOC);
     <link rel="stylesheet" href="styles00.css">
     <link rel="stylesheet" href="styles1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
     <style>
-        /* Add your custom styles here if needed */
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #2980b9;
+        }
+        hr {
+            border: none;
+            height: 1px;
+            background-color: #3498db; 
+            margin: 20px auto; 
+        }
     </style>
+
 </head>
 <body>
+    <!-- Main Content -->
+    <main>
+        <div class="nav-item">
+            <button class="button"><a href="./index.php" style="text-decoration:none;"><i class="fa fa-home" style="font-size:15px;"></i> Home</a></button>
+            <button class="button"><a href="../logout.php" style="text-decoration:none;">Logout <i class="fa fa-sign-out" style="font-size:15px;"></i></a></button>
+        </div>
+    </main>
+    
+
     <!-- Sidebar Compose,Inbox,Sent,Draft,Trash -->
     <nav class="w3-sidebar w3-bar-block w3-collapse w3-white w3-animate-left w3-card" style="z-index:3;width:320px;" id="mySidebar">
-        <a href="javascript:void(0)" class="w3-bar-item w3-button w3-dark-grey w3-button w3-hover-black w3-left-align" onclick="document.getElementById('id01').style.display='block'">New Message <i class="w3-padding fa fa-pencil"></i></a>
+        <a href="javascript:void(0)" class="w3-bar-item w3-button w3-dark-grey w3-button w3-hover-black w3-left-align" onclick="document.getElementById('id01').style.display='block'">Compose<i class="w3-padding fa fa-pencil"></i></a>
         
-        <a id="myBtn" onclick="myFunc('Demo1')" href="javascript:void(0)" class="w3-bar-item w3-button"><i class="fa fa-inbox w3-margin-right"></i>Inbox (<?php echo count($mailsInbox); ?>)<i class="fa fa-caret-down w3-margin-left"></i></a>
-        <div id="Demo1" class="w3-hide w3-animate-left">
-            <?php foreach ($mailsInbox as $mail): ?>
-                <a href="javascript:void(0)" class="w3-bar-item w3-button w3-border-bottom test w3-hover-light-grey" onclick="openMail('<?php echo htmlspecialchars($mail['id']); ?>');w3_close();">
-                    <div class="w3-container">
-                        <img class=""><span class="w3-opacity w3-large"><?php echo htmlspecialchars($mail['from_email']); ?></span>
-                        <p><?php echo htmlspecialchars($mail['subject']); ?></p>
-                        <span class="w3-right w3-margin-right"><i class="fa fa-trash w3-text-red" onclick="deleteMail('<?php echo htmlspecialchars($mail['id']); ?>', 'inbox')"></i></span>
-                    </div>
-                </a>
-            <?php endforeach; ?>
-        </div>
-        
-        <a href="#" class="w3-bar-item w3-button" onclick="myFunc('Demo2')"><i class="fa fa-paper-plane w3-margin-right"></i>Sent (<?php echo count($mailsSent); ?>)<i class="fa fa-caret-down w3-margin-left"></i></a>
+        <a id="myBtn" onclick="myFunc('Demo1'); toggleInboxCount();" href="javascript:void(0)" class="w3-bar-item w3-button"><i class="fa fa-inbox w3-margin-right"></i>Inbox <span id="inboxCountDisplay">(<?php echo count($mailsInbox); ?>)</span><i class="fa fa-caret-down w3-margin-left"></i></a>
+<div id="Demo1" class="w3-hide w3-animate-left">
+    <?php foreach ($mailsInbox as $mail): ?>
+        <a href="javascript:void(0)" class="w3-bar-item w3-button w3-border-bottom test w3-hover-light-grey" onclick="openMail('<?php echo htmlspecialchars($mail['id']); ?>');w3_close();">
+            <div class="w3-container">
+                <img class=""><span class="w3-opacity w3-large"><?php echo htmlspecialchars($mail['from_email']); ?></span>
+                <p><?php echo htmlspecialchars($mail['subject']); ?></p>
+                <span class="w3-right w3-margin-right"><i class="fa fa-trash w3-text-red" onclick="deleteMail('<?php echo htmlspecialchars($mail['id']); ?>', 'inbox')"></i></span>
+            </div>
+        </a>
+    <?php endforeach; ?>
+</div>        
+        <a href="#" class="w3-bar-item w3-button" onclick="myFunc('Demo2')"><i class="fa fa-paper-plane w3-margin-right"></i>Sent<i class="fa fa-caret-down w3-margin-left"></i></a>
         <div id="Demo2" class="w3-hide w3-animate-left">
             <?php foreach ($mailsSent as $mail): ?>
                 <a href="javascript:void(0)" class="w3-bar-item w3-button w3-border-bottom test w3-hover-light-grey" onclick="openMail('<?php echo htmlspecialchars($mail['id']); ?>');w3_close();">
@@ -80,24 +113,21 @@ $mailsTrash = $resultTrash->fetch_all(MYSQLI_ASSOC);
             <?php endforeach; ?>
         </div>
         
-        <!-- <a href="#" class="w3-bar-item w3-button"><i class="fa fa-hourglass-end w3-margin-right"></i>Drafts</a> -->
         <a href="#" class="w3-bar-item w3-button" onclick="myFunc('Demo3')"><i class="fa fa-trash w3-margin-right"></i>Trash (<?php echo count($mailsTrash); ?>)<i class="fa fa-caret-down w3-margin-left"></i></a>
-<div id="Demo3" class="w3-hide w3-animate-left">
-    <?php foreach ($mailsTrash as $mail): ?>
-        <a href="javascript:void(0)" class="w3-bar-item w3-button w3-border-bottom test w3-hover-light-grey" onclick="openMail('<?php echo htmlspecialchars($mail['id']); ?>');w3_close();">
-            <div class="w3-container">
-                <img class=""><span class="w3-opacity w3-large"><?php echo htmlspecialchars($mail['from_email']); ?></span>
-                <p><?php echo htmlspecialchars($mail['subject']); ?></p>
-                <span class="w3-right w3-margin-right"><i class="fa fa-trash w3-text-red" onclick="deleteMail('<?php echo htmlspecialchars($mail['id']); ?>', 'trash')"></i></span>
-            </div>
-        </a>
-    <?php endforeach; ?>
-</div>
-
-
-
-
+        <div id="Demo3" class="w3-hide w3-animate-left">
+            <?php foreach ($mailsTrash as $mail): ?>
+                <a href="javascript:void(0)" class="w3-bar-item w3-button w3-border-bottom test w3-hover-light-grey" onclick="openMail('<?php echo htmlspecialchars($mail['id']); ?>');w3_close();">
+                    <div class="w3-container">
+                        <img class=""><span class="w3-opacity w3-large"><?php echo htmlspecialchars($mail['from_email']); ?></span>
+                        <p><?php echo htmlspecialchars($mail['subject']); ?></p>
+                        <span class="w3-right w3-margin-right"><i class="fa fa-trash w3-text-red" onclick="deleteMail('<?php echo htmlspecialchars($mail['id']); ?>', 'trash')"></i></span>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
     </nav>
+
+
 
     <!-- Modal content -->
     <div id="id01" class="w3-modal" style="z-index:4">
@@ -132,50 +162,48 @@ $mailsTrash = $resultTrash->fetch_all(MYSQLI_ASSOC);
     </div>
 
     <!-- Mail Preview -->
+     
     <div class="w3-main" style="margin-left:320px;">
         <i class="fa fa-bars w3-button w3-white w3-hide-large w3-xlarge w3-margin-left w3-margin-top" onclick="w3_open()"></i>
         <a href="javascript:void(0)" class="w3-hide-large w3-red w3-button w3-right w3-margin-top w3-margin-right" onclick="document.getElementById('id01').style.display='block'"><i class="fa fa-pencil"></i></a>
 
         <?php foreach ($mailsInbox as $mail): ?>
-    <div id="<?php echo htmlspecialchars($mail['id']); ?>" class="w3-container person" style="display: none;">
-        <br>
-        <img class="">
-        <h5 class="w3-opacity">Subject: <?php echo htmlspecialchars($mail['subject']); ?></h5>
-        <h4><i class="fa fa-clock-o"></i> From <?php echo htmlspecialchars($mail['from_email']); ?>, <?php echo date('M d, Y', strtotime($mail['sent_at'])); ?></h4>
-        <a class="w3-button w3-light-grey">Reply<i class="w3-margin-left fa fa-mail-reply"></i></a>
-        <a class="w3-button w3-light-grey">Forward<i class="w3-margin-left fa fa-arrow-right"></i></a>
-        <hr>
-        <p><?php echo htmlspecialchars($mail['message']); ?></p>
-    </div>
-<?php endforeach; ?>
+            <div id="<?php echo htmlspecialchars($mail['id']); ?>" class="w3-container person" style="display: none;">
+                <br>
+                <img class="">
+                <h5 class="w3-opacity">Subject: <?php echo htmlspecialchars($mail['subject']); ?></h5>
+                <h4><i class="fa fa-clock-o"></i> From <?php echo htmlspecialchars($mail['from_email']); ?>, <?php echo date('M d, Y', strtotime($mail['sent_at'])); ?></h4>
+                <a class="w3-button w3-light-grey">Reply<i class="w3-margin-left fa fa-mail-reply"></i></a>
+                <a class="w3-button w3-light-grey">Forward<i class="w3-margin-left fa fa-arrow-right"></i></a>
+                <hr>
+                <p><?php echo htmlspecialchars($mail['message']); ?></p>
+            </div>
+        <?php endforeach; ?>
 
-<?php foreach ($mailsSent as $mail): ?>
-    <div id="<?php echo htmlspecialchars($mail['id']); ?>" class="w3-container person" style="display: none;">
-        <br>
-        <img class="">
-        <h5 class="w3-opacity">Subject: <?php echo htmlspecialchars($mail['subject']); ?></h5>
-        <h4><i class="fa fa-clock-o"></i> To <?php echo htmlspecialchars($mail['to_email']); ?>, <?php echo date('M d, Y', strtotime($mail['sent_at'])); ?></h4>
-        <a class="w3-button w3-light-grey">Reply<i class="w3-margin-left fa fa-mail-reply"></i></a>
-        <a class="w3-button w3-light-grey">Forward<i class="w3-margin-left fa fa-arrow-right"></i></a>
-        <hr>
-        <p><?php echo htmlspecialchars($mail['message']); ?></p>
-    </div>
-<?php endforeach; ?>
+        <?php foreach ($mailsSent as $mail): ?>
+            <div id="<?php echo htmlspecialchars($mail['id']); ?>" class="w3-container person" style="display: none;">
+                <br>
+                <img class="">
+                <h5 class="w3-opacity">Subject: <?php echo htmlspecialchars($mail['subject']); ?></h5>
+                <h4><i class="fa fa-clock-o"></i> To <?php echo htmlspecialchars($mail['to_email']); ?>, <?php echo date('M d, Y', strtotime($mail['sent_at'])); ?></h4>
+                <a class="w3-button w3-light-grey">Reply<i class="w3-margin-left fa fa-mail-reply"></i></a>
+                <a class="w3-button w3-light-grey">Forward<i class="w3-margin-left fa fa-arrow-right"></i></a>
+                <hr>
+                <p><?php echo htmlspecialchars($mail['message']); ?></p>
+            </div>
+        <?php endforeach; ?>
 
-<?php foreach ($mailsTrash as $mail): ?>
-    <div id="<?php echo htmlspecialchars($mail['id']); ?>" class="w3-container person" style="display: none;">
-        <br>
-        <img class="">
-        <h5 class="w3-opacity">Subject: <?php echo htmlspecialchars($mail['subject']); ?></h5>
-        <h4><i class="fa fa-clock-o"></i> From <?php echo htmlspecialchars($mail['from_email']); ?>, <?php echo date('M d, Y', strtotime($mail['deleted_at'])); ?></h4>
-        <a class="w3-button w3-light-grey" onclick="restoreMail('<?php echo htmlspecialchars($mail['id']); ?>')"><i class="w3-margin-left fa fa-undo"></i> Restore</a>
-        <hr>
-        <p><?php echo htmlspecialchars($mail['message']); ?></p>
-    </div>
-<?php endforeach; ?>
-
-
-        
+        <?php foreach ($mailsTrash as $mail): ?>
+            <div id="<?php echo htmlspecialchars($mail['id']); ?>" class="w3-container person" style="display: none;">
+                <br>
+                <img class="">
+                <h5 class="w3-opacity">Subject: <?php echo htmlspecialchars($mail['subject']); ?></h5>
+                <h4><i class="fa fa-clock-o"></i> From <?php echo htmlspecialchars($mail['from_email']); ?>, <?php echo date('M d, Y', strtotime($mail['deleted_at'])); ?></h4>
+                <a class="w3-button w3-light-grey" onclick="restoreMail('<?php echo htmlspecialchars($mail['id']); ?>')"><i class="w3-margin-left fa fa-undo"></i> Restore</a>
+                <hr>
+                <p><?php echo htmlspecialchars($mail['message']); ?></p>
+            </div>
+        <?php endforeach; ?>
     </div>
 
     <script src="script.js"></script>
@@ -201,25 +229,36 @@ $mailsTrash = $resultTrash->fetch_all(MYSQLI_ASSOC);
         }
 
         function restoreMail(mailId) {
-    if (confirm("Are you sure you want to restore this email?")) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                var response = this.responseText.trim();
-                if (response === "success") {
-                    document.getElementById(mailId).style.display = 'none'; // Remove mail from UI
-                    alert("Email restored successfully!");
-                } else {
-                    alert("Failed to restore email. Please try again later.");
-                }
+            if (confirm("Are you sure you want to restore this email?")) {
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        var response = this.responseText.trim();
+                        if (response === "success") {
+                            document.getElementById(mailId).style.display = 'none'; // Remove mail from UI
+                            alert("Email restored successfully!");
+                        } else {
+                            alert("Failed to restore email. Please try again later.");
+                        }
+                    }
+                };
+                xhttp.open("POST", "restore_mail.php", true);
+                xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhttp.send("mail_id=" + mailId + "&type=trash");
             }
-        };
-        xhttp.open("POST", "restore_mail.php", true);
-        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhttp.send("mail_id=" + mailId + "&type=trash");
+        }
+
+
+        var inboxOpen = false;
+
+function toggleInboxCount() {
+    inboxOpen = !inboxOpen;
+    if (inboxOpen) {
+        document.getElementById('inboxCountDisplay').style.display = 'none';
+    } else {
+        document.getElementById('inboxCountDisplay').style.display = 'inline';
     }
 }
-
     </script>
 </body>
 </html>
