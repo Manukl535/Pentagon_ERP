@@ -10,13 +10,14 @@ if (!isset($_SESSION['email'])) {
 }
 
 $email = $_SESSION['email'];
-$sqlInbox = "SELECT * FROM mails WHERE to_email = ? OR cc_email = ?";
+
+// Fetch unread emails for the logged-in user
+$sqlInbox = "SELECT * FROM mails WHERE (to_email = ? OR cc_email = ?) AND is_read = 0";
 $stmtInbox = $conn->prepare($sqlInbox);
 $stmtInbox->bind_param('ss', $email, $email); // Binding $email twice for both parameters
 $stmtInbox->execute();
 $resultInbox = $stmtInbox->get_result();
 $mailsInbox = $resultInbox->fetch_all(MYSQLI_ASSOC);
-
 
 // Fetch sent emails for the logged-in user
 $sqlSent = "SELECT * FROM mails WHERE from_email = ?";
@@ -88,10 +89,10 @@ $mailsTrash = $resultTrash->fetch_all(MYSQLI_ASSOC);
     <nav class="w3-sidebar w3-bar-block w3-collapse w3-white w3-animate-left w3-card" style="z-index:3;width:320px;" id="mySidebar">
         <a href="javascript:void(0)" class="w3-bar-item w3-button w3-dark-grey w3-button w3-hover-black w3-left-align" onclick="document.getElementById('id01').style.display='block'">Compose<i class="w3-padding fa fa-pencil"></i></a>
         
-        <a id="myBtn" onclick="myFunc('Demo1'); toggleInboxCount();" href="javascript:void(0)" class="w3-bar-item w3-button"><i class="fa fa-inbox w3-margin-right"></i>Inbox <span id="inboxCountDisplay">(<?php echo count($mailsInbox); ?>)</span><i class="fa fa-caret-down w3-margin-left"></i></a>
+        <a id="myBtn" onclick="myFunc('Demo1'); toggleInboxCount();" href="javascript:void(0)" class="w3-bar-item w3-button"><i class="fa fa-inbox w3-margin-right"></i>Inbox <span id="inboxCountDisplay"><?php echo count($mailsInbox) > 0 ? '(' . count($mailsInbox) . ')' : ''; ?></span><i class="fa fa-caret-down w3-margin-left"></i></a>
 <div id="Demo1" class="w3-hide w3-animate-left">
     <?php foreach ($mailsInbox as $mail): ?>
-        <a href="javascript:void(0)" class="w3-bar-item w3-button w3-border-bottom test w3-hover-light-grey" onclick="openMail('<?php echo htmlspecialchars($mail['id']); ?>');w3_close();">
+        <a href="javascript:void(0)" class="w3-bar-item w3-button w3-border-bottom test w3-hover-light-grey" onclick="openMail('<?php echo htmlspecialchars($mail['id']); ?>');w3_close(); markAsRead('<?php echo htmlspecialchars($mail['id']); ?>');">
             <div class="w3-container">
                 <img class=""><span class="w3-opacity w3-large"><?php echo htmlspecialchars($mail['from_email']); ?></span>
                 <p><?php echo htmlspecialchars($mail['subject']); ?></p>
@@ -208,6 +209,42 @@ $mailsTrash = $resultTrash->fetch_all(MYSQLI_ASSOC);
 
     <script src="script.js"></script>
     <script>
+        var unreadCount = <?php echo count($mailsInbox); ?>; // Initial unread count
+
+        function toggleInboxCount() {
+            if (unreadCount > 0) {
+                unreadCount--; // Decrease count when inbox is opened
+                updateInboxCountDisplay();
+            }
+        }
+
+        function updateInboxCountDisplay() {
+            var inboxCountDisplay = document.getElementById('inboxCountDisplay');
+            if (unreadCount > 0) {
+                inboxCountDisplay.textContent = '(' + unreadCount + ')';
+            } else {
+                inboxCountDisplay.textContent = '';
+            }
+        }
+
+        function markAsRead(mailId) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var response = this.responseText.trim();
+                    if (response === "success") {
+                        // Assuming you have a function to update the UI for read mails
+                        // Example: markMailAsRead(mailId);
+                    } else {
+                        alert("Failed to mark email as read. Please try again later.");
+                    }
+                }
+            };
+            xhttp.open("POST", "mark_as_read.php", true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send("mail_id=" + mailId);
+        }
+
         function deleteMail(mailId, type) {
             if (confirm("Are you sure you want to delete this email?")) {
                 var xhttp = new XMLHttpRequest();
@@ -247,18 +284,39 @@ $mailsTrash = $resultTrash->fetch_all(MYSQLI_ASSOC);
                 xhttp.send("mail_id=" + mailId + "&type=trash");
             }
         }
-
-
-        var inboxOpen = false;
-
-function toggleInboxCount() {
-    inboxOpen = !inboxOpen;
-    if (inboxOpen) {
-        document.getElementById('inboxCountDisplay').style.display = 'none';
-    } else {
-        document.getElementById('inboxCountDisplay').style.display = 'inline';
-    }
-}
     </script>
+    <script>
+    // Function to initialize unread count from PHP variable
+    var unreadCount = <?php echo count($mailsInbox); ?>;
+
+    // Function to update unread count display
+    function updateInboxCountDisplay() {
+        var inboxCountDisplay = document.getElementById('inboxCountDisplay');
+        if (unreadCount > 0) {
+            inboxCountDisplay.textContent = '(' + unreadCount + ')';
+        } else {
+            inboxCountDisplay.textContent = '';
+        }
+    }
+
+    // Function to decrease unread count (called when inbox is opened)
+    function toggleInboxCount() {
+        if (unreadCount > 0) {
+            unreadCount--;
+            updateInboxCountDisplay();
+            sessionStorage.setItem('unreadCount', unreadCount); // Store updated count in sessionStorage
+        }
+    }
+
+   
+    // On page load, retrieve unreadCount from sessionStorage if available
+    window.onload = function() {
+        if (sessionStorage.getItem('unreadCount')) {
+            unreadCount = parseInt(sessionStorage.getItem('unreadCount'));
+            updateInboxCountDisplay();
+        }
+    };
+</script>
+
 </body>
 </html>
