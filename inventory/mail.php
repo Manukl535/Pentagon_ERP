@@ -39,7 +39,7 @@ $mailsTrash = $resultTrash->fetch_all(MYSQLI_ASSOC);
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Mails</title>
+    <title>Inv Mails</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="styles00.css">
@@ -81,7 +81,7 @@ $mailsTrash = $resultTrash->fetch_all(MYSQLI_ASSOC);
     </main>
 
     <!-- Sidebar Compose, Inbox, Sent, Trash -->
-    <nav class="w3-sidebar w3-bar-block w3-collapse w3-white w3-animate-left w3-card" style="z-index:3;width:320px;" id="mySidebar">
+    <nav class="w3-sidebar w3-bar-block w3-collapse w3-white  w3-card" style="z-index:3;width:245px;" id="mySidebar">
         <a href="javascript:void(0)" class="w3-bar-item w3-button w3-dark-grey w3-button w3-hover-black w3-left-align" onclick="document.getElementById('id01').style.display='block'">Compose <i class="w3-padding fa fa-pencil"></i></a>
         
         <a id="myBtn" onclick="myFunc('Demo1'); toggleInboxCount();" href="javascript:void(0)" class="w3-bar-item w3-button"><i class="fa fa-inbox w3-margin-right"></i>Inbox <span id="inboxCountDisplay"><?php echo count($mailsInbox) > 0 ? '(' . count($mailsInbox) . ')' : ''; ?></span><i class="fa fa-caret-down w3-margin-left"></i></a>
@@ -157,7 +157,7 @@ $mailsTrash = $resultTrash->fetch_all(MYSQLI_ASSOC);
     </div>
 
     <!-- Mail Preview -->
-    <div class="w3-main" style="margin-left:320px;">
+    <div class="w3-main" style="margin-left:270px;">
         <i class="fa fa-bars w3-button w3-white w3-hide-large w3-xlarge w3-margin-left w3-margin-top" onclick="w3_open()"></i>
         <a href="javascript:void(0)" class="w3-hide-large w3-red w3-button w3-right w3-margin-top w3-margin-right" onclick="document.getElementById('id01').style.display='block'"><i class="fa fa-pencil"></i></a>
 
