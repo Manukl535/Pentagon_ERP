@@ -157,3 +157,5 @@ function deleteMail(mailId, type) {
         xhttp.send("mail_id=" + mailId + "&type=" + type);
     }
 }
+
+

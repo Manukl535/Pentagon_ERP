@@ -2,30 +2,21 @@
 session_start();
 include('../Includes/connection.php');
 
-// Check if form is submitted and article_no is set for editing
+// Handle form submissions for editing existing items
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['article_no'])) {
+    // Retrieve and sanitize input data
     $articleNo = mysqli_real_escape_string($conn, $_POST['article_no']);
     $description = mysqli_real_escape_string($conn, $_POST['description']);
     $quantity = mysqli_real_escape_string($conn, $_POST['quantity']);
     $location = mysqli_real_escape_string($conn, $_POST['location']);
-    $capacity = mysqli_real_escape_string($conn, $_POST['capacity']);
-    $color = mysqli_real_escape_string($conn, $_POST['color']);
-    $size = mysqli_real_escape_string($conn, $_POST['size']);
-    $category = mysqli_real_escape_string($conn, $_POST['category']);
-    $status = mysqli_real_escape_string($conn, $_POST['status']);
 
-    // Update query
+    // Update query with location condition
     $query = "UPDATE inv_location SET 
                 article_description = '$description', 
-                available_quantity = '$quantity', 
-                location = '$location', 
-                capacity = '$capacity',
-                color = '$color',
-                size = '$size',
-                category = '$category',
-                status = '$status' 
-              WHERE article_no = '$articleNo'";
+                available_quantity = '$quantity'
+              WHERE article_no = '$articleNo' AND location = '$location'";
 
+    // Execute the query
     if (mysqli_query($conn, $query)) {
         // Redirect back to the main page after successful update
         header("Location: ".$_SERVER['PHP_SELF']);
@@ -35,8 +26,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['article_no'])) {
     }
 }
 
-// Check if form is submitted for adding new item
+// Handle form submissions for adding new items
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_description'])) {
+    // Retrieve and sanitize input data
     $newDescription = mysqli_real_escape_string($conn, $_POST['new_description']);
     $newQuantity = mysqli_real_escape_string($conn, $_POST['new_quantity']);
     $newLocation = mysqli_real_escape_string($conn, $_POST['new_location']);
@@ -44,12 +36,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_description'])) {
     $newColor = mysqli_real_escape_string($conn, $_POST['new_color']);
     $newSize = mysqli_real_escape_string($conn, $_POST['new_size']);
     $newCategory = mysqli_real_escape_string($conn, $_POST['new_category']);
-    $newStatus = mysqli_real_escape_string($conn, $_POST['new_status']);
 
     // Insert query
-    $query = "INSERT INTO inv_location (article_description, available_quantity, location, capacity, color, size, category, status) 
-              VALUES ('$newDescription', '$newQuantity', '$newLocation', '$newCapacity', '$newColor', '$newSize', '$newCategory', '$newStatus')";
+    $query = "INSERT INTO inv_location (article_description, available_quantity, location, capacity, color, size, category) 
+              VALUES ('$newDescription', '$newQuantity', '$newLocation', '$newCapacity', '$newColor', '$newSize', '$newCategory')";
 
+    // Execute the query
     if (mysqli_query($conn, $query)) {
         // Redirect back to the main page after successful insert
         header("Location: ".$_SERVER['PHP_SELF']);
@@ -58,6 +50,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_description'])) {
         echo "Error inserting record: " . mysqli_error($conn);
     }
 }
+
+// Query to fetch inventory items
+$query = "SELECT article_no, article_description, available_quantity, location, capacity, color, size, category FROM inv_location";
+$result = $conn->query($query);
+
+// Close the database connection
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -66,182 +65,161 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_description'])) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Inventory Management System</title>
+<script src="script.js"></script>
 <style>
-    body {
-        font-family: 'Arial', sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f4f4f4;
-    }
+/* CSS styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
 
-    .main-content {
-        margin: 20px;
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border-radius: 5px;
-    }
+.main-content {
+    margin: 20px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
 
-    h1 {
-        color: #333;
-        text-align: center;
-    }
+h1 {
+    color: #333;
+    text-align: center;
+}
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
 
-    th, td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: center;
-    }
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
 
-    th {
-        background-color: #4caf50;
-        color: #fff;
-    }
+th {
+    background-color: #4caf50;
+    color: #fff;
+}
 
-    tbody tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
+tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
 
-    .add-button {
-        padding: 10px 20px;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        cursor: pointer;
-        text-decoration: none;
-        font-size: 16px;
-        display: inline-block;
-        margin-bottom: 10px;
-    }
+.add-button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 16px;
+    display: inline-block;
+    margin-bottom: 10px;
+}
 
-    .action-btn {
-        padding: 5px 8px;
-        background-color: #008CBA;
-        color: white;
-        border: none;
-        cursor: pointer;
-        border-radius: 3px;
-        text-decoration: none;
-        display: inline-block;
-        margin-right: 5px;
-    }
+.action-btn {
+    padding: 5px 8px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 3px;
+    text-decoration: none;
+    display: inline-block;
+    margin-right: 5px;
+}
 
-    .edit-btn {
-        background-color: #008CBA;
-    }
+.edit-btn {
+    background-color: #008CBA;
+}
 
-    .delete-btn {
-        background-color: #f44336;
-    }
+.delete-btn {
+    background-color: #f44336;
+}
 
-    .export-btn {
-        background-color: #337ab7;
-        color: #fff;
-        padding: 10px;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-    }
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
 
-    .export-btn:hover {
-        background-color: #286090;
-    }
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    border-radius: 5px;
+    position: relative;
+}
 
-    /* Modal styles */
-    .modal {
-        display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    }
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
 
-    .modal-content {
-        background-color: #fefefe;
-        margin: 10% auto; /* 10% from the top and centered */
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%; /* Could be more or less, depending on screen size */
-        border-radius: 5px;
-        position: relative;
-    }
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+}
 
-    .close {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-    }
+.form-container {
+    margin-top: 20px;
+    background-color: #f2f2f2;
+    padding: 20px;
+    border-radius: 5px;
+}
 
-    .close:hover,
-    .close:focus {
-        color: black;
-        text-decoration: none;
-    }
+.form-container h2 {
+    text-align: center;
+    margin-bottom: 10px;
+}
 
-    /* Form styles */
-    .form-container {
-        margin-top: 20px;
-        background-color: #f2f2f2;
-        padding: 20px;
-        border-radius: 5px;
-    }
+.form-group {
+    margin-bottom: 15px;
+}
 
-    .form-container h2 {
-        text-align: center;
-        margin-bottom: 10px;
-    }
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
 
-    .form-group {
-        margin-bottom: 15px;
-    }
+.form-group input {
+    width: calc(100% - 12px);
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
 
-    .form-group label {
-        display: block;
-        margin-bottom: 5px;
-    }
+.form-group input[type="number"] {
+    width: 100%;
+}
 
-    .form-group input {
-        width: calc(100% - 12px);
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-    }
+.form-group button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 3px;
+}
 
-    .form-group input[type="number"] {
-        width: 100%;
-    }
-
-    .form-group select {
-        width: calc(100% - 12px);
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-    }
-
-    .form-group button {
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        cursor: pointer;
-        border-radius: 3px;
-    }
-
-    .form-group button:hover {
-        background-color: #45a049;
-    }
+.form-group button:hover {
+    background-color: #45a049;
+}
 </style>
 </head>
 <body>
@@ -264,17 +242,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_description'])) {
                 <th>Color</th>
                 <th>Size</th>
                 <th>Category</th>
-                <th>BinStatus</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
             <?php
-            // Query to fetch inventory items
-            $query = "SELECT article_no, article_description, available_quantity, location, capacity, color, size, category, status FROM inv_location";
-            $result = $conn->query($query);
-
-            // Check if query executed successfully
+            // Check if there are items to display
             if ($result && $result->num_rows > 0) {
                 // Output data of each row
                 while ($row = $result->fetch_assoc()) {
@@ -287,193 +260,162 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_description'])) {
                     echo "<td>" . htmlspecialchars($row['color']) . "</td>";
                     echo "<td>" . htmlspecialchars($row['size']) . "</td>";
                     echo "<td>" . htmlspecialchars($row['category']) . "</td>";
-                    echo "<td>" . htmlspecialchars($row['status']) . "</td>";
-                    echo "<td>";
-                    echo "<button class='action-btn edit-btn' 
-                                 data-article-no='" . htmlspecialchars($row['article_no']) . "' 
-                                 data-description='" . htmlspecialchars($row['article_description']) . "' 
-                                 data-quantity='" . htmlspecialchars($row['available_quantity']) . "' 
-                                 data-location='" . htmlspecialchars($row['location']) . "' 
-                                 data-capacity='" . htmlspecialchars($row['capacity']) . "' 
-                                 data-color='" . htmlspecialchars($row['color']) . "' 
-                                 data-size='" . htmlspecialchars($row['size']) . "' 
-                                 data-category='" . htmlspecialchars($row['category']) . "' 
-                                 data-status='" . htmlspecialchars($row['status']) . "'>Edit</button>";
-                    echo "<button class='action-btn delete-btn'>Delete</button>";
-                    echo "</td>";
+                    echo '<td>
+                            <a href="#" class="action-btn edit-btn">Edit</a>
+                            <a href="#" class="action-btn delete-btn">Delete</a>
+                          </td>';
                     echo "</tr>";
                 }
             } else {
-                echo "<tr><td colspan='10'>No items found</td></tr>";
+                echo "<tr><td colspan='9'>No items found</td></tr>";
             }
             ?>
         </tbody>
     </table>
-
 </div>
 
-<!-- Modal for editing -->
+<!-- Modal for editing items -->
 <div id="editModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <h2>Edit Item <span id="editArticleNoDisplay"></span></h2>
-        <form id="editForm" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-            <input type="hidden" id="editArticleNo" name="article_no">
-            <div class="form-group">
-                <label for="editDescription">Description:</label>
-                <input type="text" id="editDescription" name="description">
-            </div>
-            <div class="form-group">
-                <label for="editQuantity">Quantity:</label>
-                <input type="number" id="editQuantity" name="quantity">
-            </div>
-            <div class="form-group">
-                <label for="editLocation">Location:</label>
-                <input type="text" id="editLocation" name="location">
-            </div>
-            <div class="form-group">
-                <label for="editCapacity">Capacity:</label>
-                <input type="text" id="editCapacity" name="capacity">
-            </div>
-            <div class="form-group">
-                <label for="editColor">Color:</label>
-                <input type="text" id="editColor" name="color">
-            </div>
-            <div class="form-group">
-                <label for="editSize">Size:</label>
-                <input type="text" id="editSize" name="size">
-            </div>
-            <div class="form-group">
-                <label for="editCategory">Category:</label>
-                <input type="text" id="editCategory" name="category">
-            </div>
-            <div class="form-group">
-                <label for="editStatus">Bin Status:</label>
-                <select id="editStatus" name="status">
-                    <option value="Available">Available</option>
-                    <option value="Not Available">Not Available</option>
-                </select>
-            </div>
-            <button type="submit">Save Changes</button>
-        </form>
+        <div class="form-container">
+            <h2>Edit Item</h2>
+            <form id="editForm" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                <input type="hidden" id="editArticleNo" name="article_no">
+                <div class="form-group">
+                    <label for="editDescription">Description:</label>
+                    <input type="text" id="editDescription" name="description" required>
+                </div>
+                <div class="form-group">
+                    <label for="editQuantity">Quantity:</label>
+                    <input type="number" id="editQuantity" name="quantity" required>
+                </div>
+                <div class="form-group">
+                    <label for="editLocation">Location:</label>
+                    <input type="text" id="editLocation" name="location" required>
+                </div>
+                <div class="form-group">
+                    <label for="editCapacity">Capacity:</label>
+                    <input type="text" id="editCapacity" name="capacity" required>
+                </div>
+                <div class="form-group">
+                    <label for="editColor">Color:</label>
+                    <input type="text" id="editColor" name="color" required>
+                </div>
+                <div class="form-group">
+                    <label for="editSize">Size:</label>
+                    <input type="text" id="editSize" name="size" required>
+                </div>
+                <div class="form-group">
+                    <label for="editCategory">Category:</label>
+                    <input type="text" id="editCategory" name="category" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Save Changes</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<!-- Form for adding new item -->
-<div class="form-container" id="addFormContainer" style="display: none;">
-    <h2>Add New Item</h2>
-    <form id="addForm" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-        <div class="form-group">
-            <label for="new_description">Description:</label>
-            <input type="text" id="new_description" name="new_description">
-        </div>
-        <div class="form-group">
-            <label for="new_quantity">Quantity:</label>
-            <input type="number" id="new_quantity" name="new_quantity">
-        </div>
-        <div class="form-group">
-            <label for="new_location">Location:</label>
-            <input type="text" id="new_location" name="new_location">
-        </div>
-        <div class="form-group">
-            <label for="new_capacity">Capacity:</label>
-            <input type="text" id="new_capacity" name="new_capacity">
-        </div>
-        <div class="form-group">
-            <label for="new_color">Color:</label>
-            <input type="text" id="new_color" name="new_color">
-        </div>
-        <div class="form-group">
-            <label for="new_size">Size:</label>
-            <input type="text" id="new_size" name="new_size">
-        </div>
-        <div class="form-group">
-            <label for="new_category">Category:</label>
-            <input type="text" id="new_category" name="new_category">
-        </div>
-        <div class="form-group">
-            <label for="new_status">Bin Status:</label>
-            <select id="new_status" name="new_status">
-                <option value="Available">Available</option>
-                <option value="Not Available">Not Available</option>
-            </select>
-        </div>
-        <button type="submit">Add Item</button>
-    </form>
-</div>
-
+<!-- JavaScript for modal and form functionality -->
 <script>
-    // JavaScript to handle edit button click and modal functionality
-    const editButtons = document.querySelectorAll('.edit-btn');
-    const editModal = document.getElementById('editModal');
-    const editForm = document.getElementById('editForm');
-    const editArticleNo = document.getElementById('editArticleNo');
-    const editDescription = document.getElementById('editDescription');
-    const editQuantity = document.getElementById('editQuantity');
-    const editLocation = document.getElementById('editLocation');
-    const editCapacity = document.getElementById('editCapacity');
-    const editColor = document.getElementById('editColor');
-    const editSize = document.getElementById('editSize');
-    const editCategory = document.getElementById('editCategory');
-    const editStatus = document.getElementById('editStatus');
-    const editArticleNoDisplay = document.getElementById('editArticleNoDisplay');
-    const closeBtn = document.querySelector('.close');
-    const addBtn = document.querySelector('.add-button');
-    const addFormContainer = document.getElementById('addFormContainer');
+document.addEventListener("DOMContentLoaded", function() {
+    var editModal = document.getElementById('editModal');
+    var editForm = document.getElementById('editForm');
+    var closeButtons = document.getElementsByClassName('close');
+    var editButtons = document.getElementsByClassName('edit-btn');
+    var addBtn = document.querySelector('.add-button');
 
-    // Edit button click event
-    editButtons.forEach(button => {
+    // Function to open edit modal and populate form fields
+    Array.from(editButtons).forEach(function(button) {
         button.addEventListener('click', function() {
-            // Fetch data from the button's data attributes
-            let articleNo = this.getAttribute('data-article-no');
-            let description = this.getAttribute('data-description');
-            let quantity = this.getAttribute('data-quantity');
-            let location = this.getAttribute('data-location');
-            let capacity = this.getAttribute('data-capacity');
-            let color = this.getAttribute('data-color');
-            let size = this.getAttribute('data-size');
-            let category = this.getAttribute('data-category');
-            let status = this.getAttribute('data-status');
-
-            // Populate form fields with fetched data
-            editArticleNo.value = articleNo;
-            editDescription.value = description;
-            editQuantity.value = quantity;
-            editLocation.value = location;
-            editCapacity.value = capacity;
-            editColor.value = color;
-            editSize.value = size;
-            editCategory.value = category;
-            editStatus.value = status;
-            editArticleNoDisplay.textContent = `#${articleNo}`;
-
-            // Display the edit modal
             editModal.style.display = 'block';
+            var row = button.parentElement.parentElement;
+            document.getElementById('editArticleNo').value = row.cells[2].innerText;
+            document.getElementById('editDescription').value = row.cells[3].innerText;
+            document.getElementById('editQuantity').value = row.cells[4].innerText;
+            document.getElementById('editLocation').value = row.cells[0].innerText;
+            document.getElementById('editCapacity').value = row.cells[1].innerText;
+            document.getElementById('editColor').value = row.cells[5].innerText;
+            document.getElementById('editSize').value = row.cells[6].innerText;
+            document.getElementById('editCategory').value = row.cells[7].innerText;
         });
     });
 
-    // Close the edit modal if close button or outside modal area is clicked
-    closeBtn.addEventListener('click', function() {
-        editModal.style.display = 'none';
+    // Function to close modals
+    Array.from(closeButtons).forEach(function(button) {
+        button.addEventListener('click', function() {
+            editModal.style.display = 'none';
+        });
     });
 
-    window.addEventListener('click', function(event) {
-        if (event.target == editModal) {
+    // Function to open add modal
+    addBtn.addEventListener('click', function() {
+        addModal.style.display = 'block';
+    });
+
+    // Submit edit form function (if needed)
+    editForm.addEventListener('submit', function(event) {
+        // Additional handling if required
+    });
+
+    // Add more JavaScript as needed
+});
+
+// cap vs qty
+
+document.addEventListener("DOMContentLoaded", function() {
+    var editModal = document.getElementById('editModal');
+    var editForm = document.getElementById('editForm');
+    var closeButtons = document.getElementsByClassName('close');
+    var editButtons = document.getElementsByClassName('edit-btn');
+    var addBtn = document.querySelector('.add-button');
+
+    // Function to open edit modal and populate form fields
+    Array.from(editButtons).forEach(function(button) {
+        button.addEventListener('click', function() {
+            editModal.style.display = 'block';
+            var row = button.parentElement.parentElement;
+            document.getElementById('editArticleNo').value = row.cells[2].innerText;
+            document.getElementById('editDescription').value = row.cells[3].innerText;
+            document.getElementById('editQuantity').value = row.cells[4].innerText;
+            document.getElementById('editLocation').value = row.cells[0].innerText;
+            document.getElementById('editCapacity').value = row.cells[1].innerText;
+            document.getElementById('editColor').value = row.cells[5].innerText;
+            document.getElementById('editSize').value = row.cells[6].innerText;
+            document.getElementById('editCategory').value = row.cells[7].innerText;
+        });
+    });
+
+    // Function to close modals
+    Array.from(closeButtons).forEach(function(button) {
+        button.addEventListener('click', function() {
             editModal.style.display = 'none';
+        });
+    });
+
+    // Function to open add modal
+    addBtn.addEventListener('click', function() {
+        addModal.style.display = 'block';
+    });
+
+    // Submit edit form function with validation
+    editForm.addEventListener('submit', function(event) {
+        var quantity = parseInt(document.getElementById('editQuantity').value);
+        var capacity = parseInt(document.getElementById('editCapacity').value);
+        
+        // Check if quantity exceeds capacity
+        if (quantity > capacity) {
+            alert("Quantity cannot be greater than Bin Capacity.");
+            event.preventDefault(); // Prevent form submission
         }
     });
 
-    // Show add form on add button click
-    addBtn.addEventListener('click', function() {
-        addFormContainer.style.display = 'block';
-    });
+    // Add more JavaScript as needed
+});
 
 </script>
 
 </body>
 </html>
-
-<?php
-// Close the database connection
-$conn->close();
-?>
