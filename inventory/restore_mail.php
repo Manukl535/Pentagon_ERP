@@ -6,7 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['mail_id'])) {
     $mailId = $_POST['mail_id'];
     $type = $_POST['type']; // 'trash' in this case
 
-    // Assuming you have a trash table where emails are moved
+   
     // Retrieve the email details from trash table
     $sqlSelect = "SELECT * FROM trash WHERE id = ?";
     $stmtSelect = $conn->prepare($sqlSelect);

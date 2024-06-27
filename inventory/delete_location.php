@@ -6,6 +6,7 @@ include('../includes/connection.php'); // Adjust the path to your connection fil
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Escape user input for security
     $delete_location = $conn->real_escape_string($_POST['delete_location']);
+    $remarks = $conn->real_escape_string($_POST['remarks']);
 
     // Check if location exists before deletion
     $check_query = "SELECT * FROM inv_location WHERE location = ?";
@@ -24,9 +25,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $delete_stmt->bind_param("s", $delete_location);
 
         if ($delete_stmt->execute()) {
+            // Log the deletion with remarks
+            $log_query = "INSERT INTO deletion_logs (location, remarks) VALUES (?, ?)";
+            $log_stmt = $conn->prepare($log_query);
+            $log_stmt->bind_param("ss", $delete_location, $remarks);
+            $log_stmt->execute();
+            
             echo '<script>alert("Location deleted successfully"); window.location.replace("index.php");</script>';
         } else {
-            echo '<script>alert("Error: ' . $delete_stmt->error . '"); window.location.replace("index.php");</script>';
+            // Error message
+            echo '<div class="error">Error: ' . $delete_stmt->error . '</div>';
         }
         
         $delete_stmt->close();
