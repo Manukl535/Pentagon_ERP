@@ -14,21 +14,21 @@
     <section>
         <div class="item">
             <a href="mail.php" style="text-decoration:none">
-              <i class="fas fa-envelope" style="font-size: 100px; color: blue;"></i>
+              <i class="fas fa-envelope" style="font-size: 100px; color: black;"></i>
             </a>
 
             <div>Mails</div>
         </div>
         <div class="item">
             <a href="dashboard.php" style="text-decoration:none"> 
-                <i class="fas fa-tachometer-alt" style="font-size: 100px; color: blue;"></i>
+                <i class="fas fa-tachometer-alt" style="font-size: 100px; color: black;"></i>
             </a>
             <div>Dashboard</div>
         </div>
         <div class="item">
-            <i class="fas fa-tools" style="font-size: 100px; color: blue;"></i>
+            <i class="fas fa-tools" style="font-size: 100px; color: black;"></i>
             <div class="dropdown">
-                <div>Works <i class="fa" style="font-size: 15px;color: green; ">&#11167;</i></div>
+                <div>Works <i class="fa" style="font-size: 15px;color: blue; ">&#11167;</i></div>
                 <div class="dropdown-content">
                     <a href="#">Departments</a>
                     <a href="#">Orders</a>
@@ -38,7 +38,7 @@
         </div>
 
         <div class="item">
-            <a href="#"><i class="fa fa-gear fa-spin" style="font-size:100px;color: blue;"></i></a>
+            <a href="#"><i class="fa fa-gear fa-spin" style="font-size:100px;color: black;"></i></a>
             <div>Settings</div>
         </div>
     </section>
