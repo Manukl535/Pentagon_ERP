@@ -17,129 +17,130 @@ $result = $conn->query($query);
 
     <title>Inventory Stocks</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
+           body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
 
-        .main-content {
-            margin: 20px;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-        }
+    .main-content {
+        margin: 20px;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+    }
 
-        h2, h3 {
-            color: #333;
-            text-align: center;
-        }
+    h2, h3 {
+        color: #333;
+        text-align: center;
+    }
 
-        form {
-            margin-bottom: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-        }
+    form {
+        margin-bottom: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
 
-        form div {
-            flex: 0 0 48%;
-            padding: 10px;
-        }
+    form div {
+        flex: 0 0 48%;
+        padding: 10px;
+    }
 
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-        }
+    label {
+        display: block;
+        margin-bottom: 5px;
+        color: #555;
+    }
 
-        input {
-            width: 90%;
-            padding: 8px;
-            margin-bottom: 10px;
-            box-sizing: border-box;
-        }
+    input {
+        width: 90%;
+        padding: 8px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+    }
 
-        button {
-            background-color: #4caf50;
-            color: #fff;
-            padding: 10px;
-            border: none;
-            cursor: pointer;
-            border-radius: 50px;
-        }
+    button {
+        background-color: #4caf50;
+        color: #fff;
+        padding: 10px;
+        border: none;
+        cursor: pointer;
+        border-radius: 50px;
+    }
 
-        button:hover {
-            background-color: #45a049;
-        }
+    button:hover {
+        background-color: #45a049;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
 
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+    }
 
-        th {
-            background-color: #4caf50;
-            color: #fff;
-        }
+    th {
+        background-color: #4caf50;
+        color: #fff;
+    }
 
-        tbody tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
+    tbody tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
 
-        a {
-            color: #d9534f;
-            text-decoration: none;
-            cursor: pointer;
-        }
+    a {
+        color: #d9534f;
+        text-decoration: none;
+        cursor: pointer;
+    }
 
-        a:hover {
-            text-decoration: underline;
-        }
+    a:hover {
+        text-decoration: underline;
+    }
 
-        .update-btn {
-            background-color: #008CBA;
-            color: #fff;
-            padding: 5px;
-            border: none;
-            cursor: pointer;
-            border-radius: 3px;
-        }
+    .update-btn {
+        background-color: #008CBA;
+        color: #fff;
+        padding: 5px;
+        border: none;
+        cursor: pointer;
+        border-radius: 3px;
+    }
 
-        .update-btn:hover {
-            background-color: #00587a;
-        }
+    .update-btn:hover {
+        background-color: #00587a;
+    }
 
-        .update-row {
-            display: none;
-        }
+    .update-row {
+        display: none;
+    }
 
-        .editable-qty input {
-            width: 60px;
-            margin-right: 10px;
-        }
+    .editable-qty input {
+        width: 60px;
+        margin-right: 10px;
+    }
 
-        .export-btn {
-            background-color: #337ab7;
-            color: #fff;
-            padding: 10px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
+    .export-btn {
+        background-color: #337ab7;
+        color: #fff;
+        padding: 10px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
 
-        .export-btn:hover {
-            background-color: #286090;
-        }
+    .export-btn:hover {
+        background-color: #286090;
+    }
+ 
     </style>
 </head>
 
@@ -147,7 +148,7 @@ $result = $conn->query($query);
 <div class="main-content">
         <a href="#" onclick="window.history.back(); return false;"><i style="font-size:24px;color:blue" class="fa">&#xf190;</i></a>
         &nbsp;
-        <a href="dashboard.php"><i style="font-size:24px;color:blue" class="fa">&#xf015;</i></a>
+        <a href="index.php"><i style="font-size:24px;color:blue" class="fa">&#xf015;</i></a>
 
         <div>
             <h2>Stock List</h2>
@@ -166,7 +167,7 @@ $result = $conn->query($query);
                         <th>Available Quantity</th>
                         <th>Category</th>
                         <th>Size</th>
-                        <th>Bin Status</th>
+                        <!-- <th>Bin Status</th> -->
                     </tr>
                 </thead>
                 <tbody>
@@ -181,7 +182,7 @@ $result = $conn->query($query);
                             <td><?php echo $row['available_quantity']; ?></td> <!-- Use correct column name -->
                             <td><?php echo $row['category']; ?></td>
                             <td><?php echo $row['size']; ?></td>
-                            <td><?php echo $row['status']; ?></td>
+                            <!-- <td><?php echo $row['status']; ?></td> -->
                         </tr>
                     <?php } ?>
                 </tbody>
@@ -215,7 +216,7 @@ $result = $conn->query($query);
                 txtArea1.document.write(tab_text);
                 txtArea1.document.close();
                 txtArea1.focus();
-                sa = txtArea1.document.execCommand("SaveAs", true, "Say Thanks to Sumit.xls");
+                sa = txtArea1.document.execCommand("SaveAs", true, "Say Thanks to manu.xls");
             }
             else {
                 sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));
