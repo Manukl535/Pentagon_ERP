@@ -1,0 +1,133 @@
+<html>
+    <head>
+    <style>
+    body {
+        margin: 0;
+        padding:0cqb;
+        display: flex;
+        justify-content: left;
+        align-items:normal;
+        height: 80vh;
+        background: linear-gradient(90deg, #e9d3d3, #308ea5); 
+        background-size: 400% 400%;
+        animation: colorAnimation 15s ease infinite;
+    }
+    form{
+        text-align: justify;
+        font-family:'Segoe UI';
+        color:navy;
+        text-decoration-style: double;
+        font-size: larger;
+       
+    }
+    h1{
+        font-family: Arial, Helvetica, sans-serif;
+        text-decoration: none;
+        color: darkorchid;
+        
+    }
+ 
+    @keyframes colorAnimation {
+        0% {
+            background-color: #308ea5;
+        }
+        50% {
+            background-color: #ff7e5f;
+        }
+        100% {
+            background-color: #308ea5;
+        }
+    }
+    
+    
+    section {
+        text-align: center;
+        display: flex; 
+    }
+        .button {
+    border: none;
+    color: rgb(7, 20, 136);
+    padding: 16px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.3s;
+    cursor: pointer;
+    }
+
+    .button1 {
+    background-color: rgb(203, 234, 245);
+    color: black;
+    border: 2px solid #5f418f;
+    }
+
+    .button1:hover {
+    background-color: #6d04aa;
+    color: white;
+    }
+        </style>
+    </head>
+    <body>
+        
+    <form>    
+        <center><h1>PO and DN form</h1><br> </center>   
+       
+        <label for="address">Adress:</label><br>
+            <textarea id="address"   name="address" rows="6" cols="40" ></textarea><br><br>
+          
+            <label for="article_no">Article No:</label><br>
+            <select id="article_no" name="article_no">
+                <option value="APT101">APT101</option>
+                <option value="APS102">APS102</option>
+                <option value="APP103">APP103</option>
+                <option value="APK104">APK104</option>
+                <option value="APJ105">APJ105</option>
+                <option value="APH106">APH106</option>
+                <option value="FSA107">FSA107</option>
+                <option value="FSH108">FSH108</option>
+                <option value="FHL109">FHL109</option>
+                <option value="FCR110">FCR110</option>
+                <option value="FSC111">FSC111</option>
+                <option value="ASG112">ASG112</option>
+                <option value="ASG113">ASG113</option>
+                <option value="ASG114">ASG114</option>
+                <option value="AHT115">AHT115</option>
+                <option value="AHT116">AHT116</option>
+                <option value="AWT117">AWT117</option>
+                <option value="AWT118">AWT118</option>
+                <option value="AHB119">AHB119</option>
+                <option value="AHB120">AHB120</option>
+                <option value="AWC121">AWC121</option>
+                <option value="AWC122">AWC122</option>
+              </select>
+            <label for="colour">Color:</label>
+            <select id="colour" name="color">
+                <option value="White">White</option>
+                <option value="blue">Blue</option>
+                <option value="Red">Red</option>
+                <option value="Black">BLack</option>
+            </select><br>
+            <br>
+            <label for="siz">Size:</label>
+            <select id="siz" name="siz">
+                <option value="M">M</option>
+                <option value="L">L</option>
+                <option value="XL">XL</option>
+                <option value="S">S</option>
+            </select><br>
+            <br>
+            <label for="quantity">Quantity:</label>
+            <input type="text" id="quantity"><br><br>
+            <label for="Description">Description:</label>
+            <input type="text" name="White Shirt" id="Description" value="White Shirt"><br><br><br>
+
+            <button class="button button1">Generate DN and PO</button>
+
+          </form>
+
+    
+
+    </body>
+</html>
