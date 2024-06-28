@@ -3,7 +3,7 @@ session_start();
 include('../Includes/connection.php');
 
 // Query to fetch inventory locations and details
-$query = "SELECT * FROM inv_location";
+$query = "SELECT * FROM audit_log";
 $result = $conn->query($query);
 
 // Query to fetch audit logs grouped by article number and location
@@ -21,6 +21,7 @@ while ($audit_row = $result1->fetch_assoc()) {
     $location = $audit_row['location'];
     $auditQuantities[$article_no][$location] = $audit_row['total_audit_quantity'];
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -99,7 +100,7 @@ while ($audit_row = $result1->fetch_assoc()) {
     th, td {
         border: 1px solid #ddd;
         padding: 8px;
-        text-align: left;
+        text-align: center;
     }
 
     th {
@@ -155,6 +156,16 @@ while ($audit_row = $result1->fetch_assoc()) {
     .export-btn:hover {
         background-color: #286090;
     }
+
+    .normal {
+        color: green;
+        font-weight: bold;
+    }
+
+    .abnormal {
+        color: red;
+        font-weight: bold;
+    }
     </style>
 </head>
 <body>
@@ -169,16 +180,11 @@ while ($audit_row = $result1->fetch_assoc()) {
                 <thead>
                     <tr>
                         <th>Location</th>
-                        <th>Capacity</th>
                         <th>Article No</th>
-                        <th>Description</th>
-                        <th>Color</th>
-                        <th>Available Quantity</th>
-                        <th>Category</th>
                         <th>Size</th>
-                        <th>Status</th>
-                        <th>Audit Quantity</th>
-                        <th>Remaining Quantity</th>
+                        <th>Qty 23-24</th>
+                        <th>Audit Qty</th>
+                        <th>Difference</th>
                         <th>Audit Status</th>
                     </tr>
                 </thead>
@@ -186,38 +192,29 @@ while ($audit_row = $result1->fetch_assoc()) {
                     <?php while ($row = $result->fetch_assoc()) { ?>
                         <tr>
                             <td><?php echo $row['location']; ?></td>
-                            <td><?php echo $row['capacity']; ?></td>
                             <td><?php echo $row['article_no']; ?></td>
-                            <td><?php echo $row['article_description']; ?></td>
-                            <td><?php echo $row['color']; ?></td>
-                            <td><?php echo $row['available_quantity']; ?></td>
-                            <td><?php echo $row['category']; ?></td>
-                            <td><?php echo $row['size']; ?></td>
-                            <td><?php echo $row['status']; ?></td>
                             <td>
-                                <?php
-                                $article_no = $row['article_no'];
-                                $location = $row['location'];
-                                echo isset($auditQuantities[$article_no][$location]) ? $auditQuantities[$article_no][$location] : 0;
+                                <?php 
+                                    // Query to fetch size based on article_no and location
+                                    $article_no = $row['article_no'];
+                                    $location = $row['location'];
+                                    $query_size = "SELECT size FROM inv_location WHERE article_no = '$article_no' AND location = '$location'";
+                                    $result_size = $conn->query($query_size);
+                                    $row_size = $result_size->fetch_assoc();
+                                    echo ($row_size) ? $row_size['size'] : 'N/A';
                                 ?>
                             </td>
-                            <td>
-                                <?php
-                                $audit_qty = isset($auditQuantities[$article_no][$location]) ? $auditQuantities[$article_no][$location] : 0;
-                                echo $row['available_quantity'] - $audit_qty;
-                                ?>
-                            </td>
-                            <td>
-                            <?php
-                                $audit_qty = isset($auditQuantities[$article_no][$location]) ? $auditQuantities[$article_no][$location] : 0;
-                                $remaining_qty = $row['available_quantity'] - $audit_qty;
-                                if ($remaining_qty != 0) {
-                                    echo '<span style="color: red;">Abnormal</span>';
-                                } else {
-                                    echo '<span style="color: green;">Normal</span>';
-                                }
+                            <td><?php echo $row['qty_23_24']; ?></td>
+                            <td><?php echo $row['audit_quantity']; ?></td>
+                            
+                            <?php 
+                                $remaining_qty = (int)$row['audit_quantity'] - $row['qty_23_24'];
+                                $audit_status = ($remaining_qty == 0) ? 'Normal' : 'Abnormal';
+                                $status_color = ($remaining_qty == 0) ? 'normal' : 'abnormal'; 
                             ?>
-                            </td>
+                            <td><?php echo $remaining_qty; ?></td>
+                            <td class="<?php echo $status_color; ?>"><?php echo $audit_status; ?></td>
+
                         </tr>
                     <?php } ?>
                 </tbody>

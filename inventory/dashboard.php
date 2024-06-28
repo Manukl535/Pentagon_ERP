@@ -4,22 +4,33 @@ include('../includes/connection.php');
 
 // Function to check overall Audit Report status
 function getAuditReportStatus($conn) {
-    // Query to fetch available quantities from inv_location table
-    $query = "SELECT SUM(available_quantity) AS total_available_quantity FROM inv_location";
+    // Query to fetch available quantities from audit_log table
+    $query = "SELECT SUM(audit_quantity) AS total_audit_quantity, SUM(qty_23_24) AS total_available_quantity  FROM audit_log";
     $result = mysqli_query($conn, $query);
     $row = mysqli_fetch_assoc($result);
-    $total_available_quantity = $row['total_available_quantity'];
+    $total_audit_quantity = (int)$row['total_audit_quantity']; // Cast to integer for safe comparison
+    $total_available_quantity = (int)$row['total_available_quantity']; // Cast to integer for safe comparison
 
-    // Determine status
-    if ($total_available_quantity <= 0) {
-        return "Abnormal";
-    } else {
+    // Calculate the difference
+    $difference = $total_audit_quantity - $total_available_quantity;
+
+    // Determine status dynamically
+    if ($difference == 0) {
         return "Normal";
+    } else {
+        return ($difference > 0) ? "+".$difference : $difference; // Return the difference as abnormal
     }
 }
 
 // Get overall Audit Report status
 $auditReportStatus = getAuditReportStatus($conn);
+
+    // Total stocks in inv
+
+    $query = "SELECT SUM(available_quantity) AS total_stocks FROM inv_location";
+    $result = $conn->query($query);
+    $row = $result->fetch_assoc();
+    $total_stocks = $row['total_stocks'];
 ?>
 
 <!DOCTYPE html>
@@ -71,11 +82,11 @@ $auditReportStatus = getAuditReportStatus($conn);
         <div class="w3-bar-block">
             <a href="#" class="w3-bar-item w3-button w3-padding w3-blue"><i class="material-icons" style="font-size:15px">dashboard</i>&nbsp; Overview</a>
             <div style="margin-top: 10px;"></div>
-            <a href="stocks.php" class="w3-bar-item w3-button w3-padding w3-brown"><i class="fa fa-cubes" style="font-size:15px"></i>&nbsp; Stocks</a>
+            <a href="stocks.php" class="w3-bar-item w3-button w3-padding w3-brown"><i class="fa fa-cubes" style="font-size:15px"></i>&nbsp; Stocks(<?php echo $total_stocks ?>)</a>
             <div style="margin-top: 10px;"></div>
             <a href="#" class="w3-bar-item w3-button w3-padding w3-green"><i class='fa fa-line-chart' style='font-size:15px'></i>&nbsp; Sales</a>
             <div style="margin-top: 10px;"></div>
-            <a href="audit_report.php" class="w3-bar-item w3-button w3-padding w3-red"><i class="fa fa-list" style="font-size:15px"></i>&nbsp; Audit Report</a>
+            <a href="audit_report.php" class="w3-bar-item w3-button w3-padding w3-red"><i class="fa fa-list" style="font-size:15px"></i>&nbsp; Audit Report (<?php echo $auditReportStatus; ?>)</a>
             <div style="margin-top: 10px;"></div>
             <a href="#" class="w3-bar-item w3-button w3-padding w3-yellow"><i class="fa fa-heartbeat" style="font-size:24px"></i>&nbsp; Safety Report</a>
         </div>

@@ -252,7 +252,7 @@ $mailsTrash = $resultTrash->fetch_all(MYSQLI_ASSOC);
                         }
                     }
                 };
-                xhttp.open("POST", "delete_inbox.php", true);
+                xhttp.open("POST", "delete_mail.php", true);
                 xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                 xhttp.send("mail_id=" + mailId + "&type=" + type);
             }

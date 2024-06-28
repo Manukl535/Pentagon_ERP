@@ -2,37 +2,63 @@
 session_start();
 include('../includes/connection.php');
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['mail_id'])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['mail_id']) && isset($_POST['type'])) {
     $mailId = $_POST['mail_id'];
-    $type = $_POST['type']; // 'trash' in this case
+    $type = $_POST['type'];
 
-   
-    // Retrieve the email details from trash table
-    $sqlSelect = "SELECT * FROM trash WHERE id = ?";
-    $stmtSelect = $conn->prepare($sqlSelect);
-    $stmtSelect->bind_param('s', $mailId);
-    $stmtSelect->execute();
-    $resultSelect = $stmtSelect->get_result();
+    // Determine the target table and columns based on original deletion
+    $tableName = 'mails'; // Assuming 'mails' table is used for both sent and received emails
 
-    if ($resultSelect->num_rows > 0) {
-        $mailData = $resultSelect->fetch_assoc();
+    if ($type === 'trash') {
+        // Retrieve email details from trash table
+        $sqlSelect = "SELECT * FROM trash WHERE id = ?";
+        $stmtSelect = $conn->prepare($sqlSelect);
+        $stmtSelect->bind_param('i', $mailId);
+        $stmtSelect->execute();
+        $resultSelect = $stmtSelect->get_result();
 
-        // Insert into the mails table (or update as per your design)
-        $sqlRestore = "INSERT INTO mails (from_email, to_email, subject, message, sent_at) VALUES (?, ?, ?, ?, ?)";
-        $stmtRestore = $conn->prepare($sqlRestore);
-        $stmtRestore->bind_param('sssss', $mailData['from_email'], $mailData['to_email'], $mailData['subject'], $mailData['message'], $mailData['deleted_at']);
-        $stmtRestore->execute();
+        if ($resultSelect->num_rows > 0) {
+            $mailData = $resultSelect->fetch_assoc();
 
-        // Delete from trash table
-        $sqlDelete = "DELETE FROM trash WHERE id = ?";
-        $stmtDelete = $conn->prepare($sqlDelete);
-        $stmtDelete->bind_param('s', $mailId);
-        $stmtDelete->execute();
+            // Determine if the email was originally sent or received
+            if (!empty($mailData['from_email'])) {
+                // Restore to 'sent'
+                $sqlRestore = "INSERT INTO $tableName (from_email, to_email, cc_email, subject, message, sent_at) VALUES (?, ?, ?, ?, ?, ?)";
+                $stmtRestore = $conn->prepare($sqlRestore);
+                $stmtRestore->bind_param('ssssss', $mailData['from_email'], $mailData['to_email'], $mailData['cc_email'], $mailData['subject'], $mailData['message'], $mailData['sent_at']);
+            } elseif (!empty($mailData['to_email'])) {
+                // Restore to 'inbox'
+                $sqlRestore = "INSERT INTO $tableName (from_email, to_email, cc_email, subject, message, sent_at) VALUES (?, ?, ?, ?, ?, ?)";
+                $stmtRestore = $conn->prepare($sqlRestore);
+                $stmtRestore->bind_param('ssssss', $mailData['to_email'], $mailData['from_email'], $mailData['cc_email'], $mailData['subject'], $mailData['message'], $mailData['sent_at']);
+            }
 
-        // Return success message to JavaScript
-        echo "success";
+            if ($stmtRestore->execute()) {
+                // Delete from trash table
+                $sqlDelete = "DELETE FROM trash WHERE id = ?";
+                $stmtDelete = $conn->prepare($sqlDelete);
+                $stmtDelete->bind_param('i', $mailId);
+                if ($stmtDelete->execute()) {
+                    echo "success";
+                } else {
+                    echo "Error deleting from trash table: " . $stmtDelete->error;
+                }
+                $stmtDelete->close();
+            } else {
+                echo "Error restoring email: " . $stmtRestore->error;
+            }
+            $stmtRestore->close();
+        } else {
+            echo "Mail not found in trash table";
+        }
+
+        $stmtSelect->close();
     } else {
-        echo "error";
+        echo "Invalid type or missing parameters";
     }
+} else {
+    echo "Parameters not set or incorrect request method";
 }
+
+$conn->close();
 ?>

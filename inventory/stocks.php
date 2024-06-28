@@ -167,7 +167,7 @@ $result = $conn->query($query);
                         <th>Available Quantity</th>
                         <th>Category</th>
                         <th>Size</th>
-                        <th>Bin Status</th>
+                        <!-- <th>Bin Status</th> -->
                     </tr>
                 </thead>
                 <tbody>
@@ -182,7 +182,7 @@ $result = $conn->query($query);
                             <td><?php echo $row['available_quantity']; ?></td> <!-- Use correct column name -->
                             <td><?php echo $row['category']; ?></td>
                             <td><?php echo $row['size']; ?></td>
-                            <td><?php echo $row['status']; ?></td>
+                            <!-- <td><?php echo $row['status']; ?></td> -->
                         </tr>
                     <?php } ?>
                 </tbody>
