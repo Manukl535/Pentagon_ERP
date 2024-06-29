@@ -19,36 +19,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Location does not exist, show alert
         echo '<script>alert("Location does not exist"); window.location.replace("index.php");</script>';
     } else {
-        // Location exists, check additional conditions
-        $location_data = $result->fetch_assoc();
-        $article = $location_data['article'];
-        $available_quantity = $location_data['available_quantity'];
+        // Location exists, proceed with deletion
+        $delete_query = "DELETE FROM inv_location WHERE location = ?";
+        $delete_stmt = $conn->prepare($delete_query);
+        $delete_stmt->bind_param("s", $delete_location);
 
-        // Check conditions for deletion (example conditions)
-        if ($article == 'some_value' && $available_quantity > 0) {
-            // Proceed with deletion
-            $delete_query = "DELETE FROM inv_location WHERE location = ?";
-            $delete_stmt = $conn->prepare($delete_query);
-            $delete_stmt->bind_param("s", $delete_location);
-
-            if ($delete_stmt->execute()) {
-                // Log the deletion with remarks
-                $log_query = "INSERT INTO deletion_logs (location, remarks) VALUES (?, ?)";
-                $log_stmt = $conn->prepare($log_query);
-                $log_stmt->bind_param("ss", $delete_location, $remarks);
-                $log_stmt->execute();
-                
-                echo '<script>alert("Location deleted successfully"); window.location.replace("index.php");</script>';
-            } else {
-                // Error message
-                echo '<div class="error">Error: ' . $delete_stmt->error . '</div>';
-            }
+        if ($delete_stmt->execute()) {
+            // Log the deletion with remarks
+            $log_query = "INSERT INTO deletion_logs (location, remarks) VALUES (?, ?)";
+            $log_stmt = $conn->prepare($log_query);
+            $log_stmt->bind_param("ss", $delete_location, $remarks);
+            $log_stmt->execute();
             
-            $delete_stmt->close();
+            echo '<script>alert("Location deleted successfully"); window.location.replace("index.php");</script>';
         } else {
-            // Conditions not met, show alert
-            echo '<script>alert("Location is not empty. Cannot be deleted."); window.location.replace("index.php");</script>';
+            // Error message
+            echo '<div class="error">Error: ' . $delete_stmt->error . '</div>';
         }
+        
+        $delete_stmt->close();
     }
 
     $check_stmt->close();
