@@ -29,9 +29,9 @@
             <div class="dropdown">
                 <div>Works <i class="fa" style="font-size: 15px;color: black; ">&#11167;</i></div>
                 <div class="dropdown-content">
-                    <a href="manage_inv.php">Manage Inventory</a>
-                    <a href="manage_loc.php">Manage Locations</a>
-                    <a href="#">Cycle Count</a>
+                    <a href="manage_inv.php">Ordered goods</a>
+                    <a href="manage_loc.php">Recieved goods</a>
+                    <a href="#">Putaway</a>
                 </div>
             </div>
         </div>
