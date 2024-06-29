@@ -47,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $delete_stmt->close();
         } else {
             // Conditions not met, show alert
-            echo '<script>alert("Location cannot be deleted due to specific conditions"); window.location.replace("index.php");</script>';
+            echo '<script>alert("Location is not empty. Cannot be deleted."); window.location.replace("index.php");</script>';
         }
     }
 
