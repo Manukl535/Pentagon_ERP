@@ -1,3 +1,15 @@
+<?php
+session_start();
+// Include the database connection
+include('../includes/connection.php');
+
+if (!isset($_SESSION['email'])) {
+    // Redirect to login page or handle unauthorized access
+    header("Location: ../index.php");
+    exit(); // Ensure script stops executing after redirection
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

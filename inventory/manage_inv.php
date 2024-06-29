@@ -2,6 +2,13 @@
 session_start();
 include('../Includes/connection.php');
 
+// Check if user is logged in and session variable is set
+if (!isset($_SESSION['email'])) {
+    // Redirect to login page or handle unauthorized access
+    header("Location: ../index.php");
+    exit(); // Ensure script stops executing after redirection
+}
+
 // Handle form submissions for editing existing items
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['article_no'])) {
     // Retrieve and sanitize input data

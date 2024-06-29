@@ -2,6 +2,13 @@
 session_start();
 include('../includes/connection.php');
 
+// Check if user is logged in and session variable is set
+if (!isset($_SESSION['email'])) {
+    // Redirect to login page or handle unauthorized access
+    header("Location: ../index.php");
+    exit(); // Ensure script stops executing after redirection
+}
+
 // Function to check overall Audit Report status
 function getAuditReportStatus($conn) {
     // Query to fetch available quantities from audit_log table
