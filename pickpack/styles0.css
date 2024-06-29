@@ -8,7 +8,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 80vh;
-    background: linear-gradient(90deg, #e9d3d3, #ff7e5f); 
+    background: linear-gradient(90deg, #308ea5, #ff7e5f); 
     background-size: 400% 400%;
     animation: colorAnimation 15s ease infinite;
 }
@@ -45,7 +45,6 @@ section {
     width: 50%;
     display: block;
     margin: 0 auto;
-    color: aqua;
 }
 
 
@@ -57,7 +56,7 @@ section {
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #04a0bb;
+    background-color: #faf7f7;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
@@ -70,7 +69,6 @@ section {
 
 .dropdown:hover .dropdown-content {
     display: block;
-    color:blue;
 }
 
 .dropdown-content a {

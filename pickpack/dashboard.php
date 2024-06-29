@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Inventory Dashboard</title>
+    <title>Pickpack Dashboard</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -35,23 +35,22 @@
     <nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;" id="mySidebar"><br>
         <div class="w3-container w3-row">
             <div class="w3-col s8 w3-bar">
-                <span style="padding-top:0">Welcome to Inventory,</span><br>
+                <span style="padding-top:0">Welcome to Pickpack,</span><br>
             </div>
         </div>
         <hr>
         <div class="w3-container" style="padding-top:0">
         </div>
         <div class="w3-bar-block">
-            <a href="#" class="w3-bar-item w3-button w3-padding w3-blue"><i class="material-icons" style="font-size:15px">dashboard</i>&nbsp; Overview</a>
+            <a href="#" class="w3-bar-item w3-button w3-padding w3-yellow"><i class="material-icons" style="font-size:15px">dashboard</i>&nbsp; Overview</a>
             <div style="margin-top: 10px;"></div>
-            <a href="#" class="w3-bar-item w3-button w3-padding w3-brown"><i class="fa fa-cubes" style="font-size:15px"></i>&nbsp; Stocks</a>
+            <a href="#" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-cubes" style="font-size:15px"></i>&nbsp; Departments</a>
             <div style="margin-top: 10px;"></div>
-            <a href="#" class="w3-bar-item w3-button w3-padding w3-green"><i class='fa fa-line-chart' style='font-size:15px'></i>&nbsp; Sales</a>
+            <a href="#" class="w3-bar-item w3-button w3-padding w3-red"><i class='fa fa-line-chart' style='font-size:15px'></i>&nbsp; Orders</a>
             <div style="margin-top: 10px;"></div>
-            <a href="#" class="w3-bar-item w3-button w3-padding w3-red"><i class="fa fa-list" style="font-size:15px"></i>&nbsp; Audit Report</a>
+            <a href="#" class="w3-bar-item w3-button w3-padding w3-aqua"><i class="fa fa-list" style="font-size:15px"></i>&nbsp; Orders delivered</a>
             <div style="margin-top: 10px;"></div>
-            <a href="#" class="w3-bar-item w3-button w3-padding w3-yellow"><i class="fa fa-heartbeat" style="font-size:24px"></i>&nbsp; Safety Report</a>
-        </div>
+           
     </nav>
 
     <div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
@@ -64,13 +63,13 @@
 
         <div class="w3-row-padding w3-margin-bottom">
             <div class="w3-quarter">
-                <div class="w3-container w3-brown w3-padding-16">
-                    <div class="w3-left"><i style="font-size:58px" class="fa">&#xf1b3;</i></div>
+                <div class="w3-container w3-blue w3-padding-16">
+                    <div class="w3-left"><i style="font-size:58px" class="fa">&#xf19c;</i></div>
                     <div class="w3-right">
                         <h3></h3>
                     </div>
                     <div class="w3-clear"></div>
-                    <h4>Stocks</h4>
+                    <h4>Departments</h4>
                 </div>
             </div>
             <div class="w3-quarter">
@@ -80,7 +79,7 @@
                         <h3></h3>
                     </div>
                     <div class="w3-clear"></div>
-                    <h4>Sales</h4>
+                    <h4>Orders</h4>
                 </div>
             </div>
             <div class="w3-quarter">
@@ -90,20 +89,10 @@
                         <h3></h3>
                     </div>
                     <div class="w3-clear"></div>
-                    <h4>Audit Report</h4>
+                    <h4>Orders Delivered</h4>
                 </div>
             </div>
-            <div class="w3-quarter">
-                <div class="w3-container w3-yellow w3-padding-16">
-                    <div class="w3-left"><i style="font-size:58px" class="fa">&#xf21e;</i></div>
-                    <div class="w3-right">
-                        <h3></h3>
-                    </div>
-                    <div class="w3-clear"></div>
-                    <h4>Safety Report</h4>
-                </div>
-            </div>
-        </div>
+        
         <div class="w3-container">
           <h4>General Stats</h4>
           

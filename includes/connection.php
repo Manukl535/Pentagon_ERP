@@ -3,7 +3,7 @@
 $host = "localhost";
 $username = "root";
 $password = "";
-$database = "pentagon";
+$database = "pentagon_erp";
 
 $conn = new mysqli($host, $username, $password, $database);
 
