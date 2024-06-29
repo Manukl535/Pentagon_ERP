@@ -124,7 +124,7 @@ $mailsTrash = $resultTrash->fetch_all(MYSQLI_ASSOC);
         </div>
     </nav>
 
-    <!-- Modal content -->
+    <!-- Compose Modal -->
     <div id="id01" class="w3-modal" style="z-index:4">
         <div class="w3-modal-content w3-animate-zoom">
             <div class="w3-container w3-padding w3-red">
@@ -156,6 +156,35 @@ $mailsTrash = $resultTrash->fetch_all(MYSQLI_ASSOC);
         </div>
     </div>
 
+    <!-- Reply Modal -->
+<div id="id02" class="w3-modal" style="z-index:4">
+    <div class="w3-modal-content w3-animate-zoom">
+        <div class="w3-container w3-padding w3-red">
+            <span onclick="document.getElementById('id02').style.display='none'" class="w3-button w3-red w3-right w3-xxlarge"><i class="fa fa-remove"></i></span>
+            <h2>Reply to Mail</h2>
+        </div>
+        <div class="w3-panel">
+            <form action="reply_mail.php" method="POST" class="w3-container">
+                <input type="hidden" name="to_email" id="reply_to_email" required>
+                <input type="hidden" name="cc_email" id="reply_cc_email">
+                <input type="hidden" name="from_email" value="<?php echo htmlspecialchars($email); ?>">
+                <input type="hidden" name="reply_to" id="reply_to_mail_id">
+                
+                <label>Subject</label>
+                <input class="w3-input w3-border w3-margin-bottom" type="text" name="subject" id="reply_subject" required>
+                
+                <textarea class="w3-input w3-border w3-margin-bottom" style="height:60px" placeholder="Write your reply here!" name="message" required></textarea>
+                
+                <div class="w3-section">
+                    <button type="submit" class="w3-button w3-red">Send <i class="fa fa-paper-plane"></i></button>
+                    <a class="w3-button w3-red" onclick="document.getElementById('id02').style.display='none'">Cancel <i class="fa fa-remove"></i></a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
     <!-- Mail Preview -->
     <div class="w3-main" style="margin-left:270px;">
         <i class="fa fa-bars w3-button w3-white w3-hide-large w3-xlarge w3-margin-left w3-margin-top" onclick="w3_open()"></i>
@@ -167,7 +196,7 @@ $mailsTrash = $resultTrash->fetch_all(MYSQLI_ASSOC);
                 <img class="">
                 <h5 class="w3-opacity">Subject: <?php echo htmlspecialchars($mail['subject']); ?></h5>
                 <h4><i class="fa fa-clock-o"></i> From <?php echo htmlspecialchars($mail['from_email']); ?>, <?php echo date('M d, Y', strtotime($mail['sent_at'])); ?></h4>
-                <a class="w3-button w3-light-grey">Reply <i class="w3-margin-left fa fa-mail-reply"></i></a>
+                <a class="w3-button w3-light-grey" onclick="replyToMail('<?php echo htmlspecialchars($mail['id']); ?>', '<?php echo htmlspecialchars($mail['from_email']); ?>', '<?php echo htmlspecialchars($mail['subject']); ?>')">Reply <i class="w3-margin-left fa fa-mail-reply"></i></a>
                 <a class="w3-button w3-light-grey">Forward <i class="w3-margin-left fa fa-arrow-right"></i></a>
                 <hr>
                 <p><?php echo htmlspecialchars($mail['message']); ?></p>
@@ -180,7 +209,7 @@ $mailsTrash = $resultTrash->fetch_all(MYSQLI_ASSOC);
                 <img class="">
                 <h5 class="w3-opacity">Subject: <?php echo htmlspecialchars($mail['subject']); ?></h5>
                 <h4><i class="fa fa-clock-o"></i> To <?php echo htmlspecialchars($mail['to_email']); ?>, <?php echo date('M d, Y', strtotime($mail['sent_at'])); ?></h4>
-                <a class="w3-button w3-light-grey">Reply <i class="w3-margin-left fa fa-mail-reply"></i></a>
+                <a class="w3-button w3-light-grey" onclick="replyToMail('<?php echo htmlspecialchars($mail['id']); ?>', '<?php echo htmlspecialchars($mail['from_email']); ?>', '<?php echo htmlspecialchars($mail['subject']); ?>')">Reply <i class="w3-margin-left fa fa-mail-reply"></i></a>
                 <a class="w3-button w3-light-grey">Forward <i class="w3-margin-left fa fa-arrow-right"></i></a>
                 <hr>
                 <p><?php echo htmlspecialchars($mail['message']); ?></p>
@@ -332,6 +361,14 @@ $mailsTrash = $resultTrash->fetch_all(MYSQLI_ASSOC);
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhttp.send("mail_id=" + mailId);
 }
+
+function replyToMail(mailId, fromEmail, subject) {
+    document.getElementById('reply_to_email').value = fromEmail;
+    document.getElementById('reply_subject').value = 'Re: ' + subject;
+    document.getElementById('reply_to_mail_id').value = mailId;
+    document.getElementById('id02').style.display = 'block';
+}
+
 
 
     </script>
