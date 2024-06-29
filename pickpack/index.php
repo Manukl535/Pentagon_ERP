@@ -28,7 +28,7 @@
         <div class="item">
             <i class="fas fa-tools" style="font-size: 100px; color: black;"></i>
             <div class="dropdown">
-                <div>Works <i class="fa" style="font-size: 15px;color: blue; ">&#11167;</i></div>
+                <div>Works <i class="fa" style="font-size: 15px; ">&#11167;</i></div>
                 <div class="dropdown-content">
                     <a href="#">Departments</a>
                     <a href="form1.html">PO and DN</a>
