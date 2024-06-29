@@ -269,7 +269,7 @@ tbody tr:nth-child(even) {
                     echo "<td>" . htmlspecialchars($row['category']) . "</td>";
                     echo '<td>
                             <a href="#" class="action-btn edit-btn">Edit</a>
-                            <a href="#" class="action-btn delete-btn">Delete</a>
+                            // <a href="#" class="action-btn delete-btn">Delete</a>
                           </td>';
                     echo "</tr>";
                 }

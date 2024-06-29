@@ -42,6 +42,7 @@ if (!isset($_SESSION['email'])) {
                 <div class="dropdown-content">
                     <a href="manage_inv.php">Manage Inventory</a>
                     <a href="manage_loc.php">Manage Locations</a>
+                    <a href="bin_transfer.php">Bin Transfer</a>
                     <a href="#">Cycle Count</a>
                 </div>
             </div>

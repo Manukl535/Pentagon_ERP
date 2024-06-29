@@ -26,25 +26,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Location does not exist, show alert
         echo '<script>alert("Location does not exist"); window.location.replace("index.php");</script>';
     } else {
-        // Location exists, proceed with deletion
-        $delete_query = "DELETE FROM inv_location WHERE location = ?";
-        $delete_stmt = $conn->prepare($delete_query);
-        $delete_stmt->bind_param("s", $delete_location);
+        // Location exists, check if it is empty
+        $check_empty_query = "SELECT * FROM inv_location WHERE location = ? AND article_no IS NOT NULL AND available_quantity > 0";
+        $check_empty_stmt = $conn->prepare($check_empty_query);
+        $check_empty_stmt->bind_param("s", $delete_location);
+        $check_empty_stmt->execute();
+        $empty_result = $check_empty_stmt->get_result();
 
-        if ($delete_stmt->execute()) {
-            // Log the deletion with remarks
-            $log_query = "INSERT INTO deletion_logs (location, remarks) VALUES (?, ?)";
-            $log_stmt = $conn->prepare($log_query);
-            $log_stmt->bind_param("ss", $delete_location, $remarks);
-            $log_stmt->execute();
-            
-            echo '<script>alert("Location deleted successfully"); window.location.replace("index.php");</script>';
+        if ($empty_result->num_rows > 0) {
+            // Location is not empty, show alert
+            echo '<script>alert("Location is not empty"); window.location.replace("index.php");</script>';
         } else {
-            // Error message
-            echo '<div class="error">Error: ' . $delete_stmt->error . '</div>';
+            // Location is empty, proceed with deletion
+            $delete_query = "DELETE FROM inv_location WHERE location = ?";
+            $delete_stmt = $conn->prepare($delete_query);
+            $delete_stmt->bind_param("s", $delete_location);
+
+            if ($delete_stmt->execute()) {
+                // Log the deletion with remarks
+                $log_query = "INSERT INTO deletion_logs (location, remarks) VALUES (?, ?)";
+                $log_stmt = $conn->prepare($log_query);
+                $log_stmt->bind_param("ss", $delete_location, $remarks);
+                $log_stmt->execute();
+
+                echo '<script>alert("Location deleted successfully"); window.location.replace("index.php");</script>';
+            } else {
+                // Error message
+                echo '<div class="error">Error: ' . $delete_stmt->error . '</div>';
+            }
+
+            $delete_stmt->close();
         }
-        
-        $delete_stmt->close();
+
+        $check_empty_stmt->close();
     }
 
     $check_stmt->close();
