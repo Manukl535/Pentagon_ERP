@@ -15,9 +15,10 @@
     form{
         text-align: justify;
         font-family:'Segoe UI';
-        color:navy;
+        color:rgb(0, 0, 0);
         text-decoration-style: double;
         font-size: larger;
+        font-weight: 700;
        
     }
     h1{
@@ -56,6 +57,16 @@
     transition-duration: 0.3s;
     cursor: pointer;
     }
+    .modelbtn{
+        padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.3s;
+    cursor: pointer;
+    }
 
     .button1 {
     background-color: rgb(203, 234, 245);
@@ -77,7 +88,7 @@
         <label for="address">Adress:</label><br>
             <textarea id="address"   name="address" rows="6" cols="40" ></textarea><br><br>
           
-            <label for="article_no">Article No:</label><br>
+            <label for="article_no">Article No:</label>
             <select id="article_no" name="article_no">
                 <option value="APT101">APT101</option>
                 <option value="APS102">APS102</option>
@@ -104,22 +115,25 @@
               </select>
             <label for="colour">Color:</label>
             <select id="colour" name="color">
+                <option value="">select color</option>
                 <option value="White">White</option>
                 <option value="blue">Blue</option>
                 <option value="Red">Red</option>
                 <option value="Black">BLack</option>
-            </select><br>
-            <br>
+            </select>
             <label for="siz">Size:</label>
             <select id="siz" name="siz">
+                <option value="">select size</option>
                 <option value="M">M</option>
                 <option value="L">L</option>
                 <option value="XL">XL</option>
                 <option value="S">S</option>
-            </select><br>
-            <br>
+            </select>
+            
             <label for="quantity">Quantity:</label>
-            <input type="text" id="quantity"><br><br>
+            <input type="number" id="quantity"><br><br>
+            <button class="modelbtn">Add More</button><br>
+            <br>
             <label for="Description">Description:</label>
             <input type="text" name="White Shirt" id="Description" value="White Shirt"><br><br><br>
 

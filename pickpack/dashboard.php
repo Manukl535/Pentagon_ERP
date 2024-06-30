@@ -69,7 +69,7 @@
                         <h3></h3>
                     </div>
                     <div class="w3-clear"></div>
-                    <h4>Departments</h4>
+                    <h4>Customers</h4>
                 </div>
             </div>
             <div class="w3-quarter">
@@ -89,7 +89,7 @@
                         <h3></h3>
                     </div>
                     <div class="w3-clear"></div>
-                    <h4>Orders Delivered</h4>
+                    <h4>Safety Report</h4>
                 </div>
             </div>
         
