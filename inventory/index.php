@@ -1,3 +1,14 @@
+<?php
+session_start();
+include('../includes/connection.php');
+
+// Check if user is logged in and session variable is set
+if (!isset($_SESSION['email'])) {
+    // Redirect to login page or handle unauthorized access
+    header("Location: ../index.php");
+    exit(); // Ensure script stops executing after redirection
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,6 +42,7 @@
                 <div class="dropdown-content">
                     <a href="manage_inv.php">Manage Inventory</a>
                     <a href="manage_loc.php">Manage Locations</a>
+                    <a href="bin_transfer.php">Bin Transfer</a>
                     <a href="#">Cycle Count</a>
                 </div>
             </div>

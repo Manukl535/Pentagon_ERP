@@ -2,6 +2,13 @@
 session_start();
 include('../Includes/connection.php');
 
+// Check if user is logged in and session variable is set
+if (!isset($_SESSION['email'])) {
+    // Redirect to login page or handle unauthorized access
+    header("Location: ../index.php");
+    exit(); // Ensure script stops executing after redirection
+}
+
 // Handle form submissions for editing existing items
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['article_no'])) {
     // Retrieve and sanitize input data
@@ -9,11 +16,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['article_no'])) {
     $description = mysqli_real_escape_string($conn, $_POST['description']);
     $quantity = mysqli_real_escape_string($conn, $_POST['quantity']);
     $location = mysqli_real_escape_string($conn, $_POST['location']);
+    $capacity = mysqli_real_escape_string($conn, $_POST['capacity']);
+    $color = mysqli_real_escape_string($conn, $_POST['color']);
+    $size = mysqli_real_escape_string($conn, $_POST['size']);
+    $category = mysqli_real_escape_string($conn, $_POST['category']);
 
-    // Update query with location condition
+    // Update query with all attributes
     $query = "UPDATE inv_location SET 
                 article_description = '$description', 
-                available_quantity = '$quantity'
+                available_quantity = '$quantity',
+                capacity = '$capacity',
+                color = '$color',
+                article_size = '$size',
+                category = '$category'
               WHERE article_no = '$articleNo' AND location = '$location'";
 
     // Execute the query
@@ -26,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['article_no'])) {
     }
 }
 
-// Handle form submissions for adding new items
+// Handle form submissions for adding new items (if any)
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_description'])) {
     // Retrieve and sanitize input data
     $newDescription = mysqli_real_escape_string($conn, $_POST['new_description']);
@@ -38,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_description'])) {
     $newCategory = mysqli_real_escape_string($conn, $_POST['new_category']);
 
     // Insert query
-    $query = "INSERT INTO inv_location (article_description, available_quantity, location, capacity, color, size, category) 
+    $query = "INSERT INTO inv_location (article_description, available_quantity, location, capacity, color, article_size, category) 
               VALUES ('$newDescription', '$newQuantity', '$newLocation', '$newCapacity', '$newColor', '$newSize', '$newCategory')";
 
     // Execute the query
@@ -52,7 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['new_description'])) {
 }
 
 // Query to fetch inventory items
-$query = "SELECT article_no, article_description, available_quantity, location, capacity, color, size, category FROM inv_location";
+$query = "SELECT article_no, article_description, available_quantity, location, capacity, color, article_size, category FROM inv_location";
 $result = $conn->query($query);
 
 // Close the database connection
@@ -258,11 +273,10 @@ tbody tr:nth-child(even) {
                     echo "<td>" . htmlspecialchars($row['article_description']) . "</td>";
                     echo "<td>" . htmlspecialchars($row['available_quantity']) . "</td>";
                     echo "<td>" . htmlspecialchars($row['color']) . "</td>";
-                    echo "<td>" . htmlspecialchars($row['size']) . "</td>";
+                    echo "<td>" . htmlspecialchars($row['article_size']) . "</td>";
                     echo "<td>" . htmlspecialchars($row['category']) . "</td>";
                     echo '<td>
                             <a href="#" class="action-btn edit-btn">Edit</a>
-                            <a href="#" class="action-btn delete-btn">Delete</a>
                           </td>';
                     echo "</tr>";
                 }
@@ -318,103 +332,96 @@ tbody tr:nth-child(even) {
     </div>
 </div>
 
-<!-- JavaScript for modal and form functionality -->
+<!-- Modal for adding new items -->
+<div id="addModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div class="form-container">
+            <h2>Add New Item</h2>
+            <form id="addForm" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                <div class="form-group">
+                    <label for="newDescription">Description:</label>
+                    <input type="text" id="newDescription" name="new_description" required>
+                </div>
+                <div class="form-group">
+                    <label for="newQuantity">Quantity:</label>
+                    <input type="number" id="newQuantity" name="new_quantity" required>
+                </div>
+                <div class="form-group">
+                    <label for="newLocation">Location:</label>
+                    <input type="text" id="newLocation" name="new_location" required>
+                </div>
+                <div class="form-group">
+                    <label for="newCapacity">Capacity:</label>
+                    <input type="text" id="newCapacity" name="new_capacity" required>
+                </div>
+                <div class="form-group">
+                    <label for="newColor">Color:</label>
+                    <input type="text" id="newColor" name="new_color" required>
+                </div>
+                <div class="form-group">
+                    <label for="newSize">Size:</label>
+                    <input type="text" id="newSize" name="new_size" required>
+                </div>
+                <div class="form-group">
+                    <label for="newCategory">Category:</label>
+                    <input type="text" id="newCategory" name="new_category" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Add Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    var editModal = document.getElementById('editModal');
-    var editForm = document.getElementById('editForm');
-    var closeButtons = document.getElementsByClassName('close');
-    var editButtons = document.getElementsByClassName('edit-btn');
-    var addBtn = document.querySelector('.add-button');
-
-    // Function to open edit modal and populate form fields
-    Array.from(editButtons).forEach(function(button) {
+// JavaScript for handling modals and editing
+document.addEventListener('DOMContentLoaded', function() {
+    // Edit button click event
+    const editButtons = document.querySelectorAll('.edit-btn');
+    editButtons.forEach(button => {
         button.addEventListener('click', function() {
-            editModal.style.display = 'block';
-            var row = button.parentElement.parentElement;
-            document.getElementById('editArticleNo').value = row.cells[2].innerText;
-            document.getElementById('editDescription').value = row.cells[3].innerText;
-            document.getElementById('editQuantity').value = row.cells[4].innerText;
-            document.getElementById('editLocation').value = row.cells[0].innerText;
-            document.getElementById('editCapacity').value = row.cells[1].innerText;
-            document.getElementById('editColor').value = row.cells[5].innerText;
-            document.getElementById('editSize').value = row.cells[6].innerText;
-            document.getElementById('editCategory').value = row.cells[7].innerText;
+            const row = this.parentNode.parentNode;
+            const cells = row.getElementsByTagName('td');
+            
+            // Populate edit form with current row data
+            document.getElementById('editArticleNo').value = cells[2].textContent.trim();
+            document.getElementById('editDescription').value = cells[3].textContent.trim();
+            document.getElementById('editQuantity').value = cells[4].textContent.trim();
+            document.getElementById('editLocation').value = cells[0].textContent.trim();
+            document.getElementById('editCapacity').value = cells[1].textContent.trim();
+            document.getElementById('editColor').value = cells[5].textContent.trim();
+            document.getElementById('editSize').value = cells[6].textContent.trim();
+            document.getElementById('editCategory').value = cells[7].textContent.trim();
+            
+            // Show edit modal
+            document.getElementById('editModal').style.display = 'block';
         });
     });
 
-    // Function to close modals
-    Array.from(closeButtons).forEach(function(button) {
+    // Close modal events
+    const closeButtons = document.querySelectorAll('.close');
+    closeButtons.forEach(button => {
         button.addEventListener('click', function() {
-            editModal.style.display = 'none';
+            this.parentNode.parentNode.style.display = 'none';
         });
     });
 
-    // Function to open add modal
-    addBtn.addEventListener('click', function() {
-        addModal.style.display = 'block';
+    // Add new item button event
+    document.querySelector('.add-button').addEventListener('click', function() {
+        document.getElementById('addModal').style.display = 'block';
     });
 
-    // Submit edit form function (if needed)
-    editForm.addEventListener('submit', function(event) {
-        // Additional handling if required
-    });
-
-    // Add more JavaScript as needed
-});
-
-// cap vs qty
-
-document.addEventListener("DOMContentLoaded", function() {
-    var editModal = document.getElementById('editModal');
-    var editForm = document.getElementById('editForm');
-    var closeButtons = document.getElementsByClassName('close');
-    var editButtons = document.getElementsByClassName('edit-btn');
-    var addBtn = document.querySelector('.add-button');
-
-    // Function to open edit modal and populate form fields
-    Array.from(editButtons).forEach(function(button) {
-        button.addEventListener('click', function() {
-            editModal.style.display = 'block';
-            var row = button.parentElement.parentElement;
-            document.getElementById('editArticleNo').value = row.cells[2].innerText;
-            document.getElementById('editDescription').value = row.cells[3].innerText;
-            document.getElementById('editQuantity').value = row.cells[4].innerText;
-            document.getElementById('editLocation').value = row.cells[0].innerText;
-            document.getElementById('editCapacity').value = row.cells[1].innerText;
-            document.getElementById('editColor').value = row.cells[5].innerText;
-            document.getElementById('editSize').value = row.cells[6].innerText;
-            document.getElementById('editCategory').value = row.cells[7].innerText;
-        });
-    });
-
-    // Function to close modals
-    Array.from(closeButtons).forEach(function(button) {
-        button.addEventListener('click', function() {
-            editModal.style.display = 'none';
-        });
-    });
-
-    // Function to open add modal
-    addBtn.addEventListener('click', function() {
-        addModal.style.display = 'block';
-    });
-
-    // Submit edit form function with validation
-    editForm.addEventListener('submit', function(event) {
-        var quantity = parseInt(document.getElementById('editQuantity').value);
-        var capacity = parseInt(document.getElementById('editCapacity').value);
-        
-        // Check if quantity exceeds capacity
-        if (quantity > capacity) {
-            alert("Quantity cannot be greater than Bin Capacity.");
-            event.preventDefault(); // Prevent form submission
+    // Close modal when clicking outside of modal content
+    window.onclick = function(event) {
+        if (event.target == document.getElementById('editModal')) {
+            document.getElementById('editModal').style.display = 'none';
+        } else if (event.target == document.getElementById('addModal')) {
+            document.getElementById('addModal').style.display = 'none';
         }
-    });
-
-    // Add more JavaScript as needed
+    };
 });
-
 </script>
 
 </body>

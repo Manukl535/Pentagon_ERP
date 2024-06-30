@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dispatch</title>
+    <title>Inventory Home</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="styles0.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -29,8 +29,9 @@
             <div class="dropdown">
                 <div>Works <i class="fa" style="font-size: 15px;color: black; ">&#11167;</i></div>
                 <div class="dropdown-content">
-                    <a href="order_dispatch.html">Dispatch Order</a>
-                    <a href="#">Dispatch History</a>
+                    <a href="manage_inv.php">Ordered goods</a>
+                    <a href="manage_loc.php">Recieved goods</a>
+                    <a href="#">Putaway</a>
                 </div>
             </div>
         </div>
@@ -52,5 +53,8 @@
             <a href="../logout.php">Logout</a>
         </div>
     </nav>
+
+
+
 </body>
 </html>

@@ -1,13 +1,7 @@
 <?php
 session_start();
-include('../includes/connection.php');
-
-// Check if user is logged in and session variable is set
-if (!isset($_SESSION['email'])) {
-    // Redirect to login page or handle unauthorized access
-    header("Location: ../index.php");
-    exit(); // Ensure script stops executing after redirection
-}
+// Include the database connection
+include('../Includes/connection.php');
 
 // Query to fetch locations from database
 $query = "SELECT * FROM inv_location";
@@ -187,7 +181,7 @@ $result = $conn->query($query);
                             <td><?php echo $row['color']; ?></td>
                             <td><?php echo $row['available_quantity']; ?></td> <!-- Use correct column name -->
                             <td><?php echo $row['category']; ?></td>
-                            <td><?php echo $row['article_size']; ?></td>
+                            <td><?php echo $row['size']; ?></td>
                             <!-- <td><?php echo $row['status']; ?></td> -->
                         </tr>
                     <?php } ?>

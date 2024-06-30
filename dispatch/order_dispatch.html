@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dispatch Order Form</title>
+    <style>
+        /* Optional: Add some basic styling */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        form {
+            margin-top: 20px;
+        }
+        .dispatch-data {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dispatch Order</h1>
+    <form id="dispatchForm" action="/submit_dispatch_order" method="post">
+        <label for="poNumber">Enter PO:</label>
+        <input type="text" id="poNumber" name="poNumber" placeholder="Enter PO number" required>
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="dispatchData" class="dispatch-data" style="display: none;">
+        <h2>Random Dispatch Data</h2>
+        <p><strong>PO Number:</strong> <span id="displayPoNumber"></span></p>
+        <p><strong>Order ID:</strong> <span id="orderId"></span></p>
+        <p><strong>Dispatch Date:</strong> <span id="dispatchDate"></span></p>
+        <p><strong>Shipping Method:</strong> <span id="shippingMethod"></span></p>
+    </div>
+
+    <script>
+        document.getElementById('dispatchForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Simulate generating random data
+            var poNumber = document.getElementById('poNumber').value;
+            var orderId = generateRandomId(); // Example function to generate random ID
+            var dispatchDate = generateRandomDate(); // Example function to generate random date
+            var shippingMethod = generateRandomShippingMethod(); // Example function to generate random shipping method
+
+            // Display generated data
+            document.getElementById('displayPoNumber').textContent = poNumber;
+            document.getElementById('orderId').textContent = orderId;
+            document.getElementById('dispatchDate').textContent = dispatchDate;
+            document.getElementById('shippingMethod').textContent = shippingMethod;
+
+            // Show the dispatch data section
+            document.getElementById('dispatchData').style.display = 'block';
+        });
+
+        // Example functions to generate random data (replace with actual logic)
+        function generateRandomId() {
+            return Math.floor(Math.random() * 10000); // Replace with your actual ID generation logic
+        }
+
+        function generateRandomDate() {
+            var startDate = new Date(2023, 0, 1); // Start date (year, month index, day)
+            var endDate = new Date(); // Today's date
+            var randomDate = new Date(startDate.getTime() + Math.random() * (endDate.getTime() - startDate.getTime()));
+            return randomDate.toLocaleDateString(); // Format date as string (adjust as needed)
+        }
+
+        function generateRandomShippingMethod() {
+            var methods = ['Standard', 'Express', 'Same-Day']; // Example shipping methods
+            var randomIndex = Math.floor(Math.random() * methods.length);
+            return methods[randomIndex];
+        }
+    </script>
+</body>
+</html>
