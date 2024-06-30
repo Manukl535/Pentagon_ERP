@@ -30,9 +30,9 @@
             <div class="dropdown">
                 <div>Works <i class="fa" style="font-size: 15px; ">&#11167;</i></div>
                 <div class="dropdown-content">
-                    <a href="#">Departments</a>
-                    <a href="form1.html">PO and DN</a>
-                    <a href="#">Orders Delivered</a>
+                    <a href="assign.html">Assign</a>
+                    <a href="todn.html">TO and DN</a>
+                   
                 </div>
             </div>
         </div>
