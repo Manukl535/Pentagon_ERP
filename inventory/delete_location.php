@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($result->num_rows == 0) {
         // Location does not exist, show alert
-        echo '<script>alert("Location does not exist"); window.location.replace("index.php");</script>';
+        echo '<script>alert("Location does not exist"); window.location.replace("manage_loc.php");</script>';
     } else {
         // Location exists, check if it is empty
         $check_empty_query = "SELECT * FROM inv_location WHERE location = ? AND article_no IS NOT NULL AND available_quantity > 0";
@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($empty_result->num_rows > 0) {
             // Location is not empty, show alert
-            echo '<script>alert("Location is not empty"); window.location.replace("index.php");</script>';
+            echo '<script>alert("Location is not empty"); window.location.replace("manage_loc.php");</script>';
         } else {
             // Location is empty, proceed with deletion
             $delete_query = "DELETE FROM inv_location WHERE location = ?";
@@ -49,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $log_stmt->bind_param("ss", $delete_location, $remarks);
                 $log_stmt->execute();
 
-                echo '<script>alert("Location deleted successfully"); window.location.replace("index.php");</script>';
+                echo '<script>alert("Location deleted successfully"); window.location.replace("manage_loc.php");</script>';
             } else {
                 // Error message
                 echo '<div class="error">Error: ' . $delete_stmt->error . '</div>';

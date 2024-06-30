@@ -37,7 +37,7 @@ if (!isset($_SESSION['email'])) {
         }
 
         .scene {
-            width: 350px;
+            width: 400px;
             height: 350px;
             perspective: 600px;
             margin: 20px;
@@ -123,17 +123,23 @@ if (!isset($_SESSION['email'])) {
             font-size: 16px;
             box-sizing: border-box;
         }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="scene" id="addCard">
-            <div class="card">
+            <div class="card is-flipped">
                 <div class="card__face card__face--front">Add Location</div>
                 <div class="card__face card__face--back">
                     <div>
                         <h2>Add Location</h2>
-                        <form action="insert_location.php" method="POST">
+                        <form id="addForm" action="insert_location.php" method="POST">
                             <div class="form-group">
                                 <label for="location">Location Name:</label>
                                 <input type="text" id="location" name="location" class="form-control" required>
@@ -141,6 +147,7 @@ if (!isset($_SESSION['email'])) {
                             <div class="form-group">
                                 <label for="capacity">Capacity:</label>
                                 <input type="number" id="capacity" name="capacity" class="form-control" required min="1">
+                                <div id="capacityError" class="error-message"></div>
                             </div>
                             <button type="submit" class="btn">Add Location</button>
                         </form>
@@ -155,7 +162,7 @@ if (!isset($_SESSION['email'])) {
                 <div class="card__face card__face--back">
                     <div>
                         <h2>Delete Location</h2>
-                        <form action="delete_location.php" method="POST">
+                        <form id="deleteForm" action="delete_location.php" method="POST">
                             <div class="form-group">
                                 <label for="delete_location">Location Name:</label>
                                 <input type="text" id="delete_location" name="delete_location" class="form-control" required>
@@ -180,8 +187,22 @@ if (!isset($_SESSION['email'])) {
             card.classList.toggle('is-flipped');
         }
 
+        function validateAddForm(event) {
+            const capacityInput = document.getElementById('capacity');
+            const capacityError = document.getElementById('capacityError');
+
+            if (capacityInput.value < 1) {
+                event.preventDefault();
+                capacityError.textContent = 'Capacity must be greater than or equal to 1';
+            } else {
+                capacityError.textContent = '';
+            }
+        }
+
+        document.getElementById('addForm').addEventListener('submit', validateAddForm);
+
         addCard.addEventListener('click', function(event) {
-            if (!event.target.closest('input')) {
+            if (!event.target.closest('input') && !event.target.closest('form')) {
                 flipCard(addCard.querySelector('.card'));
                 if (deleteCard.querySelector('.card').classList.contains('is-flipped')) {
                     flipCard(deleteCard.querySelector('.card'));
@@ -190,7 +211,7 @@ if (!isset($_SESSION['email'])) {
         });
 
         deleteCard.addEventListener('click', function(event) {
-            if (!event.target.closest('input')) {
+            if (!event.target.closest('input') && !event.target.closest('form')) {
                 flipCard(deleteCard.querySelector('.card'));
                 if (addCard.querySelector('.card').classList.contains('is-flipped')) {
                     flipCard(addCard.querySelector('.card'));
