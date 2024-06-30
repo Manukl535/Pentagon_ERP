@@ -76,8 +76,9 @@ if (!isset($_SESSION['email'])) {
         }
 
         .card__face--front {
-            background: crimson;
+            background: lightblue;
             transform: rotateY(0deg);
+            color:black;
         }
 
         .card__face--back {
@@ -138,14 +139,14 @@ if (!isset($_SESSION['email'])) {
                 <div class="card__face card__face--front">Add Location</div>
                 <div class="card__face card__face--back">
                     <div>
-                        <h2>Add Location</h2>
+                        <h4 style="text-align: center;">Add Location</h4>
                         <form id="addForm" action="insert_location.php" method="POST">
                             <div class="form-group">
-                                <label for="location">Location Name:</label>
-                                <input type="text" id="location" name="location" class="form-control" required>
+                                <label for="location" style="font-size: 15px;">Location Name:</label>
+                                <input type="text" id="location" name="location" class="form-control" style="width: 350px;" required>
                             </div>
                             <div class="form-group">
-                                <label for="capacity">Capacity:</label>
+                                <label for="capacity" style="font-size: 15px;">Capacity:</label>
                                 <input type="number" id="capacity" name="capacity" class="form-control" required min="1">
                                 <div id="capacityError" class="error-message"></div>
                             </div>
@@ -161,14 +162,14 @@ if (!isset($_SESSION['email'])) {
                 <div class="card__face card__face--front">Delete Location</div>
                 <div class="card__face card__face--back">
                     <div>
-                        <h2>Delete Location</h2>
+                        <h4 style="text-align: center;">Delete Location</h4>
                         <form id="deleteForm" action="delete_location.php" method="POST">
                             <div class="form-group">
-                                <label for="delete_location">Location Name:</label>
-                                <input type="text" id="delete_location" name="delete_location" class="form-control" required>
+                                <label for="delete_location" style="font-size: 15px;">Location Name:</label>
+                                <input type="text" id="delete_location" name="delete_location" class="form-control" style="width: 350px;" required>
                             </div>
                             <div class="form-group">
-                                <label for="remarks">Remarks:</label>
+                                <label for="remarks" style="font-size: 15px;">Remarks:</label>
                                 <input type="text" id="remarks" name="remarks" class="form-control" required>
                             </div>
                             <button type="submit" class="btn delete-btn">Delete Location</button>
