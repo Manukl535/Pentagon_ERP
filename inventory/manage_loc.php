@@ -98,7 +98,7 @@ if (!isset($_SESSION['email'])) {
                 
                 <div class="form-group">
                     <label for="capacity">Capacity:</label>
-                    <input type="number" id="capacity" name="capacity" class="form-control" required min="0">
+                    <input type="number" id="capacity" name="capacity" class="form-control" required min="1">
                     <!-- min="0" ensures the input is a non-negative integer -->
                 </div>
                 

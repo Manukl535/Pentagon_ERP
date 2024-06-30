@@ -205,10 +205,10 @@ while ($audit_row = $result1->fetch_assoc()) {
                                     // Query to fetch size based on article_no and location
                                     $article_no = $row['article_no'];
                                     $location = $row['location'];
-                                    $query_size = "SELECT size FROM inv_location WHERE article_no = '$article_no' AND location = '$location'";
+                                    $query_size = "SELECT article_size FROM inv_location WHERE article_no = '$article_no' AND location = '$location'";
                                     $result_size = $conn->query($query_size);
                                     $row_size = $result_size->fetch_assoc();
-                                    echo ($row_size) ? $row_size['size'] : 'N/A';
+                                    echo ($row_size) ? $row_size['article_size'] : 'N/A';
                                 ?>
                             </td>
                             <td><?php echo $row['qty_23_24']; ?></td>

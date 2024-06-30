@@ -1,3 +1,8 @@
+<?php
+// Assuming $conn is your database connection
+include('../includes/connection.php'); // Include your database connection file
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -56,16 +61,13 @@
 <body>
     <div class="container">
         <h2 style="text-align: center">Bin Transfer</h2>
-        <form id="binTransferForm" action="process_bin_transfer.php" method="POST">
+        <form id="binTransferForm" action="bin_transfer_handler.php" method="POST">
             <div class="form-row">
                 <div class="form-group">
-                    <label for="location">Location:</label>
+                    <label for="location">Source Location:</label>
                     <select id="location" name="location" required>
-                    <option value="">Select Location</option>
+                        <option value="">Select Location</option>
                         <?php
-                        // Assuming $conn is your database connection
-                        include('../includes/connection.php'); // Include your database connection file
-
                         // Fetch locations from inv_location table
                         $query = "SELECT location FROM inv_location";
                         $result = $conn->query($query);
@@ -77,15 +79,12 @@
                         } else {
                             echo '<option value="">No locations found</option>';
                         }
-
-                        // Close database connection
-                        $conn->close();
                         ?>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="article_number">Article Number:</label>
-                    <input type="text" id="article_number" name="article_number" required readonly>
+                    <input type="text" id="article_number" name="article_no" required readonly>
                 </div>
             </div>
             <div class="form-row">
@@ -106,6 +105,7 @@
                 <div class="form-group">
                     <label for="size">Size:</label>
                     <input type="text" id="size" name="size" required readonly>
+
                 </div>
             </div>
             <div class="form-row">
@@ -114,25 +114,46 @@
                     <input type="text" id="category" name="category" required readonly>
                 </div>
                 <div class="form-group">
-    <label for="destination_bin">Destination Bin:</label>
-    <select id="destination_bin" name="destination_bin" required>
-        <option value="">Select Destination Bin</option>
-        <!-- Options will be dynamically populated by JavaScript -->
-    </select>
-</div>
+                    <label for="destination_bin">Destination Location:</label>
+                    <select id="destination_bin" name="destination_bin" required>
+                        <option value="">Select Destination Bin</option>
+                        <?php
+                            // Fetch locations from inv_location table
+                            $query1 = "SELECT location, available_quantity AS qty, capacity AS cap FROM inv_location";
+                            $result1 = $conn->query($query1); // Assuming $conn is the database connection object
 
+                            if ($result1->num_rows > 0) {
+                                while ($row = $result1->fetch_assoc()) {
+                                    // Check if the available qty is zero or not
+                                    $location = $row['location'];
+                                    $qty = $row['qty'];
+                                    $cap = $row['cap'];
+
+                                    // Modify the option value based on qty condition
+                                    if ($qty == 0) {
+                                        echo '<option value="' . $location . '" data-available="false">' . $location . ' (Qty: 0)(Cap: ' . $cap . ')</option>';
+                                    } else {
+                                        // echo '<option value="' . $location . '" data-available="true">' . $location . ' (Qty: ' . $qty . ')(Cap: ' . $cap . ')</option>';
+                                    }
+                                }
+                            } else {
+                                echo '<option value="">No locations found</option>';
+                            }
+                        ?>
+                    </select>
+                </div>
             </div>
             <input type="submit" value="Transfer">
         </form>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
+<script>
 $(document).ready(function() {
     $('#location').change(function() {
         var location = $(this).val();
         $.ajax({
-            url: 'bin_transfer_handler.php',
+            url: 'bin_map.php',
             method: 'POST',
             dataType: 'json',
             data: { location: location },
@@ -150,7 +171,12 @@ $(document).ready(function() {
         });
     });
 });
+</script>
 
-    </script>
 </body>
 </html>
+
+<?php
+// Close database connection (if it's not already closed)
+$conn->close();
+?>

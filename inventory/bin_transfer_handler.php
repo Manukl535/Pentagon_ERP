@@ -1,46 +1,67 @@
 <?php
-// process_bin_transfer.php
+// bin_transfer_handler.php
 
-//  database connection 
-include('../includes/connection.php'); 
+// Include your database connection file
+include('../includes/connection.php');
 
-// Check if location is set and not empty
-if (isset($_POST['location']) && !empty($_POST['location'])) {
+// Check if all necessary parameters are set
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['location'], $_POST['article_no'], $_POST['quantity'], $_POST['description'], $_POST['color'], $_POST['size'], $_POST['category'], $_POST['destination_bin'])) {
+    // Retrieve form data
     $location = $_POST['location'];
+    $article_number = $_POST['article_no'];
+    $quantity = $_POST['quantity'];
+    $description = $_POST['description'];
+    $color = $_POST['color'];
+    $size = $_POST['size'];
+    $category = $_POST['category'];
+    $destination_bin = $_POST['destination_bin'];
 
-    // Prepare SQL query to fetch details from inv_location based on location
-    $query = "SELECT article_no, article_description, color, available_quantity, size, category FROM inv_location WHERE location = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param('s', $location);
-    $stmt->execute();
-    $stmt->store_result();
+    // Retrieve available quantity and size from source location
+    $query_source = "SELECT available_quantity, size FROM inv_location WHERE location = ?";
+    $stmt_source = $conn->prepare($query_source);
+    $stmt_source->bind_param("s", $location);
+    $stmt_source->execute();
+    $stmt_source->bind_result($available_quantity, $source_size);
+    $stmt_source->fetch();
+    $stmt_source->close();
 
-    // Bind results to variables
-    $stmt->bind_result($article_no, $article_description, $color, $available_quantity, $size, $category);
+    // Retrieve capacity from destination bin
+    $query_destination = "SELECT capacity FROM inv_location WHERE location = ?";
+    $stmt_destination = $conn->prepare($query_destination);
+    $stmt_destination->bind_param("s", $destination_bin);
+    $stmt_destination->execute();
+    $stmt_destination->bind_result($capacity);
+    $stmt_destination->fetch();
+    $stmt_destination->close();
 
-    // Fetch the row
-    if ($stmt->fetch()) {
-        // Return JSON response
-        $response = array(
-            'article_number' => $article_no, // Mapping to article_number in HTML
-            'quantity' => $available_quantity, // Mapping to quantity in HTML
-            'description' => $article_description, // Mapping to description in HTML
-            'color' => $color,
-            'size' => $size,
-            'category' => $category
-        );
-        echo json_encode($response);
+    // Check if transfer conditions are met
+    if ($available_quantity >= $quantity && $available_quantity >= $capacity) {
+        // Perform the transfer
+        $query_transfer = "UPDATE inv_location SET article_no = ?, article_description = ?, color = ?, available_quantity = ?, size = ?, category = ? WHERE location = ?";
+        $stmt_transfer = $conn->prepare($query_transfer);
+        $stmt_transfer->bind_param("sssiiss", $article_number, $description, $color, $quantity, $source_size, $category, $destination_bin); // Ensure $source_size is used here
+        $stmt_transfer->execute();
+        $stmt_transfer->close();
+
+        // Update source location (reduce available quantity and reset other fields)
+        $new_quantity = $available_quantity - $quantity;
+        $query_update_source = "UPDATE inv_location SET available_quantity = ?, article_no = NULL, article_description = NULL, color = NULL, size = NULL, category = NULL WHERE location = ?";
+        $stmt_update_source = $conn->prepare($query_update_source);
+        $stmt_update_source->bind_param("is", $new_quantity, $location);
+        $stmt_update_source->execute();
+        $stmt_update_source->close();
+
+        // Success alert
+        echo '<script>alert("Transfer successful!");window.location.replace("bin_transfer.php");</script>';
     } else {
-        // No results found for the location
-        echo json_encode(array('error' => 'No data found for the selected location'));
+        // Failure alert
+        echo '<script>alert("Transfer failed: Source location quantity does not meet or exceed destination bin capacity.");window.location.replace("bin_transfer.php");</script>';
     }
-
-    // Close statement and database connection
-    $stmt->close();
-    $conn->close();
 } else {
-    // Handle if location parameter is missing or empty
-    echo json_encode(array('error' => 'Location parameter is missing or empty'));
+    // Error alert
+    echo '<script>alert("Error: Missing parameters for transfer.");</script>';
 }
 
+// Close database connection
+$conn->close();
 ?>
