@@ -30,7 +30,7 @@
                 <div>Works <i class="fa" style="font-size: 15px;color: black; ">&#11167;</i></div>
                 <div class="dropdown-content">
                     <a href="order_dispatch.html">Dispatch Order</a>
-                    <a href="#">Manage Dispatched Item</a>
+                    <a href="#">Dispatch History</a>
                 </div>
             </div>
         </div>
