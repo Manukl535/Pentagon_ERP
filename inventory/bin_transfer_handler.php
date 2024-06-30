@@ -1,6 +1,14 @@
 <?php
-// Include your database connection file
-include('../includes/connection.php');
+session_start();
+include('../Includes/connection.php');
+
+// Check if user is logged in and session variable is set
+if (!isset($_SESSION['email'])) {
+    // Redirect to login page or handle unauthorized access
+    header("Location: ../index.php");
+    exit(); // Ensure script stops executing after redirection
+}
+
 
 // Check if all necessary parameters are set
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['location'], $_POST['article_no'], $_POST['quantity'], $_POST['description'], $_POST['color'], $_POST['article_size'], $_POST['category'], $_POST['destination_bin'])) {
