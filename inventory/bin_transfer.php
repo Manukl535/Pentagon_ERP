@@ -104,8 +104,7 @@ include('../includes/connection.php'); // Include your database connection file
                 </div>
                 <div class="form-group">
                     <label for="size">Size:</label>
-                    <input type="text" id="size" name="size" required readonly>
-
+                    <input type="text" id="size" name="article_size" required readonly>
                 </div>
             </div>
             <div class="form-row">
@@ -119,17 +118,16 @@ include('../includes/connection.php'); // Include your database connection file
                         <option value="">Select Destination Bin</option>
                         <?php
                             // Fetch locations from inv_location table
-                            $query1 = "SELECT location, available_quantity AS qty, capacity AS cap FROM inv_location";
-                            $result1 = $conn->query($query1); // Assuming $conn is the database connection object
+                            $query1 = "SELECT location, available_quantity AS qty, capacity AS cap, article_size FROM inv_location";
+                            $result1 = $conn->query($query1);
 
                             if ($result1->num_rows > 0) {
                                 while ($row = $result1->fetch_assoc()) {
-                                    // Check if the available qty is zero or not
                                     $location = $row['location'];
                                     $qty = $row['qty'];
                                     $cap = $row['cap'];
+                                    $article_size = $row['article_size'];
 
-                                    // Modify the option value based on qty condition
                                     if ($qty == 0) {
                                         echo '<option value="' . $location . '" data-available="false">' . $location . ' (Qty: 0)(Cap: ' . $cap . ')</option>';
                                     } else {
@@ -148,30 +146,30 @@ include('../includes/connection.php'); // Include your database connection file
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-$(document).ready(function() {
-    $('#location').change(function() {
-        var location = $(this).val();
-        $.ajax({
-            url: 'bin_map.php',
-            method: 'POST',
-            dataType: 'json',
-            data: { location: location },
-            success: function(data) {
-                $('#article_number').val(data.article_number);
-                $('#quantity').val(data.quantity);
-                $('#description').val(data.description);
-                $('#color').val(data.color);
-                $('#size').val(data.size);
-                $('#category').val(data.category);
-            },
-            error: function(xhr, status, error) {
-                console.error('AJAX Error: ' + status + ' - ' + error);
-            }
+    <script>
+    $(document).ready(function() {
+        $('#location').change(function() {
+            var location = $(this).val();
+            $.ajax({
+                url: 'bin_map.php',
+                method: 'POST',
+                dataType: 'json',
+                data: { location: location },
+                success: function(data) {
+                    $('#article_number').val(data.article_number);
+                    $('#quantity').val(data.quantity);
+                    $('#description').val(data.description);
+                    $('#color').val(data.color);
+                    $('#size').val(data.article_size);
+                    $('#category').val(data.category);
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error: ' + status + ' - ' + error);
+                }
+            });
         });
     });
-});
-</script>
+    </script>
 
 </body>
 </html>

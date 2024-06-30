@@ -1,6 +1,4 @@
 <?php
-// bin_map.php
-
 // Include your database connection file
 include('../includes/connection.php');
 
@@ -9,7 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['location'])) {
     $location = $_POST['location'];
 
     // Prepare SQL query to fetch details from inv_location based on location
-    $query = "SELECT article_no, article_description, color, available_quantity, size, category FROM inv_location WHERE location = ?";
+    $query = "SELECT article_no, article_description, color, available_quantity, article_size, category FROM inv_location WHERE location = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param('s', $location);
     $stmt->execute();
@@ -26,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['location'])) {
             'quantity' => $available_quantity,
             'description' => $article_description,
             'color' => $color,
-            'size' => $size, // Ensure size is correctly fetched and returned
+            'article_size' => $size, // Ensure article_size is correctly fetched
             'category' => $category
         );
         echo json_encode($response);
