@@ -66,7 +66,7 @@ if (!isset($_SESSION['email'])) {
         </div>
     </nav>
 
-
+    <?php include('../AMA/ama.html');?>
 
 </body>
 </html>

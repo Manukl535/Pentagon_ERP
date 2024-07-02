@@ -209,6 +209,8 @@ if(isset($_POST['login-btn'])){
         </div>
     
     </footer></center>
+
+    <?php include('AMA/ama.html');?>
     <?php
 
 if (isset($_SESSION['login_message'])) {
@@ -216,5 +218,6 @@ if (isset($_SESSION['login_message'])) {
     unset($_SESSION['login_message']); // Clear the message after displaying it
 }
 ?>
+
 </body>
 </html>
