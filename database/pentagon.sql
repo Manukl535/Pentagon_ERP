@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 30, 2024 at 09:49 AM
+-- Generation Time: Jul 03, 2024 at 07:50 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,53 @@ SET time_zone = "+00:00";
 --
 -- Database: `pentagon`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `associates`
+--
+
+CREATE TABLE `associates` (
+  `count` int(11) NOT NULL,
+  `id` varchar(100) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `department` varchar(20) NOT NULL,
+  `barcode` varchar(50) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `associates`
+--
+
+INSERT INTO `associates` (`count`, `id`, `username`, `department`, `barcode`, `created_at`, `updated_at`) VALUES
+(1, '21078', 'rohits', 'inventory', 'BARCODEb02954498de843bbe2677f9fefbfebcd', '2024-06-30 13:21:13', '2024-06-30 17:32:06'),
+(2, '21079', 'ruhis', 'receipt', 'BARCODE0c144d6cb34c65273f7a2edc2b37c2f2', '2024-06-30 13:21:13', '2024-06-30 17:32:18'),
+(3, '21123', 'srishal', 'pickpack', 'BARCODE4cbb818c631acb8d47b7dd19d8e3e686', '2024-06-30 13:21:13', '2024-06-30 17:32:26'),
+(4, '22403', 'manukl', 'inventory', 'BARCODEbdf4d268f232b3937ff84aa76535444e', '2024-06-30 13:21:13', '2024-06-30 17:32:31');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `attendance`
+--
+
+CREATE TABLE `attendance` (
+  `id` int(11) NOT NULL,
+  `associate_id` varchar(10) DEFAULT NULL,
+  `department` varchar(30) NOT NULL,
+  `attendance_time` timestamp NOT NULL DEFAULT current_timestamp(),
+  `remarks` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `attendance`
+--
+
+INSERT INTO `attendance` (`id`, `associate_id`, `department`, `attendance_time`, `remarks`) VALUES
+(1, '22403', 'Inventory', '2024-06-30 17:26:52', 'Reported at 10');
 
 -- --------------------------------------------------------
 
@@ -43,7 +90,7 @@ CREATE TABLE `audit_log` (
 --
 
 INSERT INTO `audit_log` (`audit_id`, `user_id`, `user_name`, `location`, `article_no`, `qty_23_24`, `audit_quantity`, `audit_timestamp`) VALUES
-(2, 141108, 'Manu', 'A01', 'APT101', '100', '100', '2024-06-15 20:17:34'),
+(2, 141108, 'Manu', 'A01', 'APT101', '100', '10', '2024-06-15 20:17:34'),
 (134, 141108, 'Manu', 'A02', 'APT101', '30', '30', '2024-06-15 20:17:34'),
 (135, 141108, 'Manu', 'A03', 'APT101', '20', '20', '2024-06-15 20:17:34'),
 (136, 141108, 'Manu', 'A04', 'APT101', '15', '15', '2024-06-15 20:17:34'),
@@ -177,6 +224,29 @@ INSERT INTO `audit_log` (`audit_id`, `user_id`, `user_name`, `location`, `articl
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `cc_data`
+--
+
+CREATE TABLE `cc_data` (
+  `count` int(11) NOT NULL,
+  `cc_id` varchar(50) NOT NULL,
+  `associate_name` varchar(50) DEFAULT NULL,
+  `location` varchar(50) DEFAULT NULL,
+  `available_qty` varchar(50) DEFAULT NULL,
+  `scanned_qty` varchar(50) DEFAULT NULL,
+  `assigned_on` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `cc_data`
+--
+
+INSERT INTO `cc_data` (`count`, `cc_id`, `associate_name`, `location`, `available_qty`, `scanned_qty`, `assigned_on`) VALUES
+(41, 'A010324', 'ruhis', 'A01', '100', NULL, '2024-07-03 17:38:07');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `credentials`
 --
 
@@ -207,6 +277,7 @@ INSERT INTO `credentials` (`user_id`, `phone`, `name`, `email`, `password`) VALU
 --
 
 CREATE TABLE `deletion_logs` (
+  `count` int(10) NOT NULL,
   `location` varchar(10) DEFAULT NULL,
   `remarks` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -215,10 +286,12 @@ CREATE TABLE `deletion_logs` (
 -- Dumping data for table `deletion_logs`
 --
 
-INSERT INTO `deletion_logs` (`location`, `remarks`) VALUES
-('A001', 'No use'),
-('A01', 'No more usage'),
-('A001', 'No more usage');
+INSERT INTO `deletion_logs` (`count`, `location`, `remarks`) VALUES
+(1, 'A001', 'No use'),
+(2, 'A01', 'No more usage'),
+(3, 'A001', 'No more usage'),
+(4, 'A002', 'No more usage'),
+(5, 'A001', 'No more usage');
 
 -- --------------------------------------------------------
 
@@ -243,7 +316,7 @@ CREATE TABLE `inv_location` (
 --
 
 INSERT INTO `inv_location` (`id`, `location`, `capacity`, `article_no`, `article_description`, `color`, `available_quantity`, `article_size`, `category`) VALUES
-(1, 'A01', 100, '', NULL, NULL, 0, NULL, NULL),
+(1, 'A01', 100, 'APT101', 'Men T-shirt', 'White', 100, 'S', 'Apparel'),
 (2, 'A02', 60, 'APT101', 'Men T-shirt\n', 'White', 30, 'M', 'Apparel'),
 (3, 'A03', 50, 'APT101', 'Men T-shirt\n', 'White', 20, 'L', 'Apparel'),
 (4, 'A04', 30, 'APT101', 'Men T-shirt\n', 'White', 15, 'XL', 'Apparel'),
@@ -373,7 +446,7 @@ INSERT INTO `inv_location` (`id`, `location`, `capacity`, `article_no`, `article
 (128, 'Z04', 60, 'AWC122', 'Smart Watch', 'Brown', 30, '38', 'Accessories'),
 (129, 'Z05', 30, 'AWC122', 'Smart Watch', 'White', 10, '38', 'Accessories'),
 (130, 'Z06', 40, 'AWC122', 'Smart Watch', 'Black', 20, '38', 'Accessories'),
-(136, 'A001', 100, 'APT101', 'Men T-shirt', 'White', 100, 'S', 'Apparel');
+(149, 'A001', 100, '', NULL, NULL, 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -399,6 +472,39 @@ CREATE TABLE `mails` (
 INSERT INTO `mails` (`id`, `to_email`, `cc_email`, `from_email`, `subject`, `message`, `sent_at`, `is_read`) VALUES
 (61, 'receipt@pentagon.com', '', 'inventory@pentagon.com', 'manu', 'manu', '2024-06-28 05:44:21', ''),
 (62, 'inventory@pentagon.com', '', 'inventory@pentagon.com', 'Re: manu', 'madhu', '2024-06-28 05:45:18', '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pp_customer`
+--
+
+CREATE TABLE `pp_customer` (
+  `count` int(11) NOT NULL,
+  `customer_id` varchar(75) NOT NULL,
+  `customer_name` varchar(75) DEFAULT NULL,
+  `company_name` varchar(75) DEFAULT NULL,
+  `address` varchar(100) DEFAULT NULL,
+  `phone` bigint(20) DEFAULT NULL,
+  `email` varchar(75) DEFAULT NULL,
+  `gstin` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pp_customer`
+--
+
+INSERT INTO `pp_customer` (`count`, `customer_id`, `customer_name`, `company_name`, `address`, `phone`, `email`, `gstin`) VALUES
+(1, 'C001', 'Srisha', 'Srisha Fashions', 'HOSA ROAD,BANGALORE', 9343532878, 'sri@gmail.com', '29AABCU9601D1ZQ'),
+(2, 'C002', 'Madhu', 'Madhuu Fashions', 'MG ROAD,HOSUR', 7950213425, 'Madhuu2@gmail.com', '36AABCZ1234E1ZP'),
+(3, 'C003', 'Sowmya', 'Golden Clothing Solutions', 'JP NAGAR,BANGALORE', 9901234589, 'Sowmya@example.com', '09AAACI2345F1ZJ'),
+(4, 'C004', 'Manu', 'Manu Fashions', 'ATTIBELE,BANGLORE', 998876611, 'Manu4@gmail.com', '27AAADP5678G1ZK'),
+(5, 'C005', 'Maithili', 'Mangrove Clothing', 'T NAGAR,KOLAR', 9977446583, 'Maithili5@gmail.com', '08AAAEQ9876H1ZL'),
+(6, 'C006', 'Aria', 'Elicit Fashions', 'VINAYAKA NAGAR,CHENNAI', 6789546319, 'Aria6@gmail.com', '33AAAFP6543I1ZM'),
+(7, 'C007', 'Murali', 'Elite Fabrics', 'ELITE ROAD ,CHENNAI', 7890129902, 'Elite7@gmail.com', '22AAAGS8765J1ZN'),
+(8, 'C008', 'Ruhi', 'Ruhi Fashions', 'GANDHI NAGAR, HOSUR', 8901234567, 'Ruhi8@gmail.com', '10AAATH4321K1ZO'),
+(9, 'C009', 'Rohit', 'Rohit Designs', 'GAURAV LAYOUT,ATTIBELE', 9012345678, 'Rohitsharma@gmail.com', '18AAAUI9876L1ZP'),
+(10, 'C010', 'Shraddha', 'Shravs Garments', 'ABC ROAD,BANGALORE', 6789054321, 'Shravs@gmail.com', '21AAAVJ2345M1ZQ');
 
 -- --------------------------------------------------------
 
@@ -429,6 +535,21 @@ INSERT INTO `trash` (`id`, `from_email`, `to_email`, `subject`, `message`, `sent
 --
 
 --
+-- Indexes for table `associates`
+--
+ALTER TABLE `associates`
+  ADD PRIMARY KEY (`count`,`id`,`username`),
+  ADD UNIQUE KEY `barcode` (`barcode`),
+  ADD KEY `idx_associates_id` (`id`);
+
+--
+-- Indexes for table `attendance`
+--
+ALTER TABLE `attendance`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `associate_id` (`associate_id`);
+
+--
 -- Indexes for table `audit_log`
 --
 ALTER TABLE `audit_log`
@@ -436,10 +557,23 @@ ALTER TABLE `audit_log`
   ADD KEY `article_no` (`article_no`);
 
 --
+-- Indexes for table `cc_data`
+--
+ALTER TABLE `cc_data`
+  ADD PRIMARY KEY (`count`,`cc_id`),
+  ADD UNIQUE KEY `cc_id` (`cc_id`);
+
+--
 -- Indexes for table `credentials`
 --
 ALTER TABLE `credentials`
   ADD PRIMARY KEY (`user_id`);
+
+--
+-- Indexes for table `deletion_logs`
+--
+ALTER TABLE `deletion_logs`
+  ADD PRIMARY KEY (`count`);
 
 --
 -- Indexes for table `inv_location`
@@ -455,6 +589,12 @@ ALTER TABLE `mails`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `pp_customer`
+--
+ALTER TABLE `pp_customer`
+  ADD PRIMARY KEY (`count`,`customer_id`);
+
+--
 -- Indexes for table `trash`
 --
 ALTER TABLE `trash`
@@ -465,10 +605,28 @@ ALTER TABLE `trash`
 --
 
 --
+-- AUTO_INCREMENT for table `associates`
+--
+ALTER TABLE `associates`
+  MODIFY `count` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `attendance`
+--
+ALTER TABLE `attendance`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `audit_log`
 --
 ALTER TABLE `audit_log`
   MODIFY `audit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=263;
+
+--
+-- AUTO_INCREMENT for table `cc_data`
+--
+ALTER TABLE `cc_data`
+  MODIFY `count` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `credentials`
@@ -477,16 +635,28 @@ ALTER TABLE `credentials`
   MODIFY `user_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
+-- AUTO_INCREMENT for table `deletion_logs`
+--
+ALTER TABLE `deletion_logs`
+  MODIFY `count` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT for table `inv_location`
 --
 ALTER TABLE `inv_location`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=140;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=150;
 
 --
 -- AUTO_INCREMENT for table `mails`
 --
 ALTER TABLE `mails`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+
+--
+-- AUTO_INCREMENT for table `pp_customer`
+--
+ALTER TABLE `pp_customer`
+  MODIFY `count` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `trash`
@@ -497,6 +667,12 @@ ALTER TABLE `trash`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `attendance`
+--
+ALTER TABLE `attendance`
+  ADD CONSTRAINT `attendance_ibfk_1` FOREIGN KEY (`associate_id`) REFERENCES `associates` (`id`);
 
 --
 -- Constraints for table `audit_log`
