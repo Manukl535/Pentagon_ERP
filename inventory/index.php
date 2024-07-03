@@ -43,7 +43,7 @@ if (!isset($_SESSION['email'])) {
                     <a href="manage_inv.php">Manage Inventory</a>
                     <a href="manage_loc.php">Manage Locations</a>
                     <a href="bin_transfer.php">Bin Transfer</a>
-                    <a href="#">Cycle Count</a>
+                    <a href="cycle_count.php">Cycle Count</a>
                 </div>
             </div>
         </div>
