@@ -1,0 +1,10 @@
+Operation,Description,Example Utterance,Answer,Category,Intent
+Order Goods,Requesting to order goods for the warehouse,I need to order.,Login in to receipt using credentials provided by your organisation and in work select the order goods and fill the order form with necessary stock list,Order Goods,order_goods
+Receive Goods,Inquiry about receiving goods into the warehouse,"""Can you help me receive a shipment?""",,Receive goods,receive_goods
+Putaway,Request to allocate received goods to their designated storage locations,"""Where should I put away these items?""",,Inventory,putaway_goods
+Inventory Check,Checking the current stock levels of specific items,"""What is the inventory level of SKU123?""",,Inventory,check_inventory
+Pick Inventory,Request to pick items from the warehouse for fulfillment,"""I need to pick items for order #456.""",,Picking,pick_inventory
+Dispatch Order,Inquiry or instruction regarding dispatching orders to customers or other destinations,"""How do I dispatch orders?""",,Dispatch,dispatch_order
+Update Inventory,"Requesting to update inventory records (e.g., adjustments, transfers)","""I need to update the inventory count.""",,Inventory,update_inventory
+Resolve Issue,Asking for assistance to resolve issues related to warehouse operations,"""There's an issue with a shipment. Can you help?""",,General,resolve_issue
+Provide Information,"Seeking information about warehouse policies, procedures, or general information","""What are the warehouse operating hours?""",,General,provide_information

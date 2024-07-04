@@ -3,122 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Virtual Assistant Widget</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>Virtual Assistant</title>
     <style>
-.widget-container {
-    display: none; 
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 300px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    font-family: Arial, sans-serif;
-    border-radius: 8px;
-    overflow: hidden;
-    z-index: 1000;
-}
+        /* Your CSS styles for widget appearance */
+        .widget-container {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            font-family: Arial, sans-serif;
+            border-radius: 8px;
+            overflow: hidden;
+            z-index: 1000;
+        }
 
-.widget-header {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px;
-    text-align: center;
-    font-weight: bold;
-}
+        .widget-header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
 
-.widget-body {
-    padding: 10px;
-}
+        .widget-body {
+            padding: 10px;
+        }
 
-.chat-messages {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    max-height: 300px;
-    overflow-y: scroll;
-}
+        .chat-messages {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            max-height: 300px;
+            overflow-y: scroll;
+        }
 
-.user-message {
-    text-align: right;
-    margin-bottom: 5px;
-}
+        .user-message {
+            text-align: right;
+            margin-bottom: 5px;
+        }
 
-.assistant-message {
-    text-align: left;
-    margin-bottom: 5px;
-}
+        .assistant-message {
+            text-align: left;
+            margin-bottom: 5px;
+        }
 
-.message {
-    background-color: #e5e5ea;
-    padding: 8px;
-    border-radius: 5px;
-    display: inline-block;
-    max-width: 70%;
-}
+        .message {
+            background-color: #e5e5ea;
+            padding: 8px;
+            border-radius: 5px;
+            display: inline-block;
+            max-width: 70%;
+        }
 
-.user-message .message {
-    background-color: #4CAF50;
-    color: white;
-    align-self: flex-end;
-}
+        .user-message .message {
+            background-color: #4CAF50;
+            color: white;
+            align-self: flex-end;
+        }
 
-.assistant-message .message {
-    background-color: #f0f0f0;
-    color: #333;
-    align-self: flex-start;
-}
+        .assistant-message .message {
+            background-color: #f0f0f0;
+            color: #333;
+            align-self: flex-start;
+        }
 
-.input-container {
-    display: flex;
-    margin-top: 10px;
-}
+        .input-container {
+            display: flex;
+            margin-top: 10px;
+        }
 
-.input-container input[type="text"] {
-    flex: 1;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px 0 0 5px;
-    font-size: 14px;
-}
+        .input-container input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px 0 0 5px;
+            font-size: 14px;
+        }
 
-.input-container button {
-    padding: 8px 12px;
-    background-color: #4CAF50;
-    border: none;
-    color: white;
-    border-radius: 0 5px 5px 0;
-    cursor: pointer;
-    font-size: 14px;
-}
+        .input-container button {
+            padding: 8px 12px;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            font-size: 14px;
+        }
 
-.widget-icon {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: #4CAF50;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 1000;
-}
+        .widget-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1000;
+        }
 
-.close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    color: #666;
-}
-
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -127,13 +126,13 @@
 
 <div class="widget-container" id="widget-container" aria-hidden="true" aria-labelledby="widget-header">
     <div class="widget-header" id="widget-header">
-        AMA
+        Virtual Assistant
         <span class="close-button" onclick="toggleWidget()" aria-label="Close">&times;</span>
     </div>
     <div class="widget-body">
         <ul class="chat-messages" id="chat-messages" role="log" aria-live="polite">
             <li class="assistant-message">
-                <div class="message">Hello! I am AMA. How can I help you today?</div>
+                <div class="message">Hello! I am your virtual assistant. How can I assist you today?</div>
             </li>
         </ul>
         <div class="input-container">
@@ -144,75 +143,59 @@
 </div>
 
 <script>
-    // script.js
-
-// Predefined QA pairs
-const qaPairs = [
-{ question: /^(hello|hlo|hi|hey)$/i, answer: 'Hello! How can I assist you today?' },
-{ question: /^(help me|help|hlp)$/i, answer: 'I am here to help. How can I assist you today?' },
-{ question: /^how are you$/i, answer: 'I\'m just a virtual assistant, but I\'m here and ready to assist you!' },
-{ question: /^what can you do$/i, answer: 'I can provide information, answer questions, and even engage in small talk. How can I assist you today?' },
-{ question: /^bye$/i, answer: 'Goodbye! Feel free to reach out anytime you need assistance.' }
-// Add more question-answer pairs as needed
-];
-
-// JavaScript for toggling the widget visibility
-function toggleWidget() {
-const widgetContainer = document.getElementById('widget-container');
-const isVisible = widgetContainer.style.display !== 'none';
-
-widgetContainer.style.display = isVisible ? 'none' : 'block';
-document.getElementById('user-input').focus(); // Focus on input field when widget opens
-}
-
-// JavaScript for sending a message
-function sendMessage() {
-const userInput = document.getElementById('user-input').value.trim();
-if (userInput === '') return; // If input is empty, do nothing
-
-const chatMessages = document.getElementById('chat-messages');
-const userMessage = document.createElement('li');
-userMessage.className = 'user-message';
-userMessage.innerHTML = `<div class="message">${userInput}</div>`;
-chatMessages.appendChild(userMessage);
-
-// Clear input after sending message
-document.getElementById('user-input').value = '';
-
-// Check if there's a predefined answer for the user input
-let answerFound = false;
-for (let i = 0; i < qaPairs.length; i++) {
-    const pair = qaPairs[i];
-    if (pair.question.test(userInput)) {
-        const assistantMessage = document.createElement('li');
-        assistantMessage.className = 'assistant-message';
-        assistantMessage.innerHTML = `<div class="message">${pair.answer}</div>`;
-        chatMessages.appendChild(assistantMessage);
-        answerFound = true;
-        break;
+    // Function to toggle the visibility of the widget
+    function toggleWidget() {
+        const widgetContainer = document.getElementById('widget-container');
+        const isVisible = widgetContainer.style.display !== 'none';
+        widgetContainer.style.display = isVisible ? 'none' : 'block';
+        document.getElementById('user-input').focus(); // Focus on input field when widget opens
     }
-}
 
-// If no predefined answer, provide a default response
-if (!answerFound) {
-    const defaultAnswer = "I'm sorry, I don't understand. Can you please rephrase?";
-    const assistantMessage = document.createElement('li');
-    assistantMessage.className = 'assistant-message';
-    assistantMessage.innerHTML = `<div class="message">${defaultAnswer}</div>`;
-    chatMessages.appendChild(assistantMessage);
-}
+    // Function to send user message and fetch response from backend
+    function sendMessage() {
+        const userInput = document.getElementById('user-input').value.trim();
+        if (userInput === '') return;
 
-// Scroll to the bottom of the chat messages
-chatMessages.scrollTop = chatMessages.scrollHeight;
-}
+        // Display user message
+        displayMessage(userInput, 'user');
 
-// Function to handle Enter key press
-function handleKeyPress(event) {
-if (event.key === 'Enter') {
-    sendMessage();
-}
-}
+        // Send user message to backend and fetch response
+        fetch(`/ask?question=${encodeURIComponent(userInput)}`)
+            .then(response => response.json())
+            .then(data => {
+                const answer = data.answer;
+                // Display assistant's response
+                displayMessage(answer, 'assistant');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const defaultAnswer = "Sorry, I couldn't process your request at the moment. Please try again later.";
+                displayMessage(defaultAnswer, 'assistant');
+            });
 
+        // Clear input field
+        document.getElementById('user-input').value = '';
+
+        // Scroll chat to bottom
+        const chatMessages = document.getElementById('chat-messages');
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Function to display messages in chat
+    function displayMessage(message, sender) {
+        const chatMessages = document.getElementById('chat-messages');
+        const messageElement = document.createElement('li');
+        messageElement.className = `${sender}-message`;
+        messageElement.innerHTML = `<div class="message">${message}</div>`;
+        chatMessages.appendChild(messageElement);
+    }
+
+    // Function to handle Enter key press
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    }
 </script>
 
 </body>
