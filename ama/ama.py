@@ -21,4 +21,4 @@ while True:
         print("Exiting...")
         break
     answer = get_answer(user_question, dataset)
-    print(f"Bot: {answer}")
+    print(f"AMA: {answer}")
