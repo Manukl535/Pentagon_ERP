@@ -678,7 +678,7 @@ ALTER TABLE `attendance`
 -- Constraints for table `audit_log`
 --
 ALTER TABLE `audit_log`
-  ADD CONSTRAINT `audit_log_ibfk_1` FOREIGN KEY (`article_no`) REFERENCES `inv_locations` (`article_no`);
+  ADD CONSTRAINT `audit_log_ibfk_1` FOREIGN KEY (`article_no`) REFERENCES `inv_location` (`article_no`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
