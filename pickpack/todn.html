@@ -82,6 +82,15 @@
     <div class="form-container">
         <h1>PO and DN form</h1>
         <form id="poDnForm">
+            <label for="customer_name">Customer Name:</label><br>
+            <select id="customer_name" name="customer_name[]">
+                <option value="">select customer_name</option>
+        <option value="John Peter">John Peter</option>
+        <option value="Celina">Celina</option>
+        <option value="Srisha">Srisha</option>
+        <option value="Ruhi">Ruhi</option>
+            </select><br>
+
             <label for="address">Address:</label><br>
             <textarea id="address" name="address"></textarea><br>
 
@@ -131,12 +140,13 @@
                     </select>
                     <label for="quantity">Quantity:</label>
                     <input type="number" id="quantity" name="quantity[]"><br>
+                    <label for="description">Description:</label>
+                    <input type="text" id="description" name="description" value="White Shirt"><br>
                 </div>
             </div>
 
             <button type="button" onclick="openModal()">Add More</button><br>
-            <label for="description">Description:</label>
-            <input type="text" id="description" name="description" value="White Shirt"><br>
+       
             <button type="submit">Generate DN and PO</button>
         </form>
     </div>
@@ -226,6 +236,8 @@
                     </select>
                     <label for="quantity">Quantity:</label>
                     <input type="number" id="quantity" name="quantity[]"><br>
+                    <label for="description">Description:</label>
+                    <input type="text" id="description" name="description" value="White Shirt"><br>
                 `;
                 container.appendChild(newItemGroup);
             }
