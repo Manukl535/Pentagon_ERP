@@ -109,10 +109,9 @@ input[type="date"] {
         <section class="vendor-section">
             <label for="vendor">Select a Vendor:</label>
             <select id="vendor" name="vendor">
-                <option value="vendor1">Vendor 1</option>
-                <option value="vendor2">Vendor 2</option>
-                <option value="vendor3">Vendor 3</option>
-                <option value="vendor4">Vendor 4</option>
+                <option value="vendor1">Gokaldas Exports Ltd.</option>
+                <option value="vendor2">Shahi Exports Pvt Ltd.</option>
+                <option value="vendor3">Go Go International</option>
             </select>
         </section>
     </main>
