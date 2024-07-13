@@ -1,10 +1,12 @@
 Operation,Description,Example Utterance,Answer,Category,Intent
 Order Goods,Requesting to order goods for the warehouse,I need to order.,Login in to receipt using credentials provided by your organisation and in work select the order goods and fill the order form with necessary stock list,Order Goods,order_goods
-Receive Goods,Inquiry about receiving goods into the warehouse,"""Can you help me receive a shipment?""",,Receive goods,receive_goods
-Putaway,Request to allocate received goods to their designated storage locations,"""Where should I put away these items?""",,Inventory,putaway_goods
-Inventory Check,Checking the current stock levels of specific items,"""What is the inventory level of SKU123?""",,Inventory,check_inventory
-Pick Inventory,Request to pick items from the warehouse for fulfillment,"""I need to pick items for order #456.""",,Picking,pick_inventory
-Dispatch Order,Inquiry or instruction regarding dispatching orders to customers or other destinations,"""How do I dispatch orders?""",,Dispatch,dispatch_order
-Update Inventory,"Requesting to update inventory records (e.g., adjustments, transfers)","""I need to update the inventory count.""",,Inventory,update_inventory
-Resolve Issue,Asking for assistance to resolve issues related to warehouse operations,"""There's an issue with a shipment. Can you help?""",,General,resolve_issue
-Provide Information,"Seeking information about warehouse policies, procedures, or general information","""What are the warehouse operating hours?""",,General,provide_information
+Receive Goods,Inquiry about receiving goods into the warehouse,"""Can you help me receive a shipment?""","To receive a shipment: Verify shipment details, scan RFID tags, update inventory in WMS, perform quality checks, and store items in designated locations.",Receive goods,receive_goods
+Putaway,Request to allocate received goods to their designated storage locations,"""Where should I put away these items?""",Put away items in their designated storage locations as indicated by the inventory.,Inventory,putaway_goods
+Inventory Check,Checking the current stock levels of specific items,"""What is the inventory level of SKU123?""",The inventory level of SKU123 is [X] units.,Inventory,check_inventory
+Pick Inventory,Request to pick items from the warehouse for fulfillment,"""I need to pick items for order #456.""",Retrieve items for order #456 from the specified storage locations as directed by the Pentagon ERP system with the help of article number and their corresponding locationsin inventory table.,Picking,pick_inventory
+Dispatch Order,Inquiry or instruction regarding dispatching orders to customers or other destinations,"""How do I dispatch orders?""","Dispatch orders by packing items, generating shipping labels, and updating the status in the Pentagon ERP system.",Dispatch,dispatch_order
+Update Inventory,"Requesting to update inventory records (e.g., adjustments, transfers)","""I need to update the inventory count.""",Update the inventory count by scanning RFID tags of the items  and entering the new quantities in the stocks table of inventory.,Inventory,update_inventory
+Resolve Issue,Asking for assistance to resolve issues related to warehouse operations,"""There's an issue with a shipment. Can you help?""",Report the shipment issue through the mails to corresponding associate or inventory team for assistance.,General,resolve_issue
+Provide Information,"Seeking information about warehouse policies, procedures, or general information","""What are the warehouse operating hours?""","It will operated whole as shifts depending on the particular warehouse timing .here are pentagon shifts=>First Shift: 8:00 AM to 4:00 PM,Second Shift: 4:00 PM to 12:00 AM (midnight),Third Shift: 12:00 AM (midnight) to 8:00 AM are the operating hours .",General,provide_information
+,,,,,
+,,,,,
