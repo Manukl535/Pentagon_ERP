@@ -10,8 +10,12 @@
 /* Basic styling for the layout */
 body {
     font-family: Arial, sans-serif;
-    
-    background-color: #f0f0f0;	
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
 }
 
 header {
@@ -19,144 +23,159 @@ header {
     color: #fff;
     text-align: center;
     padding: 1rem 0;
+    width: 100%;
 }
 
-
-.vendor-section select {
-    padding: 10px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: 200px;
-}
-.item-section select {
-    padding: 10px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: 200px;
+.container {
+    text-align: center;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    width: 800px; /* Increased the width */
+    margin: 20px;
 }
 
+.vendor-section,
+.item-section,
 .date-selector {
-  background-color: #fff;
-  border: 1px solid #ccc;
-  padding: 20px;
-  
-  
+    margin-top: 20px; /* Added space between sections */
 }
+
+.vendor-section select,
+.item-section select,
+.date-selector input[type="date"],
+.shirt-form .shirt-option select,
+.shirt-form .shirt-option input[type="number"] {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 150px; /* Adjusted the width */
+    margin-bottom: 15px;
+}
+
 .shirt-form {
-        max-width: 600px;
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        margin: 0 auto;
-    }
-    .shirt-option {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-    }
-    .shirt-option label {
-        font-weight: bold;
-        margin-right: 10px;
-    }
-    .shirt-option select, .shirt-option input[type="number"] {
-        flex: 1;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        font-size: 16px;
-    }
-    .add-more, .delete-option {
-        background-color: #4CAF50;
-        color: white;
-        padding: 8px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-        margin-left: 10px;
-    }
-    .add-more:hover {
-        background-color: #45a049;
-    }label {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 10px;
+    max-width: 800px; /* Adjusted the max-width */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin: 0 auto;
 }
 
-input[type="date"] {
-  padding: 8px;
-  font-size: 16px;
- 
-  box-sizing: border-box;
-  border: 1px solid #ccc;
-  border-radius: 3px;
+.shirt-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
 }
 
+.shirt-option label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.add-more,
+.delete-option {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 10px;
+}
+
+.add-more:hover,
+.delete-option:hover {
+    background-color: #45a049;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px;
+}
+
+button[type="submit"] {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button[type="submit"]:hover {
+    background-color: #555;
+}
 </style>
 </head>
 <body>
-    <header>
-        <h1>ORDER FORM</h1>
-	
-    </header>
+    <div class="container">
+        <header>
+            <h1>ORDER FORM</h1>
+        </header>
+        <main>
+            <section class="vendor-section">
+                <label for="vendor">Select a Vendor:</label>
+                <select id="vendor" name="vendor">
+                    <option value="vendor1">Gokaldas Exports Ltd.</option>
+                    <option value="vendor2">Shahi Exports Pvt Ltd.</option>
+                    <option value="vendor3">Go Go International</option>
+                </select>
+            </section>
+            <section class="item-section">
+                <label for="item">Select an item:</label>
+                <select id="item" name="item">
+                    <option value="i1">i1</option>
+                    <option value="i2">i2</option>
+                    <option value="i3">i3</option>
+                    <option value="i4">i4</option>
+                </select>
+            </section>
+            <div class="shirt-form">
+                <div class="shirt-option">
+                    <label for="color">Color:</label>
+                    <select class="color" name="color">
+                        <option value="red">Red</option>
+                        <option value="blue">Blue</option>
+                        <option value="green">Green</option>
+                        <option value="black">Black</option>
+                    </select>
 
-    <main>
-<br></br>
-        <section class="vendor-section">
-            <label for="vendor">Select a Vendor:</label>
-            <select id="vendor" name="vendor">
-                <option value="vendor1">Gokaldas Exports Ltd.</option>
-                <option value="vendor2">Shahi Exports Pvt Ltd.</option>
-                <option value="vendor3">Go Go International</option>
-            </select>
-        </section>
-    </main>
- <main>
-        <section class="item-section">
-            <label for="item">Select an item:</label>
-            <select id="item" name="item">
-                <option value="i1">i1</option>
-                <option value="i2">i2</option>
-                <option value="i3">i3</option>
-                <option value="i4">i4</option>
-            </select>
-        </section>
-    </main>
-<div class="shirt-form">
-    <div class="shirt-option">
-        <label for="color">Color:</label>
-        <select class="color" name="color">
-            <option value="red">Red</option>
-            <option value="blue">Blue</option>
-            <option value="green">Green</option>
-            <option value="black">Black</option>
-            <!-- Add more color options as needed -->
-        </select>
+                    <label for="size">Size:</label>
+                    <select class="size" name="size">
+                        <option value="small">Small</option>
+                        <option value="medium">Medium</option>
+                        <option value="large">Large</option>
+                        <option value="xl">Extra Large</option>
+                    </select>
 
-        <label for="size">Size:</label>
-        <select class="size" name="size">
-            <option value="small">Small</option>
-            <option value="medium">Medium</option>
-            <option value="large">Large</option>
-            <option value="xl">Extra Large</option>
-            <!-- Add more size options as needed -->
-        </select>
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" class="quantity" name="quantity" min="1" value="1">
 
-        <label for="quantity">Quantity:</label>
-        <input type="number" class="quantity" name="quantity" min="1" value="1">
-
-        <div class="option-actions">
-            <button class="delete-option">Delete</button>
-        </div>
+                    <button class="delete-option">Delete</button>
+                </div>
+                <button class="add-more">Add More</button>
+            </div>
+            <div class="date-selector">
+                <label for="date">Select a Date:</label>
+                <input type="date" id="date" name="date">
+            </div>
+            <section class="item-section">
+                <label for="transport">Means of transport:</label>
+                <select id="transport" name="transport">
+                    <option value="By Road">By Road</option>
+                    <option value="By Air">By Air</option>
+                </select>
+            </section>
+            <button type="submit">Add</button>
+        </main>
     </div>
-
-    <button class="add-more">Add More</button>
-</div>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const formContainer = document.querySelector('.shirt-form');
@@ -175,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to handle deleting a shirt option
     function deleteShirtOption(event) {
         const shirtOption = event.target.closest('.shirt-option');
-        if (shirtOption && formContainer.childElementCount > 1) {
+        if (shirtOption && formContainer.childElementCount > 2) {
             formContainer.removeChild(shirtOption);
         }
     }
@@ -191,23 +210,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-
- <class="date-selector">
-  <label for="date">Select a Date:</label>
-  <input type="date" id="date" name="date">
-<br></br>
-<main>
-        <section class="item-section">
-            <label for="item">Means of transport:</label>
-            <select id="item" name="item">
-                <option value="By Road">By Road</option>
-                <option value="By Air">By Air</option>
-            </select>
-        </section>
-    </main>
-<br></br>
-            <button type="submit">Add</button>
-        </form>
-</main>
 </body>
 </html>
