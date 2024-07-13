@@ -1,347 +1,213 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
-    <title>Goods Order Form</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            width: 80%;
-            max-width: 800px;
-            margin: 20px auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .title {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .order-form {
-            background-color: #f9f9f9;
-            padding: 15px;
-            border-radius: 8px;
-            position: relative; /* Ensure relative positioning */
-        }
-        form {
-            display: grid;
-            gap: 15px;
-        }
-        .row {
-            display: flex;
-            gap: 15px; /* Adjust as needed */
-        }
-        .row label {
-            flex: 1; /* Distribute equal width among labels */
-        }
-        .row label span {
-            display: block;
-            margin-bottom: 5px;
-        }
-        input[type="text"],
-        input[type="number"],
-        input[type="email"],
-        select {
-            width: 100%;
-            padding: 8px;
-            font-size: 14px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        input[type="date"] {
-            width: 100%;
-            padding: 8px;
-            font-size: 13px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .center {
-            text-align: center;
-            margin-top: 10px; /* Added margin for better spacing */
-            position: absolute; /* Position absolutely within .order-form */
-            bottom: 20px; /* Adjust as per your design preference */
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        /* Styling for the modal */
-        .modal {
-            display: none; /* Hidden by default */
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0,0,0);
-            background-color: rgba(0,0,0,0.4);
-            padding-top: 60px;
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 10% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 400px;
-            border-radius: 8px;
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORDER FORM</title>
+    <link rel="stylesheet" href="styles.css">
+
+<style>
+/* Basic styling for the layout */
+body {
+    font-family: Arial, sans-serif;
+    
+    background-color: #f0f0f0;	
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1rem 0;
+}
+
+
+.vendor-section select {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 200px;
+}
+.item-section select {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 200px;
+}
+
+.date-selector {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 20px;
+  
+  
+}
+.shirt-form {
+        max-width: 600px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        margin: 0 auto;
+    }
+    .shirt-option {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .shirt-option label {
+        font-weight: bold;
+        margin-right: 10px;
+    }
+    .shirt-option select, .shirt-option input[type="number"] {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+    .add-more, .delete-option {
+        background-color: #4CAF50;
+        color: white;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-left: 10px;
+    }
+    .add-more:hover {
+        background-color: #45a049;
+    }label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 10px;
+}
+
+input[type="date"] {
+  padding: 8px;
+  font-size: 16px;
+ 
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="title">
-            <h2>Goods Order Form</h2>
-        </div>
-        <div class="order-form">
-            <form action="submit_order.php" method="post">
-                <div class="row">
-                    <label>
-                        <span>Vendor:</span>
-                        <select name="vendor" id="vendor" required onchange="fetchVendorDetails()">
-                            <option value="">Select Vendor</option>
-                            <!-- PHP code to fetch vendors from database -->
-                            <?php
-                            // Include the database connection
-                            include('../includes/connection.php');
+    <header>
+        <h1>ORDER FORM</h1>
+	
+    </header>
 
-                            // Fetch vendors from the database
-                            $query = "SELECT DISTINCT name FROM vendors";
-                            $result = $conn->query($query);
+    <main>
+<br></br>
+        <section class="vendor-section">
+            <label for="vendor">Select a Vendor:</label>
+            <select id="vendor" name="vendor">
+                <option value="vendor1">Gokaldas Exports Ltd.</option>
+                <option value="vendor2">Shahi Exports Pvt Ltd.</option>
+                <option value="vendor3">Go Go International</option>
+            </select>
+        </section>
+    </main>
+ <main>
+        <section class="item-section">
+            <label for="item">Select an item:</label>
+            <select id="item" name="item">
+                <option value="i1">i1</option>
+                <option value="i2">i2</option>
+                <option value="i3">i3</option>
+                <option value="i4">i4</option>
+            </select>
+        </section>
+    </main>
+<div class="shirt-form">
+    <div class="shirt-option">
+        <label for="color">Color:</label>
+        <select class="color" name="color">
+            <option value="red">Red</option>
+            <option value="blue">Blue</option>
+            <option value="green">Green</option>
+            <option value="black">Black</option>
+            <!-- Add more color options as needed -->
+        </select>
 
-                            if ($result->num_rows > 0) {
-                                while ($row = $result->fetch_assoc()) {
-                                    echo '<option value="' . htmlspecialchars($row['name']) . '">' . htmlspecialchars($row['name']) . '</option>';
-                                }
-                            } else {
-                                echo '<option value="">No vendors found</option>';
-                            }
+        <label for="size">Size:</label>
+        <select class="size" name="size">
+            <option value="small">Small</option>
+            <option value="medium">Medium</option>
+            <option value="large">Large</option>
+            <option value="xl">Extra Large</option>
+            <!-- Add more size options as needed -->
+        </select>
 
-                            // Close the database connection
-                            $conn->close();
-                            ?>
-                        </select>
-                    </label>
-                    <label>
-                        <span>Address:</span>
-                        <input type="text" name="address" id="address" required readonly>
-                    </label>
-                    <label>
-                        <span>Phone:</span>
-                        <input type="text" name="phone" id="phone" required readonly>
-                    </label>
-                </div>
-                <div class="row">
-                    <label>
-                        <span>Email:</span>
-                        <input type="email" name="email" id="email" required readonly>
-                    </label>
-                    <label>
-                        <span>GST:</span>
-                        <input type="text" name="gst" id="gst" required readonly>
-                    </label>
-                    <label>
-                        <span>Date of Delivery:</span>
-                        <?php
-                            // Calculate 1 week ahead date
-                            $minDate = date('Y-m-d', strtotime('+1 week'));
-                        ?>
-                        <input type="date" name="date_of_delivery" id="date_of_delivery" min="<?php echo $minDate; ?>" required>
-                    </label>
-                </div>
-                <div class="row">
-                    <label>
-                        <span>Article No:</span>
-                        <select name="article_no" id="article_no" required onchange="fetchArticleDetails()">
-                            <option value="">Select Article No</option>
-                            <!-- PHP code to fetch article numbers from database -->
-                            <?php
-                            // Include the database connection
-                            include('../includes/connection.php');
+        <label for="quantity">Quantity:</label>
+        <input type="number" class="quantity" name="quantity" min="1" value="1">
 
-                            // Fetch article numbers from the database
-                            $query = "SELECT DISTINCT article_no FROM inv_location";
-                            $result = $conn->query($query);
-
-                            if ($result->num_rows > 0) {
-                                while ($row = $result->fetch_assoc()) {
-                                    echo '<option value="' . htmlspecialchars($row['article_no']) . '">' . htmlspecialchars($row['article_no']) . '</option>';
-                                }
-                            } else {
-                                echo '<option value="">No articles found</option>';
-                            }
-
-                            // Close the database connection
-                            $conn->close();
-                            ?>
-                        </select>
-                    </label>
-                    <label>
-                        <span>Color:</span>
-                        <select name="color" id="color" required>
-                            <option value="">Select Color</option>
-                        </select>
-                    </label>
-                    <label>
-                        <span>Size:</span>
-                        <select name="size" id="size" required>
-                            <option value="">Select Size</option>
-                        </select>
-                    </label>
-                    <label>
-                        <span>Quantity:</span>
-                        <input type="number" name="quantity" id="quantity" min="1" required>
-                    </label>
-                </div>
-            </form>
-            <br><br><br>
-            <div class="center">
-                <button type="button" onclick="openModal()">Add More Items</button>
-            </div>
-        </div>
-        <br>
-        <form action="submit_order.php" method="post">
-            <div style="text-align: center; padding-left: 600px;">
-                <button type="submit">Submit Order</button>
-            </div>
-        </form>
-    </div>
-    <!-- The Modal -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <p>Enter number of items to add:</p>
-            <input type="number" id="quantityInput" min="1"><br><br>
-            <button onclick="addItems()">Submit</button>
+        <div class="option-actions">
+            <button class="delete-option">Delete</button>
         </div>
     </div>
 
-    <script>
-        function fetchVendorDetails() {
-            var vendorName = document.getElementById('vendor').value;
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'fetch_vendor_details.php?vendor=' + encodeURIComponent(vendorName), true);
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    var data = JSON.parse(xhr.responseText);
-                    document.getElementById('address').value = data.address;
-                    document.getElementById('phone').value = data.phone;
-                    document.getElementById('email').value = data.email;
-                    document.getElementById('gst').value = data.gst;
-                }
-            };
-            xhr.send();
-        }
+    <button class="add-more">Add More</button>
+</div>
 
-        function fetchArticleDetails() {
-            var articleNo = document.getElementById('article_no').value;
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'fetch_article_details.php?article_no=' + encodeURIComponent(articleNo), true);
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    var data = JSON.parse(xhr.responseText);
-                    populateSelect('color', data.colors); // Assuming 'colors' is an array of color options
-                    populateSelect('size', data.sizes);   // Assuming 'sizes' is an array of size options
-                }
-            };
-            xhr.send();
-        }
-
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const formContainer = document.querySelector('.shirt-form');
+    
+    // Function to handle adding a new shirt option
+    function addShirtOption() {
+        const lastShirtOption = formContainer.lastElementChild.previousElementSibling;
+        const newShirtOption = lastShirtOption.cloneNode(true);
+        formContainer.insertBefore(newShirtOption, formContainer.lastElementChild);
         
-
-        // Helper function to populate select options
-        function populateSelect(id, options) {
-            var select = document.getElementById(id);
-            select.innerHTML = '<option value="">Select ' + id.charAt(0).toUpperCase() + id.slice(1) + '</option>';
-            options.forEach(function(option) {
-                var optionElem = document.createElement('option');
-                optionElem.value = option;
-                optionElem.textContent = option;
-                select.appendChild(optionElem);
-            });
+        // Attach event listener to the new delete button
+        const deleteButton = newShirtOption.querySelector('.delete-option');
+        deleteButton.addEventListener('click', deleteShirtOption);
+    }
+    
+    // Function to handle deleting a shirt option
+    function deleteShirtOption(event) {
+        const shirtOption = event.target.closest('.shirt-option');
+        if (shirtOption && formContainer.childElementCount > 1) {
+            formContainer.removeChild(shirtOption);
         }
+    }
+    
+    // Initial event listener for the "Add More" button
+    const addButton = document.querySelector('.add-more');
+    addButton.addEventListener('click', addShirtOption);
+    
+    // Initial event listener for the first delete button
+    const deleteButtons = document.querySelectorAll('.delete-option');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', deleteShirtOption);
+    });
+});
+</script>
 
-        function openModal() {
-            document.getElementById('myModal').style.display = 'block';
-        }
-
-        function closeModal() {
-            document.getElementById('myModal').style.display = 'none';
-        }
-
-        function addItems() {
-            var quantity = document.getElementById('quantityInput').value;
-            var articleSelect = document.getElementById('article_no');
-            var colorSelect = document.getElementById('color');
-            var sizeSelect = document.getElementById('size');
-            var quantityInput = document.getElementById('quantity');
-
-            for (var i = 0; i < quantity; i++) {
-                // Clone the row template and append to the form
-                var row = document.createElement('div');
-                row.classList.add('row');
-
-                var articleClone = articleSelect.cloneNode(true);
-                articleClone.removeAttribute('id');
-                articleClone.removeAttribute('onchange');
-                row.appendChild(articleClone);
-
-                var colorClone = colorSelect.cloneNode(true);
-                colorClone.removeAttribute('id');
-                row.appendChild(colorClone);
-
-                var sizeClone = sizeSelect.cloneNode(true);
-                sizeClone.removeAttribute('id');
-                row.appendChild(sizeClone);
-
-                var quantityClone = quantityInput.cloneNode(true);
-                quantityClone.removeAttribute('id');
-                row.appendChild(quantityClone);
-
-                document.querySelector('form').appendChild(row);
-            }
-
-            closeModal();
-        }
-    </script>
-
+ <class="date-selector">
+  <label for="date">Select a Date:</label>
+  <input type="date" id="date" name="date">
+<br></br>
+<main>
+        <section class="item-section">
+            <label for="item">Means of transport:</label>
+            <select id="item" name="item">
+                <option value="By Road">By Road</option>
+                <option value="By Air">By Air</option>
+            </select>
+        </section>
+    </main>
+<br></br>
+            <button type="submit">Add</button>
+        </form>
+</main>
 </body>
 </html>
