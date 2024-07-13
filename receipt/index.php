@@ -1,9 +1,20 @@
+<?php
+session_start();
+include('../includes/connection.php');
+
+// Check if user is logged in and session variable is set
+if (!isset($_SESSION['email'])) {
+    // Redirect to login page or handle unauthorized access
+    header("Location: ../index.php");
+    exit(); // Ensure script stops executing after redirection
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory Home</title>
+    <title>Receipt Home</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="styles0.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -29,9 +40,10 @@
             <div class="dropdown">
                 <div>Works <i class="fa" style="font-size: 15px;color: black; ">&#11167;</i></div>
                 <div class="dropdown-content">
-                    <a href="manage_inv.php">Ordered goods</a>
-                    <a href="manage_loc.php">Recieved goods</a>
-                    <a href="#">Putaway</a>
+                    <a href="#">GRN</a>
+                    <a href="order_goods.php">Order Goods</a>
+                    <a href="#">Quality Assessment</a>
+
                 </div>
             </div>
         </div>
@@ -53,7 +65,6 @@
             <a href="../logout.php">Logout</a>
         </div>
     </nav>
-
 
 
 </body>

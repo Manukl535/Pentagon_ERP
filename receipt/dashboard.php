@@ -2,8 +2,42 @@
 session_start();
 include('../includes/connection.php');
 
-// Function to check overall Audit Report status
+// Check if user is logged in and session variable is set
+if (!isset($_SESSION['email'])) {
+    // Redirect to login page or handle unauthorized access
+    header("Location: ../index.php");
+    exit(); // Ensure script stops executing after redirection
+}
 
+// Function to check overall Audit Report status
+function getAuditReportStatus($conn) {
+    // Query to fetch available quantities from audit_log table
+    $query = "SELECT SUM(audit_quantity) AS total_audit_quantity, SUM(qty_23_24) AS total_available_quantity  FROM audit_log";
+    $result = mysqli_query($conn, $query);
+    $row = mysqli_fetch_assoc($result);
+    $total_audit_quantity = (int)$row['total_audit_quantity']; // Cast to integer for safe comparison
+    $total_available_quantity = (int)$row['total_available_quantity']; // Cast to integer for safe comparison
+
+    // Calculate the difference
+    $difference = $total_audit_quantity - $total_available_quantity;
+
+    // Determine status dynamically
+    if ($difference == 0) {
+        return "Normal";
+    } else {
+        return ($difference > 0) ? "+".$difference : $difference; // Return the difference as abnormal
+    }
+}
+
+// Get overall Audit Report status
+$auditReportStatus = getAuditReportStatus($conn);
+
+    // Total stocks in inv
+
+    $query = "SELECT SUM(available_quantity) AS total_stocks FROM inv_location";
+    $result = $conn->query($query);
+    $row = $result->fetch_assoc();
+    $total_stocks = $row['total_stocks'];
 ?>
 
 <!DOCTYPE html>
@@ -55,13 +89,13 @@ include('../includes/connection.php');
         <div class="w3-bar-block">
             <a href="#" class="w3-bar-item w3-button w3-padding w3-blue"><i class="material-icons" style="font-size:15px">dashboard</i>&nbsp; Overview</a>
             <div style="margin-top: 10px;"></div>
-            <a href="stocks.php" class="w3-bar-item w3-button w3-padding w3-brown"><i class="fa fa-cubes" style="font-size:15px"></i>&nbsp; Purchased goods</a>
+            <a href="#" class="w3-bar-item w3-button w3-padding w3-brown"><i class="fa fa-cubes" style="font-size:15px"></i>&nbsp;Ordered()</a>
             <div style="margin-top: 10px;"></div>
-            <a href="#" class="w3-bar-item w3-button w3-padding w3-green"><i class='fa fa-check' style='font-size:15px'></i>&nbsp; Recieved goods</a>
+            <a href="#" class="w3-bar-item w3-button w3-padding w3-green"><i class='fa fa-line-chart' style='font-size:15px'></i>&nbsp; Received</a>
             <div style="margin-top: 10px;"></div>
-            <a href="audit_report.php" class="w3-bar-item w3-button w3-padding w3-red"><i class="fa fa-list" style="font-size:15px"></i>&nbsp; Quality Issues</a>
+            <a href="#" class="w3-bar-item w3-button w3-padding w3-red"><i class="fa fa-list" style="font-size:15px"></i>&nbsp; Audit Report ()</a>
             <div style="margin-top: 10px;"></div>
-            <a href="#" class="w3-bar-item w3-button w3-padding w3-yellow"><i class="fa fa-heartbeat" style="font-size:24px"></i>&nbsp; Safety Report</a>
+            <a href="#" class="w3-bar-item w3-button w3-padding w3-yellow"><i class="fa fa-heartbeat" style="font-size:24px"></i>&nbsp; Safety Report()</a>
         </div>
     </nav>
 
@@ -81,18 +115,18 @@ include('../includes/connection.php');
                         <h3></h3>
                     </div>
                     <div class="w3-clear"></div>
-                    <h4>Purchased goods</h4>
+                    <h4>Ordererd()</h4>
 
                 </div>
             </div>
             <div class="w3-quarter">
                 <div class="w3-container w3-green w3-padding-16">
-                    <div class="w3-left"><i style="font-size:58px" class="fa">&#xf00c;</i></div>
+                    <div class="w3-left"><i style="font-size:58px" class="fa">&#xf201;</i></div>
                     <div class="w3-right">
                         <h3></h3>
                     </div>
                     <div class="w3-clear"></div>
-                    <h4>Recieved goods</h4>
+                    <h4>Received()</h4>
                 </div>
             </div>
             <div class="w3-quarter">
@@ -102,7 +136,7 @@ include('../includes/connection.php');
                         <h3></h3>
                     </div>
                     <div class="w3-clear"></div>
-                    <h4>Quality issues </h4>
+                    <h4>Audit Report (<?php echo $auditReportStatus; ?>)</h4>
                 </div>
             </div>
             <div class="w3-quarter">
@@ -112,7 +146,7 @@ include('../includes/connection.php');
                         <h3></h3>
                     </div>
                     <div class="w3-clear"></div>
-                    <h4>Safety Report</h4>
+                    <h4>Safety Report()</h4>
                 </div>
             </div>
         </div>
