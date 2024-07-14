@@ -1,81 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dispatch Order Form</title>
-    <style>
-        /* Optional: Add some basic styling */
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 0 20px;
-        }
-        form {
-            margin-top: 20px;
-        }
-        .dispatch-data {
-            margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            background-color: #f9f9f9;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Dispatch</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link href="styles.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Dispatch Order</h1>
-    <form id="dispatchForm" action="/submit_dispatch_order" method="post">
-        <label for="poNumber">Enter PO:</label>
-        <input type="text" id="poNumber" name="poNumber" placeholder="Enter PO number" required>
-        <button type="submit">Submit</button>
+  <div class="container mt-5">
+    <h2>Order Dispatch</h2>
+    <form id="poForm">
+      <div class="form-group">
+        <label for="poNumber">PO Number:</label>
+        <input type="text" class="form-control" id="poNumber" name="poNumber" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
     </form>
+    <button id="viewOrders" class="btn btn-secondary mt-3">View Saved Orders</button>
+  </div>
 
-    <div id="dispatchData" class="dispatch-data" style="display: none;">
-        <h2>Random Dispatch Data</h2>
-        <p><strong>PO Number:</strong> <span id="displayPoNumber"></span></p>
-        <p><strong>Order ID:</strong> <span id="orderId"></span></p>
-        <p><strong>Dispatch Date:</strong> <span id="dispatchDate"></span></p>
-        <p><strong>Shipping Method:</strong> <span id="shippingMethod"></span></p>
+  <!-- Modal for displaying order details -->
+  <div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="orderModalLabel">Order Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h5>Customer Name: <span id="customerName"></span></h5>
+          <h5>Address: <span id="customerAddress"></span></h5>
+          <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+              <tr>
+                <th>Article Number</th>
+                <th>Quantity</th>
+                <th>Color</th>
+                <th>Size</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody id="orderDetails">
+              <!-- Order details will be dynamically added here -->
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="saveOrder">Save</button>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <script>
-        document.getElementById('dispatchForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent form submission
+  <!-- Bootstrap JavaScript and dependencies -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <!-- Custom JavaScript -->
+  <script>
+    document.getElementById('poForm').addEventListener('submit', function(event) {
+  event.preventDefault();
+  var poNumber = document.getElementById('poNumber').value;
+  
+  var savedOrders = JSON.parse(localStorage.getItem('savedOrders')) || [];
+  var existingOrder = savedOrders.find(order => order.poNumber === poNumber);
+  
+  if (existingOrder) {
+    alert('Order with this PO number already saved!');
+    return;
+  }
 
-            // Simulate generating random data
-            var poNumber = document.getElementById('poNumber').value;
-            var orderId = generateRandomId(); // Example function to generate random ID
-            var dispatchDate = generateRandomDate(); // Example function to generate random date
-            var shippingMethod = generateRandomShippingMethod(); // Example function to generate random shipping method
+  // Mock data (replace with your backend API call)
+  var order = {
+    customerName: 'John Doe',
+    address: '123 Main St, City, Country',
+    items: [
+      {
+        articleNumber: 'A123',
+        quantity: 2,
+        color: 'Blue',
+        size: 'M',
+        description: 'T-Shirt'
+      },
+      {
+        articleNumber: 'B456',
+        quantity: 1,
+        color: 'Red',
+        size: 'L',
+        description: 'Pants'
+      }
+    ]
+  };
 
-            // Display generated data
-            document.getElementById('displayPoNumber').textContent = poNumber;
-            document.getElementById('orderId').textContent = orderId;
-            document.getElementById('dispatchDate').textContent = dispatchDate;
-            document.getElementById('shippingMethod').textContent = shippingMethod;
+  // Display order details in modal
+  document.getElementById('customerName').innerText = order.customerName;
+  document.getElementById('customerAddress').innerText = order.address;
+  
+  var orderDetails = document.getElementById('orderDetails');
+  orderDetails.innerHTML = '';
+  order.items.forEach(function(item) {
+    var row = `
+      <tr>
+        <td>${item.articleNumber}</td>
+        <td>${item.quantity}</td>
+        <td>${item.color}</td>
+        <td>${item.size}</td>
+        <td>${item.description}</td>
+      </tr>
+    `;
+    orderDetails.innerHTML += row;
+  });
 
-            // Show the dispatch data section
-            document.getElementById('dispatchData').style.display = 'block';
-        });
+  // Show modal
+  $('#orderModal').modal('show');
 
-        // Example functions to generate random data (replace with actual logic)
-        function generateRandomId() {
-            return Math.floor(Math.random() * 10000); // Replace with your actual ID generation logic
-        }
+  // Save orders to local storage
+  document.getElementById('saveOrder').addEventListener('click', function() {
+    savedOrders.push({ poNumber: poNumber, order: order });
+    localStorage.setItem('savedOrders', JSON.stringify(savedOrders));
+    alert('Order saved successfully!');
+    // Optionally, close the modal after saving
+    $('#orderModal').modal('hide');
+  });
+});
 
-        function generateRandomDate() {
-            var startDate = new Date(2023, 0, 1); // Start date (year, month index, day)
-            var endDate = new Date(); // Today's date
-            var randomDate = new Date(startDate.getTime() + Math.random() * (endDate.getTime() - startDate.getTime()));
-            return randomDate.toLocaleDateString(); // Format date as string (adjust as needed)
-        }
-
-        function generateRandomShippingMethod() {
-            var methods = ['Standard', 'Express', 'Same-Day']; // Example shipping methods
-            var randomIndex = Math.floor(Math.random() * methods.length);
-            return methods[randomIndex];
-        }
-    </script>
+document.getElementById('viewOrders').addEventListener('click', function() {
+  window.location.href = 'orders.html';
+});
+  </script>
 </body>
 </html>
