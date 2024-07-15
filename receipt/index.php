@@ -40,9 +40,9 @@ if (!isset($_SESSION['email'])) {
             <div class="dropdown">
                 <div>Works <i class="fa" style="font-size: 15px;color: black; ">&#11167;</i></div>
                 <div class="dropdown-content">
-                    <a href="#">GRN</a>
+                    <a href="grn.php">GRN</a>
                     <a href="order_goods.php">Order Goods</a>
-                    <a href="#">Quality Assessment</a>
+                    <a href="#">Putaway</a>
 
                 </div>
             </div>

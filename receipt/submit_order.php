@@ -1,46 +1,84 @@
 <?php
-// Check if the form was submitted
+// Check if form is submitted using POST method
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
-    // Validate and sanitize input data
-    $vendor = htmlspecialchars($_POST['vendor']);
-    $address = htmlspecialchars($_POST['address']);
-    $phone = htmlspecialchars($_POST['phone']);
-    $email = htmlspecialchars($_POST['email']);
-    $gst = htmlspecialchars($_POST['gst']);
-    $date_of_delivery = htmlspecialchars($_POST['date_of_delivery']);
-    $article_no = htmlspecialchars($_POST['article_no']);
-    $color = htmlspecialchars($_POST['color']);
-    $size = htmlspecialchars($_POST['size']);
-    $quantity = intval($_POST['quantity']); // Ensure quantity is an integer
+    // Validate and sanitize inputs (you should add more validation as needed)
+    $vendor = $_POST['vendor'] ?? '';
+    $address = $_POST['address'] ?? '';
+    $phone = $_POST['phone'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $gst = $_POST['gst'] ?? '';
+    $date_of_delivery = $_POST['date_of_delivery'] ?? '';
+    $article_no = $_POST['article_no'] ?? '';
+    $color = $_POST['color'] ?? '';
+    $size = $_POST['size'] ?? '';
+    $quantity = $_POST['quantity'] ?? 0; // assuming default to 0 if not set
     
-    // Additional validation checks can be added here
-    
-    // Connect to database (example assuming MySQL/MariaDB)
-    include('../includes/connection.php'); // Adjust this path as per your file structure
+    // Generate dynamic po number
+    if (!empty($vendor)) {
+        // Extract first letters of each word in vendor name
+        $vendor_words = explode(' ', $vendor);
+        $first_letters = '';
+        foreach ($vendor_words as $word) {
+            $first_letters .= strtoupper(substr($word, 0, 1));
+        }
+        
+        // Get current date for po number (MMDD format)
+        $current_date = date('md');
 
-    // Prepare SQL statement to insert into orders table
-    $stmt = $conn->prepare("INSERT INTO orders (vendor, address, phone, email, gst, date_of_delivery, article_no, color, size, quantity) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        // Check if PO number for today's date already exists
+        $existing_poes = []; // Assume this array stores existing PO numbers for today
+        $suffix = 'A'; // Default suffix starting point
 
-    // Bind parameters and execute the statement
-    $stmt->bind_param("sssssssssi", $vendor, $address, $phone, $email, $gst, $date_of_delivery, $article_no, $color, $size, $quantity);
+        // Find the next available suffix
+        while (in_array($first_letters . $current_date . $suffix, $existing_poes)) {
+            $suffix++;
+            if ($suffix > 'Z') {
+                $suffix = 'A'; // Loop back to 'A' after 'Z'
+            }
+        }
 
-    // Execute the prepared statement
-    if ($stmt->execute()) {
-        // Order successfully inserted
-        echo "<script>alert('Order submitted successfully!'); window.location.href = 'order_goods.php'</script>";
+        // Combine to form po number
+        $po = $first_letters . $current_date . $suffix;
     } else {
-        // Error inserting order
+        $po = ''; // handle if vendor name is empty
+    }
+    
+    // Additional processing or validation can go here
+    
+    // Example of inserting into database
+    // Include your database connection script
+    include('../includes/connection.php');
+
+    // Example insert query (modify as per your database schema)
+    $insertQuery = "INSERT INTO orders (po, vendor, address, phone, email, gst, date_of_delivery, article_no, color, size, quantity)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    // Prepare statement
+    $stmt = $conn->prepare($insertQuery);
+    if ($stmt === false) {
+        // Handle error, e.g., log it or display an error message
+        die('Error in preparing statement: ' . $conn->error);
+    }
+
+    // Bind parameters
+    $stmt->bind_param('ssssssssssi', $po, $vendor, $address, $phone, $email, $gst, $date_of_delivery, $article_no, $color, $size, $quantity);
+
+    // Execute statement
+    if ($stmt->execute()) {
+        // Success message
+        echo "<script>alert('Order submitted successfully!'); window.location.replace('order_goods.php');</script>";
+    } else {
+        // Error message
         echo "Error: " . $stmt->error;
     }
 
-    // Close statement and database connection
+    // Close statement and connection
     $stmt->close();
     $conn->close();
 
 } else {
-    // Redirect to the order form if accessed directly without POST method
-    header("Location: order_goods.php");
-    exit();
+    // Redirect or handle unauthorized access
+    echo "Unauthorized access!";
 }
 ?>

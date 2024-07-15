@@ -38,6 +38,8 @@
         .row {
             display: flex;
             gap: 15px; /* Adjust as needed */
+            align-items: center; /* Align items vertically */
+            position: relative; /* Needed for button alignment */
         }
         .row label {
             flex: 1; /* Distribute equal width among labels */
@@ -99,7 +101,6 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgb(0,0,0);
             background-color: rgba(0,0,0,0.4);
             padding-top: 60px;
         }
@@ -117,12 +118,17 @@
             float: right;
             font-size: 28px;
             font-weight: bold;
+            cursor: pointer;
         }
         .close:hover,
         .close:focus {
             color: black;
             text-decoration: none;
-            cursor: pointer;
+        }
+        .delete-button {
+        font-size: 14px; 
+        padding: 6px 10px;
+        margin-left: 5px;
         }
     </style>
 </head>
@@ -231,19 +237,19 @@
                         <input type="number" name="quantity" id="quantity" min="1" required>
                     </label>
                 </div>
+                <div style="text-align: center;">
+                    <button type="submit">Submit Order</button>
+                </div>
+                <!-- Hidden input to store the total number of dynamic rows -->
+                <input type="hidden" id="dynamicRowsCount" name="dynamicRowsCount" value="0">
             </form>
             <br><br><br>
             <div class="center">
                 <button type="button" onclick="openModal()">Add More Items</button>
             </div>
         </div>
-        <br>
-        <form action="submit_order.php" method="post">
-            <div style="text-align: center; padding-left: 600px;">
-                <button type="submit">Submit Order</button>
-            </div>
-        </form>
     </div>
+
     <!-- The Modal -->
     <div id="myModal" class="modal">
         <div class="modal-content">
@@ -255,93 +261,121 @@
     </div>
 
     <script>
-        function fetchVendorDetails() {
-            var vendorName = document.getElementById('vendor').value;
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'fetch_vendor_details.php?vendor=' + encodeURIComponent(vendorName), true);
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    var data = JSON.parse(xhr.responseText);
-                    document.getElementById('address').value = data.address;
-                    document.getElementById('phone').value = data.phone;
-                    document.getElementById('email').value = data.email;
-                    document.getElementById('gst').value = data.gst;
-                }
-            };
-            xhr.send();
-        }
-
-        function fetchArticleDetails() {
-            var articleNo = document.getElementById('article_no').value;
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'fetch_article_details.php?article_no=' + encodeURIComponent(articleNo), true);
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    var data = JSON.parse(xhr.responseText);
-                    populateSelect('color', data.colors); // Assuming 'colors' is an array of color options
-                    populateSelect('size', data.sizes);   // Assuming 'sizes' is an array of size options
-                }
-            };
-            xhr.send();
-        }
-
-        
-
-        // Helper function to populate select options
-        function populateSelect(id, options) {
-            var select = document.getElementById(id);
-            select.innerHTML = '<option value="">Select ' + id.charAt(0).toUpperCase() + id.slice(1) + '</option>';
-            options.forEach(function(option) {
-                var optionElem = document.createElement('option');
-                optionElem.value = option;
-                optionElem.textContent = option;
-                select.appendChild(optionElem);
-            });
-        }
-
-        function openModal() {
-            document.getElementById('myModal').style.display = 'block';
-        }
-
-        function closeModal() {
-            document.getElementById('myModal').style.display = 'none';
-        }
-
-        function addItems() {
-            var quantity = document.getElementById('quantityInput').value;
-            var articleSelect = document.getElementById('article_no');
-            var colorSelect = document.getElementById('color');
-            var sizeSelect = document.getElementById('size');
-            var quantityInput = document.getElementById('quantity');
-
-            for (var i = 0; i < quantity; i++) {
-                // Clone the row template and append to the form
-                var row = document.createElement('div');
-                row.classList.add('row');
-
-                var articleClone = articleSelect.cloneNode(true);
-                articleClone.removeAttribute('id');
-                articleClone.removeAttribute('onchange');
-                row.appendChild(articleClone);
-
-                var colorClone = colorSelect.cloneNode(true);
-                colorClone.removeAttribute('id');
-                row.appendChild(colorClone);
-
-                var sizeClone = sizeSelect.cloneNode(true);
-                sizeClone.removeAttribute('id');
-                row.appendChild(sizeClone);
-
-                var quantityClone = quantityInput.cloneNode(true);
-                quantityClone.removeAttribute('id');
-                row.appendChild(quantityClone);
-
-                document.querySelector('form').appendChild(row);
+    function fetchVendorDetails() {
+        var vendorName = document.getElementById('vendor').value;
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'fetch_vendor_details.php?vendor=' + encodeURIComponent(vendorName), true);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                var data = JSON.parse(xhr.responseText);
+                document.getElementById('address').value = data.address;
+                document.getElementById('phone').value = data.phone;
+                document.getElementById('email').value = data.email;
+                document.getElementById('gst').value = data.gst;
             }
+        };
+        xhr.send();
+    }
 
-            closeModal();
+    function fetchArticleDetails() {
+        var articleNo = document.getElementById('article_no').value;
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'fetch_article_details.php?article_no=' + encodeURIComponent(articleNo), true);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                var data = JSON.parse(xhr.responseText);
+                populateSelect('color', data.colors); // Assuming 'colors' is an array of color options
+                populateSelect('size', data.sizes);   // Assuming 'sizes' is an array of size options
+            }
+        };
+        xhr.send();
+    }
+
+    // Helper function to populate select options
+    function populateSelect(id, options) {
+        var select = document.getElementById(id);
+        select.innerHTML = '<option value="">Select ' + id.charAt(0).toUpperCase() + id.slice(1) + '</option>';
+        options.forEach(function(option) {
+            var optionElem = document.createElement('option');
+            optionElem.value = option;
+            optionElem.textContent = option;
+            select.appendChild(optionElem);
+        });
+    }
+
+    function openModal() {
+        document.getElementById('myModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('myModal').style.display = 'none';
+    }
+
+    function addItems() {
+        var quantity = document.getElementById('quantityInput').value;
+        var articleSelect = document.getElementById('article_no');
+        var colorSelect = document.getElementById('color');
+        var sizeSelect = document.getElementById('size');
+        var quantityInput = document.getElementById('quantity');
+
+        var form = document.querySelector('form');
+        var submitButton = form.querySelector('button[type="submit"]');
+        var container = form.querySelector('.center');
+
+        for (var i = 0; i < quantity; i++) {
+            // Create a new row
+            var row = document.createElement('div');
+            row.classList.add('row');
+
+            // Article No
+            var articleClone = articleSelect.cloneNode(true);
+            articleClone.removeAttribute('id');
+            articleClone.removeAttribute('onchange');
+            row.appendChild(articleClone);
+
+            // Color
+            var colorClone = colorSelect.cloneNode(true);
+            colorClone.removeAttribute('id');
+            row.appendChild(colorClone);
+
+            // Size
+            var sizeClone = sizeSelect.cloneNode(true);
+            sizeClone.removeAttribute('id');
+            row.appendChild(sizeClone);
+
+            // Quantity
+            var quantityClone = quantityInput.cloneNode(true);
+            quantityClone.removeAttribute('id');
+            row.appendChild(quantityClone);
+
+            // Delete button
+            var deleteButton = document.createElement('button');
+            deleteButton.innerHTML = 'X';
+            deleteButton.classList.add('delete-button');
+            deleteButton.type = 'button'; // Ensure it doesn't submit the form
+            deleteButton.onclick = (function (currentRow) {
+                return function() {
+                    currentRow.remove();
+                };
+            })(row); // Immediately invoked function to capture current row
+
+            row.appendChild(deleteButton);
+
+            // Insert the new row above the existing submit button
+            form.insertBefore(row, submitButton.parentNode);
+
+            // Add a margin for spacing between rows
+            row.style.marginBottom = '15px';
         }
-    </script>
+
+        // Update the hidden input value with the current count of dynamic rows
+        document.getElementById('dynamicRowsCount').value = document.querySelectorAll('.row').length - 1;
+
+        // Close the modal and reset the quantity input
+        closeModal();
+    }
+</script>
+
 
 </body>
 </html>
