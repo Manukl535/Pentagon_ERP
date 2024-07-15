@@ -210,7 +210,7 @@ if(isset($_POST['login-btn'])){
     
     </footer></center>
 
-    <?php include('AMA/index.html');?>
+    <?php include('ama.php');?>
     <?php
 
 if (isset($_SESSION['login_message'])) {
