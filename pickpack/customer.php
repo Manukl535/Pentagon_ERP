@@ -30,7 +30,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt = $conn->prepare("INSERT INTO pp_customer (customer_id, customer_name, company_name, address, phone, email, gstin) VALUES (?, ?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("sssssss", $customer_id, $customer_name, $company_name, $address, $phone, $email, $gstin);
     }
+
     $stmt->execute();
+        // Check if the insertion was successful
+        if ($stmt->affected_rows > 0) {
+            $_SESSION['customer_added'] = true; // Set session variable
+        }
     $stmt->close();
 }
 
@@ -195,11 +200,20 @@ $conn->close();
         document.getElementById('gstin').value = cells[6].innerText;
     }
 
+
     function deleteRow(element, id) {
         if (confirm("Are you sure you want to delete this customer?")) {
             window.location.href = `delete_customer.php?id=${id}`;
         }
     }
+
+            // Check if session variable is set and show alert
+            <?php
+        if (isset($_SESSION['customer_added']) && $_SESSION['customer_added']) {
+            echo 'window.onload = function() { alert("Customer added successfully"); };';
+            unset($_SESSION['customer_added']); // Unset session variable after displaying alert
+        }
+        ?>
 </script>
 
 </body>
