@@ -42,7 +42,7 @@ if (!isset($_SESSION['email'])) {
                 <div>Works <i class="fa" style="font-size: 15px; ">&#11167;</i></div>
                 <div class="dropdown-content">
                     <a href="assign.html">Assign</a>
-                    <a href="todn.html">TO and DN</a>
+                    <a href="transfer_order.php">Transfer Order</a>
                    
                 </div>
             </div>
