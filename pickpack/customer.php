@@ -109,6 +109,7 @@ $conn->close();
             color: white;
         }
         .action-button {
+            display:inline; 
             padding: 5px 10px;
             margin: 0 5px;
             color: white;
@@ -128,20 +129,38 @@ $conn->close();
         .delete-button:hover {
             background-color: #e53935;
         }
+        .form-group {
+            display:inline-table;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
 
 <div class="form-container">
     <form id="customerForm" method="POST" action="customer.php">
-        <input type="hidden" id="row_index" name="row_index">
-        <input type="text" id="customer_id" name="customer_id" placeholder="Customer ID" required>
-        <input type="text" id="customer_name" name="customer_name" placeholder="Customer Name" required>
-        <input type="text" id="company_name" name="company_name" placeholder="Company Name" required>
-        <input type="text" id="address" name="address" placeholder="Address" required>
-        <input type="text" id="phone" name="phone" placeholder="Phone" required>
-        <input type="email" id="email" name="email" placeholder="Email" required>
-        <input type="text" id="gstin" name="gstin" placeholder="GSTIN" required>
+        <div class="form-group">
+         <input type="hidden" id="row_index" name="row_index">
+         <label for="customer_id">Customer ID</label>
+        <input type="text" id="customer_id" name="customer_id" placeholder="Customer ID" required>&nbsp;&nbsp;
+        <label for="customer_name">Customer Name</label>
+        <input type="text" id="customer_name" name="customer_name" placeholder="Customer Name" required></div>
+        <div class="form-group">
+        <label for="address">Address</label> 
+        &nbsp; &nbsp;&nbsp;&nbsp;
+        <input type="text" id="address" name="address" placeholder="Address" required>&nbsp;&nbsp;
+        <label for="phone">Phone</label>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="tel" id="phone" name="phone" placeholder="Phone" pattern="[0-9]{10}" title="Please enter 10 digits" required>
+        </div>
+        <div class="form-group"> 
+        <label for="email">Email</label>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="email" id="email" name="email" placeholder="Email" pattern="^[a-zA-Z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,}$" title="Please enter a valid email address (eg. 0Bqz9@example.com)$" required>
+        &nbsp;
+        <label for="gstin">GSTIN</label>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="text" id="gstin" name="gstin" placeholder="GSTIN" required></div>
         <button type="submit">Add Customer</button>
     </form>
 </div>

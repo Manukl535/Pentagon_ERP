@@ -1,136 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-  /* CSS for table and dropdown */
-  body {
-    text-align: center; /* Center align all content */
-    background-color: #ffffff;
-  }
-  table {
-    border-collapse: collapse;
-    width: 50%; /* Adjust table width as needed */
-    margin: auto; /* Center align table */
-    margin-bottom: 20px;
-  }
-  th, td {
-    border: 1px solid #0f0f0f;
-    text-align: center; /* Center align text within cells */
-    padding: 8px;
-  }
-  th {
-    background-color:#e2e0e0;
-  }
-  select {
-    width: 100%;
-    padding: 8px 10px;
-    border: 1px solid #e2e0e0;
-    border-radius: 4px;
-    box-sizing: border-box;
-    background-color: #f8f8f8;
-  }
-  /* CSS for button */
-  button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin-top: 10px;
-    cursor: pointer;
-    border: none;
-    border-radius: 4px;
-  }
-  button:hover {
-    background-color: #2d8d32;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Details Form</title>
+    <style>
+        .form-container {
+            margin: 20px;
+        }
+        .form-group {
+            display:;
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            width: 150px;
+            margin-right: 10px;
+        }
+        .form-group input {
+            flex: 1;
+            padding: 8px;
+        }
+        .form-group:nth-child(even) input {
+            flex: none;
+            width: 200px;
+        }
+    </style>
 </head>
 <body>
-
-<table border="1">
-  <tr>
-    <th>SI No</th>
-    <th>DN Number</th>
-    <th>Associate Name</th>
- 
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>B2B001</td>
-    <td>
-      <select>
-        <option value="">Select Associate</option>
-        <option value="John Doe">John Doe</option>
-        <option value="Jane Smith">Jane Smith</option>
-        <option value="Michael Johnson">Michael Johnson</option>
-        <option value="Emily Brown">Emily Brown</option>
-      </select>
-    </td>
-   
-  </tr>
-  <tr>
-    <td>2</td>
-    <td>B2B002</td>
-    <td>
-      <select>
-        <option value="">Select Associate</option>
-        <option value="Alice Green">Alice Green</option>
-        <option value="Robert Lee">Robert Lee</option>
-        <option value="Sarah White">Sarah White</option>
-        <option value="David Davis">David Davis</option>
-      </select>
-    </td>
-    
-  </tr>
-  <tr>
-    <td>3</td>
-    <td>B2B003</td>
-    <td>
-      <select>
-        <option value="">Select Associate</option>
-        <option value="Lisa Johnson">Lisa Johnson</option>
-        <option value="Daniel Wilson">Daniel Wilson</option>
-        <option value="Olivia Miller">Olivia Miller</option>
-        <option value="James Anderson">James Anderson</option>
-      </select>
-    </td>
-   
-  </tr>
-  <tr>
-    <td>4</td>
-    <td>B2B004</td>
-    <td>
-      <select>
-        <option value="">Select Associate</option>
-        <option value="Sophia Martinez">Sophia Martinez</option>
-        <option value="Matthew Thompson">Matthew Thompson</option>
-        <option value="Chloe Harris">Chloe Harris</option>
-        <option value="Andrew Clark">Andrew Clark</option>
-      </select>
-    </td>
-   
-  </tr>
-  <tr>
-    <td>5</td>
-    <td>B2B005</td>
-    <td>
-      <select>
-        <option value="">Select Associate</option>
-        <option value="Ethan Wright">Ethan Wright</option>
-        <option value="Isabella Walker">Isabella Walker</option>
-        <option value="Logan King">Logan King</option>
-        <option value="Ava Scott">Ava Scott</option>
-      </select>
-    </td>
-    
-  </tr>
-</table>
-<button>Assign</button>
-
+    <div class="form-group">
+        <input type="hidden" id="row_index" name="row_index">
+        <label for="customer_id">Customer ID</label>
+       <input type="text" id="customer_id" name="customer_id" placeholder="Customer ID" required>
+       <label for="customer_name">Customer Name</label>
+       <input type="text" id="customer_name" name="customer_name" placeholder="Customer Name" required></div>
+       <div class="form-group">
+       <label for="address">Address</label>
+       <input type="text" id="address" name="address" placeholder="Address" required>
+       <label for="phone">Phone</label>
+       <input type="tel" id="phone" name="phone" placeholder="Phone" pattern="[0-9]{10}" title="Please enter 10 digits" required>
+       </div>
+       <div class="form-group"> 
+       <label for="email">Email</label>
+       <input type="email" id="email" name="email" placeholder="Email" pattern="^[a-zA-Z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,}$" title="Please enter a valid email address (eg. 0Bqz9@example.com)$" required>
+       <label for="gstin">GSTIN</label>
+       <input type="text" id="gstin" name="gstin" placeholder="GSTIN" required></div>
+       <button type="submit">Add Customer</button>
+   </form>
+</div>
 </body>
 </html>
