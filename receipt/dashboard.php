@@ -89,11 +89,11 @@ $auditReportStatus = getAuditReportStatus($conn);
         <div class="w3-bar-block">
             <a href="#" class="w3-bar-item w3-button w3-padding w3-blue"><i class="material-icons" style="font-size:15px">dashboard</i>&nbsp; Overview</a>
             <div style="margin-top: 10px;"></div>
-            <a href="#" class="w3-bar-item w3-button w3-padding w3-brown"><i class="fa fa-cubes" style="font-size:15px"></i>&nbsp;Ordered()</a>
+            <a href="vendors.php" class="w3-bar-item w3-button w3-padding w3-brown"><i style="font-size:15px" class="fa"> &#xf0c0;</i>&nbsp;Vendors</a>
             <div style="margin-top: 10px;"></div>
-            <a href="#" class="w3-bar-item w3-button w3-padding w3-green"><i class='fa fa-line-chart' style='font-size:15px'></i>&nbsp; Received</a>
+            <a href="#" class="w3-bar-item w3-button w3-padding w3-green"><span style='font-size:15px;'>&#10004;</span>&nbsp; Received Goods</a>
             <div style="margin-top: 10px;"></div>
-            <a href="#" class="w3-bar-item w3-button w3-padding w3-red"><i class="fa fa-list" style="font-size:15px"></i>&nbsp; Audit Report ()</a>
+            <a href="#" class="w3-bar-item w3-button w3-padding w3-red"><i style="font-size:15px" class="fa">&#xf0ae;</i>&nbsp; Ordered goods</a>
             <div style="margin-top: 10px;"></div>
             <a href="#" class="w3-bar-item w3-button w3-padding w3-yellow"><i class="fa fa-heartbeat" style="font-size:24px"></i>&nbsp; Safety Report()</a>
         </div>
@@ -110,33 +110,33 @@ $auditReportStatus = getAuditReportStatus($conn);
         <div class="w3-row-padding w3-margin-bottom">
             <div class="w3-quarter">
                 <div class="w3-container w3-brown w3-padding-16">
-                    <div class="w3-left"><i style="font-size:58px" class="fa">&#xf1b3;</i></div>
+                    <div class="w3-left"><i style="font-size:58px" class="fa"> &#xf0c0;</i></div>
                     <div class="w3-right">
                         <h3></h3>
                     </div>
                     <div class="w3-clear"></div>
-                    <h4>Ordererd()</h4>
+                    <h4>Vendors</h4>
 
                 </div>
             </div>
             <div class="w3-quarter">
                 <div class="w3-container w3-green w3-padding-16">
-                    <div class="w3-left"><i style="font-size:58px" class="fa">&#xf201;</i></div>
+                    <div class="w3-left"><span style='font-size:40px;'>&#10004;</span></div>
                     <div class="w3-right">
                         <h3></h3>
                     </div>
                     <div class="w3-clear"></div>
-                    <h4>Received()</h4>
+                    <h4>Received Goods</h4>
                 </div>
             </div>
             <div class="w3-quarter">
                 <div class="w3-container w3-red w3-padding-16">
-                    <div class="w3-left"><i style="font-size:58px" class="fa">&#xf03a;</i></div>
+                    <div class="w3-left"><i style="font-size:58px" class="fa">&#xf0ae;</i></div>
                     <div class="w3-right">
                         <h3></h3>
                     </div>
                     <div class="w3-clear"></div>
-                    <h4>Audit Report (<?php echo $auditReportStatus; ?>)</h4>
+                    <h4>Ordered goods</h4>
                 </div>
             </div>
             <div class="w3-quarter">

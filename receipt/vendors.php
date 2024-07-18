@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["delete_id"])) {
         // Handle delete request
         $delete_id = $_POST["delete_id"];
-        $stmt = $conn->prepare("DELETE FROM pp_customers WHERE count=?");
+        $stmt = $conn->prepare("DELETE FROM vendors WHERE id=?");
         $stmt->bind_param("i", $delete_id);
         
         if ($stmt->execute()) {
@@ -30,33 +30,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->close();
     } else {
         // Handle add/update request
-        $customer_id = $_POST["customer_id"];
-        $customer_name = $_POST["customer_name"];
+        $id = $_POST["id"];
+        $name = $_POST["name"];
         $address = $_POST["address"];
         $phone = $_POST["phone"];
         $email = $_POST["email"];
-        $gstin = $_POST["gstin"];
+        $gst = $_POST["gst"];
         $row_index = $_POST["row_index"];
 
         if (!empty($row_index)) {
             // Update existing record
-            $stmt = $conn->prepare("UPDATE pp_customers SET customer_id=?, customer_name=?, address=?, phone=?, email=?, gstin=? WHERE count=?");
-            $stmt->bind_param("ssssssi", $customer_id, $customer_name, $address, $phone, $email, $gstin, $row_index);
+            $stmt = $conn->prepare("UPDATE vendors SET id=?, name=?, address=?, phone=?, email=?, gst=? WHERE id=?");
+            $stmt->bind_param("ssssssi", $id, $name, $address, $phone, $email, $gst, $row_index);
         } else {
             // Add new record
-            $stmt = $conn->prepare("INSERT INTO pp_customers (customer_id, customer_name, address, phone, email, gstin) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("ssssss", $customer_id, $customer_name, $address, $phone, $email, $gstin);
+            $stmt = $conn->prepare("INSERT INTO vendors (id, name, address, phone, email, gst) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssssss", $id, $name, $address, $phone, $email, $gst);
         }
 
         if ($stmt->execute()) {
             if (!empty($row_index)) {
                 // Record updated successfully
                 $alertMessage = "Record successfully updated.";
-                $alertType = "updated";
             } else {
                 // Record added successfully
                 $alertMessage = "Record successfully added.";
-                $alertType = "added";
             }
         } else {
             $alertMessage = "Error: " . $stmt->error;
@@ -65,22 +63,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Redirect to the same page to prevent form resubmission
-    header("Location: customer.php?alertMessage=" . urlencode($alertMessage));
+    header("Location: vendors.php?alertMessage=" . urlencode($alertMessage));
     exit();
 }
 
-// Retrieve customer data
-$result = $conn->query("SELECT * FROM pp_customers");
+// Retrieve vendor data
+$result = $conn->query("SELECT * FROM vendors");
 
 $conn->close();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Details</title>
+    <title>Vendor Details</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -165,35 +162,37 @@ $conn->close();
         }
     </style>
     <script>
-        function editCustomer(row) {
-            var cells = row.getElementsByTagName("td");
-            document.getElementById("row_index").value = row.dataset.id; 
-            document.getElementById("customer_id").value = cells[0].innerHTML;
-            document.getElementById("customer_name").value = cells[1].innerHTML;
-            document.getElementById("address").value = cells[2].innerHTML;
-            document.getElementById("phone").value = cells[3].innerHTML;
-            document.getElementById("email").value = cells[4].innerHTML;
-            document.getElementById("gstin").value = cells[5].innerHTML;
-            document.getElementById("submitButton").innerText = "Update Customer"; // Change button text to "Update Customer"
+        
+    function editVendor(row) {
+        var cells = row.getElementsByTagName("td");
+        document.getElementById("row_index").value = row.dataset.id;
+        document.getElementById("id").value = cells[0].innerHTML;
+        document.getElementById("name").value = cells[1].innerHTML;
+        document.getElementById("address").value = cells[2].innerHTML;
+        document.getElementById("phone").value = cells[3].innerHTML;
+        document.getElementById("email").value = cells[4].innerHTML;
+        document.getElementById("gst").value = cells[5].innerHTML;
+        document.getElementById("submitButton").innerText = "Update Vendor"; // Change button text to "Update Vendor"
+    }
+
+    function deleteVendor(row) {
+        var rowIndex = row.dataset.id; // Use data-id attribute for the row index
+        if (confirm("Are you sure you want to delete this record?")) {
+            var form = document.createElement("form");
+            form.method = "POST";
+            form.action = "vendors.php";
+
+            var input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "delete_id";
+            input.value = rowIndex;
+            form.appendChild(input);
+
+            document.body.appendChild(form);
+            form.submit();
         }
+    }
 
-        function deleteCustomer(row) {
-            var rowIndex = row.dataset.id; // Use data-id attribute for the row index
-            if (confirm("Are you sure you want to delete this record?")) {
-                var form = document.createElement("form");
-                form.method = "POST";
-                form.action = "customer.php";
-
-                var input = document.createElement("input");
-                input.type = "hidden";
-                input.name = "delete_id";
-                input.value = rowIndex;
-                form.appendChild(input);
-
-                document.body.appendChild(form);
-                form.submit();
-            }
-        }
     </script>
 </head>
 <body>
@@ -203,13 +202,13 @@ $conn->close();
 <?php endif; ?>
 
 <div class="form-container">
-    <form id="customerForm" method="POST" action="customer.php">
+    <form id="vendorForm" method="POST" action="vendors.php">
         <div class="form-group">
             <input type="hidden" id="row_index" name="row_index">
-            <label for="customer_id">Customer ID</label>
-            <input type="text" id="customer_id" name="customer_id" placeholder="Customer ID" required>&nbsp;&nbsp;
-            <label for="customer_name">Customer Name</label>
-            <input type="text" id="customer_name" name="customer_name" placeholder="Customer Name" required>
+            <label for="id">Vendor ID</label>
+            <input type="text" id="id" name="id" placeholder="Vendor ID" required>&nbsp;&nbsp;
+            <label for="name">Vendor Name</label>
+            <input type="text" id="name" name="name" placeholder="Vendor Name" required>
         </div>
         <div class="form-group">
             <label for="address">Address</label> 
@@ -217,52 +216,52 @@ $conn->close();
             <input type="text" id="address" name="address" placeholder="Address" required>&nbsp;&nbsp;
             <label for="phone">Phone</label>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <input type="tel" id="phone" name="phone" placeholder="Phone" pattern="[0-9]{10}" title="Please enter 10 digits" required>
+            <input type="tel" id="phone" name="phone" placeholder="Phone"  title="Please enter 10 digits" required>
         </div>
         <div class="form-group"> 
             <label for="email">Email</label>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <input type="email" id="email" name="email" placeholder="Email" pattern="^[a-zA-Z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,}$" title="Please enter a valid email address (eg. 0Bqz9@example.com)$" required>
+            <input type="email" id="email" name="email" placeholder="Email" pattern="^[a-zA-Z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,}$" title="Please enter a valid email address (eg. example@example.com)" required>
             &nbsp;
-            <label for="gstin">GSTIN</label>
+            <label for="gst">GSTIN</label>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <input type="text" id="gstin" name="gstin" placeholder="GSTIN" required>
+            <input type="text" id="gst" name="gst" placeholder="gst" required>
         </div>
-        <button id="submitButton" type="submit">Add Customer</button>
+        <button id="submitButton" type="submit">Add Vendor</button>
     </form>
 </div>
 
 <table>
     <thead>
         <tr>
-            <th>Customer ID</th>
-            <th>Customer Name</th>
+            <th>Vendor ID</th>
+            <th>Vendor Name</th>
             <th>Address</th>
             <th>Phone</th>
             <th>Email</th>
-            <th>GSTIN</th>
+            <th>GST</th>
             <th>Actions</th>
         </tr>
     </thead>
-    <tbody id="customerTableBody">
+    <tbody id="vendorTableBody">
         <?php if ($result->num_rows > 0): ?>
             <?php while($row = $result->fetch_assoc()): ?>
-                <tr data-id="<?php echo $row["count"]; ?>"> <!-- Add data-id attribute for row index -->
-                    <td><?php echo $row["customer_id"]; ?></td>
-                    <td><?php echo $row["customer_name"]; ?></td>
+                <tr data-id="<?php echo $row["id"]; ?>"> <!-- Add data-id attribute for row index -->
+                    <td><?php echo $row["id"]; ?></td>
+                    <td><?php echo $row["name"]; ?></td>
                     <td><?php echo $row["address"]; ?></td>
                     <td><?php echo $row["phone"]; ?></td>
                     <td><?php echo $row["email"]; ?></td>
-                    <td><?php echo $row["gstin"]; ?></td>
+                    <td><?php echo $row["gst"]; ?></td>
                     <td>
-                        <button class="action-button edit-button" onclick="editCustomer(this.parentElement.parentElement)">Edit</button>
-                        <button class="action-button delete-button" onclick="deleteCustomer(this.parentElement.parentElement)">Delete</button>
+                        <button class="action-button edit-button" onclick="editVendor(this.parentElement.parentElement)">Edit</button>
+                        <button class="action-button delete-button" onclick="deleteVendor(this.parentElement.parentElement)">Delete</button>
                     </td>
                 </tr>
             <?php endwhile; ?>
         <?php else: ?>
             <tr>
-                <td colspan="8">No customers found</td>
+                <td colspan="7">No vendors found</td>
             </tr>
         <?php endif; ?>
     </tbody>
