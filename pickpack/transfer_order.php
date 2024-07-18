@@ -16,6 +16,7 @@
                 <input type="number" placeholder="Quantity" required>
             </div>
         </div>
+        <button>Add More</button>
 
         <label for="customerName">Customer Name:</label>
         <input type="text" id="customerName" name="customerName" required><br><br>
@@ -29,11 +30,7 @@
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required><br><br>
 
-        <!-- Input for uploading Excel file -->
-        <label for="excelFile">Upload Excel Sheet:</label>
-        <input type="file" id="excelFile" name="excelFile" accept=".xls,.xlsx"><br><br>
 
-        <button type="button" onclick="uploadExcel()">Upload & Populate</button>
         <button type="submit">Submit Order</button>
     </form>
 
