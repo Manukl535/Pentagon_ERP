@@ -1,16 +1,6 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "pentagon";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+// Database connection details
+include('../Includes/connection.php');
 
 // Fetch data from the database
 $sql = "SELECT count, po, customer_name, dn_status, po_quantity FROM pp_orders";
