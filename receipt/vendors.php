@@ -1,4 +1,5 @@
-<?php// Database connection details
+<?php
+// Database connection details
 include('../Includes/connection.php');
 
 // Handle form submission
@@ -59,6 +60,7 @@ $result = $conn->query("SELECT * FROM vendors");
 
 $conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -144,12 +146,13 @@ $conn->close();
             background-color: #e53935;
         }
         .form-group {
-            display:inline-table;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
             margin-bottom: 10px;
         }
     </style>
     <script>
-        
     function editVendor(row) {
         var cells = row.getElementsByTagName("td");
         document.getElementById("row_index").value = row.dataset.id;
@@ -179,7 +182,6 @@ $conn->close();
             form.submit();
         }
     }
-
     </script>
 </head>
 <body>
@@ -193,26 +195,21 @@ $conn->close();
         <div class="form-group">
             <input type="hidden" id="row_index" name="row_index">
             <label for="id">Vendor ID</label>
-            <input type="text" id="id" name="id" placeholder="Vendor ID" required>&nbsp;&nbsp;
+            <input type="text" id="id" name="id" placeholder="Vendor ID" required>
             <label for="name">Vendor Name</label>
             <input type="text" id="name" name="name" placeholder="Vendor Name" required>
         </div>
         <div class="form-group">
-            <label for="address">Address</label> 
-            &nbsp; &nbsp;&nbsp;&nbsp;
-            <input type="text" id="address" name="address" placeholder="Address" required>&nbsp;&nbsp;
+            <label for="address">Address</label>
+            <input type="text" id="address" name="address" placeholder="Address" required>
             <label for="phone">Phone</label>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <input type="tel" id="phone" name="phone" placeholder="Phone"  title="Please enter 10 digits" required>
+            <input type="tel" id="phone" name="phone" placeholder="Phone" pattern="[0-9]{10}" title="Please enter 10 digits" required>
         </div>
-        <div class="form-group"> 
+        <div class="form-group">
             <label for="email">Email</label>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <input type="email" id="email" name="email" placeholder="Email" pattern="^[a-zA-Z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,}$" title="Please enter a valid email address (eg. example@example.com)" required>
-            &nbsp;
+            <input type="email" id="email" name="email" placeholder="Email" pattern="^[a-zA-Z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$" title="Please enter a valid email address (e.g. example@example.com)" required>
             <label for="gst">GSTIN</label>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <input type="text" id="gst" name="gst" placeholder="gst" required>
+            <input type="text" id="gst" name="gst" placeholder="GSTIN" required>
         </div>
         <button id="submitButton" type="submit">Add Vendor</button>
     </form>
