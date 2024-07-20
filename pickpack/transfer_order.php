@@ -94,7 +94,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Order Form</h1>
+        <h1>Transfer Order</h1>
         <form id="orderForm" action="process_order.php" method="POST">
             <div id="articles-container">
                 <!-- Initial article set (cannot be removed) -->
