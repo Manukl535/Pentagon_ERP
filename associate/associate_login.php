@@ -9,6 +9,7 @@ if (isset($_SESSION['username'])) {
 
 // Initialize variables
 $error_message = '';
+$barcode = '';
 
 // Database connection details (include your connection script)
 include('../Includes/connection.php');
@@ -144,7 +145,7 @@ $conn->close();
             <p class="error-message"><?php echo $error_message; ?></p>
         <?php endif; ?>
         <div class="form-group">
-            <input type="text" class="form-control" placeholder="Scan Barcode" id="username" name="username" required="required">
+            <input type="password" class="form-control" placeholder="Scan Barcode" id="username" name="username" required="required" <?php if(isset($_POST['username']) && !empty($error_message)) echo 'value="' . htmlspecialchars($_POST['username']) . '"'; ?>>
         </div>
         <button type="submit" class="btn btn-primary btn-block btn-lg">Login</button>             
     </form>			
