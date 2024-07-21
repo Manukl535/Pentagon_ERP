@@ -9,35 +9,30 @@ if (!isset($_SESSION['email'])) {
     exit(); // Ensure script stops executing after redirection
 }
 
-// Function to check overall Audit Report status
-function getAuditReportStatus($conn) {
-    // Query to fetch available quantities from audit_log table
-    $query = "SELECT SUM(audit_quantity) AS total_audit_quantity, SUM(qty_23_24) AS total_available_quantity  FROM audit_log";
-    $result = mysqli_query($conn, $query);
+function getTotalVendors()
+{
+    global $conn;
+    $sql = "SELECT COUNT(*) AS total_vendors FROM vendors";
+    $result = mysqli_query($conn, $sql);
     $row = mysqli_fetch_assoc($result);
-    $total_audit_quantity = (int)$row['total_audit_quantity']; // Cast to integer for safe comparison
-    $total_available_quantity = (int)$row['total_available_quantity']; // Cast to integer for safe comparison
-
-    // Calculate the difference
-    $difference = $total_audit_quantity - $total_available_quantity;
-
-    // Determine status dynamically
-    if ($difference == 0) {
-        return "Normal";
-    } else {
-        return ($difference > 0) ? "+".$difference : $difference; // Return the difference as abnormal
-    }
+    return $row['total_vendors'];
 }
 
-// Get overall Audit Report status
-$auditReportStatus = getAuditReportStatus($conn);
+function getTotalOrders(){
+    global $conn;
+    $sql = "SELECT COUNT(*) AS total_orders FROM orders";
+    $result = mysqli_query($conn, $sql);
+    $row = mysqli_fetch_assoc($result);
+    return $row['total_orders'];
+}
 
-    // Total stocks in inv
-
-    $query = "SELECT SUM(available_quantity) AS total_stocks FROM inv_location";
-    $result = $conn->query($query);
-    $row = $result->fetch_assoc();
-    $total_stocks = $row['total_stocks'];
+function getReceivedOrders(){
+    global $conn;
+    $sql = "SELECT COUNT(*) AS po_number FROM approved_po WHERE approved_by IS NOT NULL";
+    $result = mysqli_query($conn, $sql);
+    $row = mysqli_fetch_assoc($result);
+    return $row['po_number'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -89,11 +84,11 @@ $auditReportStatus = getAuditReportStatus($conn);
         <div class="w3-bar-block">
             <a href="#" class="w3-bar-item w3-button w3-padding w3-blue"><i class="material-icons" style="font-size:15px">dashboard</i>&nbsp; Overview</a>
             <div style="margin-top: 10px;"></div>
-            <a href="vendors.php" class="w3-bar-item w3-button w3-padding w3-brown"><i style="font-size:15px" class="fa"> &#xf0c0;</i>&nbsp;Vendors</a>
+            <a href="vendors.php" class="w3-bar-item w3-button w3-padding w3-brown"><i style="font-size:15px" class="fa"> &#xf0c0;</i>&nbsp;Vendors(<?php echo getTotalVendors(); ?>)</a>
             <div style="margin-top: 10px;"></div>
-            <a href="approve_order.php" class="w3-bar-item w3-button w3-padding w3-green"><span style='font-size:15px;'>&#10004;</span>&nbsp; Received Goods</a>
+            <a href="#" class="w3-bar-item w3-button w3-padding w3-red"><i style="font-size:15px" class="fa">&#xf0ae;</i>&nbsp; Ordered goods(<?php echo getTotalOrders(); ?>)</a>
             <div style="margin-top: 10px;"></div>
-            <a href="#" class="w3-bar-item w3-button w3-padding w3-red"><i style="font-size:15px" class="fa">&#xf0ae;</i>&nbsp; Ordered goods</a>
+            <a href="approve_order.php" class="w3-bar-item w3-button w3-padding w3-green"><span style='font-size:15px;'>&#10004;</span>&nbsp; Received Goods(<?php echo getReceivedOrders(); ?>)</a>
             <div style="margin-top: 10px;"></div>
             <a href="#" class="w3-bar-item w3-button w3-padding w3-yellow"><i class="fa fa-heartbeat" style="font-size:24px"></i>&nbsp; Safety Report()</a>
         </div>
@@ -115,7 +110,7 @@ $auditReportStatus = getAuditReportStatus($conn);
                         <h3></h3>
                     </div>
                     <div class="w3-clear"></div>
-                    <h4>Vendors</h4>
+                    <h4>Vendors (<?php echo getTotalVendors(); ?>)</h4>
 
                 </div>
             </div>
@@ -127,7 +122,7 @@ $auditReportStatus = getAuditReportStatus($conn);
                         <h3></h3>
                     </div>
                     <div class="w3-clear"></div>
-                    <h4>Ordered goods</h4>
+                    <h4>Ordered goods(<?php echo getTotalOrders(); ?>)</h4>
                 </div>
             </div>
 
@@ -138,7 +133,7 @@ $auditReportStatus = getAuditReportStatus($conn);
                         <h3></h3>
                     </div>
                     <div class="w3-clear"></div>
-                    <h4>Received Goods</h4>
+                    <h4>Received Goods(<?php echo getReceivedOrders(); ?>)</h4>
                 </div>
             </div>
             

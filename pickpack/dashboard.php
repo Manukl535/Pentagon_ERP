@@ -20,6 +20,17 @@ function getTotalCustomers($conn) {
 // Retrieve total number of customers
 $total_customers = getTotalCustomers($conn);
 
+// Function to retrieve total number of orders
+function getTotalOrders($conn) {
+    $query = "SELECT COUNT(*) AS total_orders FROM pp_orders";
+    $result = mysqli_query($conn, $query);
+    $row = mysqli_fetch_assoc($result);
+    return (int) $row['total_orders']; 
+}
+
+// Retrieve total number of customers
+$total_orders = getTotalOrders($conn);
+
 // Close database connection
 $conn->close();
 ?>
@@ -75,7 +86,7 @@ $conn->close();
         <a href="customer.php" class="w3-bar-item w3-button w3-padding w3-brown"><i style="font-size:15px" class="fa">&#xf0c0;</i>&nbsp;Customers (<?php echo $total_customers; ?>)</a>
         <div style="margin-top: 10px;"></div>
 
-        <a href="pp_orders.php" class="w3-bar-item w3-button w3-padding w3-green"><i style="font-size:15px" class="fa">&#xf0ae;</i>&nbsp;Orders</a>
+        <a href="pp_orders.php" class="w3-bar-item w3-button w3-padding w3-green"><i style="font-size:15px" class="fa">&#xf0ae;</i>&nbsp;Orders (<?php echo $total_orders; ?>)</a>
         <div style="margin-top: 10px;"></div>
 
         <a href="#" class="w3-bar-item w3-button w3-padding w3-light-blue"><i style="font-size:24px" class="fa">&#xf4ad;</i> Feedbacks</a>
@@ -110,7 +121,7 @@ $conn->close();
                     <h3></h3>
                 </div>
                 <div class="w3-clear"></div>
-                <h4>Orders</h4>
+                <h4>Orders (<?php echo $total_orders; ?>)</h4>
             </div>
         </div>
 

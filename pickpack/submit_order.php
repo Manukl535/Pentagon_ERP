@@ -38,11 +38,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Insert into pp_orders successful
         $stmt_orders->close();
 
-        // Insert into dn_details table
-        $insert_query_details = "INSERT INTO dn_details (dn_number, article, color, size, quantity, inv_loc) 
-                                 VALUES (?, ?, ?, ?, ?, ?)";
+        // Insert into dn_details table with dn_quantity
+        $insert_query_details = "INSERT INTO dn_details (dn_number, article, color, size, quantity, inv_loc, dn_quantity) 
+                                 VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt_details = $conn->prepare($insert_query_details);
-        $stmt_details->bind_param("ssssis", $po_number, $article_no, $color, $size, $quantity, $inv_location);
+        $stmt_details->bind_param("ssssisi", $po_number, $article_no, $color, $size, $quantity, $inv_location, $quantity); // Add $quantity as dn_quantity
         
         if ($stmt_details->execute()) {
             // Insert into dn_details successful

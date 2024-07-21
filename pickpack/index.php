@@ -41,7 +41,7 @@ if (!isset($_SESSION['email'])) {
             <div class="dropdown">
                 <div>Works <i class="fa" style="font-size: 15px; ">&#11167;</i></div>
                 <div class="dropdown-content">
-                    <a href="assign.php">Assign</a>
+                    <a href="assign.php">Assign Orders</a>
                     <a href="transfer_order.php">Transfer Order</a>
                    
                 </div>
@@ -49,7 +49,7 @@ if (!isset($_SESSION['email'])) {
         </div>
 
         <div class="item">
-            <a href="#"><i class="fa fa-gear fa-spin" style="font-size:100px;color: black;"></i></a>
+            <a href="settings.php"><i class="fa fa-gear fa-spin" style="font-size:100px;color: black;"></i></a>
             <div>Settings</div>
         </div>
     </section>

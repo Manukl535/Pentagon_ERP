@@ -1,188 +1,183 @@
+<?php
+session_start();
+include('../includes/connection.php');
+
+// Function to sanitize input data
+function sanitize_input($data) {
+    $data = trim($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
+
+// Function to handle SQL errors
+function handle_sql_error($conn) {
+    echo "Error: " . $conn->error;
+    exit(); // Stop further execution
+}
+
+// Process form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['assign'])) {
+    // Sanitize inputs
+    $dn_number = sanitize_input($_POST['bin']);
+    $associate = sanitize_input($_POST['associate']);
+
+    // Validate inputs (basic validation)
+    if (empty($dn_number) || empty($associate)) {
+        echo "<script>alert('Please select both DN and Associate'); window.location.href = 'assign.php';</script>";
+        exit(); // Stop further execution
+    }
+
+    // Prepare SQL statement to update dn_details table
+    $update_sql = "UPDATE dn_details SET assigned_to = ? WHERE dn_number = ?";
+    $stmt = $conn->prepare($update_sql);
+    $stmt->bind_param("ss", $associate, $dn_number);
+
+    // Execute SQL statement
+    if ($stmt->execute()) {
+        echo "<script>alert('DN assigned successfully'); window.location.href = 'assign.php';</script>";
+    } else {
+        handle_sql_error($conn);
+    }
+}
+
+// Fetch DN options for dropdown
+$sql_dns = "SELECT dn_number FROM dn_details WHERE assigned_to = ''";
+$result_dns = $conn->query($sql_dns);
+
+// Fetch associate options for dropdown
+$sql_associates = "SELECT username FROM associates";
+$result_associates = $conn->query($sql_associates);
+
+// Fetch data for the table
+$sql_table = "SELECT dn_number, assigned_to, dn_quantity, picked_quantity FROM dn_details";
+$result_table = $conn->query($sql_table);
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assign Work</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 90vh;
-            margin: 0;
-            padding: 10px;
-        }
-        h2 {
-            margin-bottom: 10px;
-        }
-        .table-container {
-            width: 80%;
-            background-color: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            color: #333;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        .assign-button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        .assign-button:hover {
-            background-color: #45a049;
-        }
-        .assigned-button {
-            background-color: red;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            cursor: not-allowed;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        .associate-cell {
-            position: relative;
-        }
-        select {
-            width: 100%;
-            padding: 6px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #fff;
-            appearance: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        select:hover {
-            background-color: #f1f1f1;
-        }
-        .assigned-select {
-            padding: 6px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #f1f1f1;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assign for picking</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    padding: 20px;
+}
+h2 {
+    color: #333;
+    text-align:center;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+th {
+    background-color:  #4CAF50;
+    color:#fff;
+}
+label {
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: block;
+}
+select {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+input[type="submit"]:hover {
+    background-color: #45a049;
+}
+</style>
 </head>
 <body>
-    <h2>Assign Work</h2>
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>SI. No</th>
-                    <th>DN Number</th>
-                    <th>Associate</th>
-                    <th>Actions</th>
-                    <th>DN Quantity</th>
-                    <th>Picked Quantity</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                session_start();
-                include('../includes/connection.php');
-                
-                // Fetch DN Numbers from dn_details table
-                $sql_dn = "SELECT dn_number FROM dn_details";
-                $result_dn = $conn->query($sql_dn);
-                $dn_numbers = [];
-                if ($result_dn->num_rows > 0) {
-                    while ($row_dn = $result_dn->fetch_assoc()) {
-                        $dn_numbers[] = $row_dn['dn_number'];
-                    }
-                }
+<h2>Assign Order</h2>
 
-                // Fetch Associates from associates table
-                $sql_assoc = "SELECT id, username FROM associates";
-                $result_assoc = $conn->query($sql_assoc);
-                $associates = [];
-                if ($result_assoc->num_rows > 0) {
-                    while ($row_assoc = $result_assoc->fetch_assoc()) {
-                        $associates[] = $row_assoc;
-                    }
-                }
-
-                $rows = count($dn_numbers); // Number of rows based on DN Numbers fetched
-                for ($i = 0; $i < $rows; $i++) {
-                    // Random quantities for demonstration
-                    $dnQuantity = rand(1, 100);
-                    $pickedQuantity = rand(0, $dnQuantity);
-
-                    echo "<tr>";
-                    echo "<td>" . ($i + 1) . "</td>";
-                    echo "<td>" . $dn_numbers[$i] . "</td>";
-                    echo "<td class='associate-cell'>";
-                    echo "<select>";
-                    echo "<option value=''>Select Associate</option>";
-                    foreach ($associates as $associate) {
-                        echo "<option value='" . $associate['id'] . "'>" . $associate['username'] . "</option>";
-                    }
-                    echo "</select>";
-                    echo "</td>";
-                    echo "<td><button class='assign-button' onclick='assignButtonClick(this)'>Assign</button></td>";
-                    echo "<td class='dn-quantity'>" . $dnQuantity . "</td>";
-                    echo "<td class='picked-quantity'>" . $pickedQuantity . "</td>";
-                    echo "</tr>";
-                }
-
-                $conn->close();
-                ?>
-            </tbody>
-        </table>
-    </div>
-    <script>
-        function assignButtonClick(button) {
-            const row = button.closest('tr');
-            const select = row.querySelector('select');
-            const selectedValue = select.value;
-            const selectedOption = select.options[select.selectedIndex].text;
-
-            if (selectedValue === '') {
-                alert('Please select an associate before assigning.');
-                return;
+<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" style="max-width: 400px; margin: 0 auto; background: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+    <label for="bin">Delivery Note:</label>
+    <select id="bin" name="bin">
+        <option value="">Select DN</option>
+        <?php
+        if ($result_dns->num_rows > 0) {
+            while($row = $result_dns->fetch_assoc()) {
+                echo "<option value='" . htmlspecialchars($row['dn_number']) . "'>" . htmlspecialchars($row['dn_number']) . "</option>";
             }
-
-            // Update the Picked Quantity to 0
-            const pickedQuantityCell = row.querySelector('.picked-quantity');
-            pickedQuantityCell.textContent = '0'; 
-
-            // Disable the select and show only the assigned name
-            const assignedSelect = document.createElement('div');
-            assignedSelect.textContent = selectedOption;
-            assignedSelect.className = 'assigned-select';
-
-            select.replaceWith(assignedSelect);
-
-            // Change button appearance
-            button.textContent = 'Assigned';
-            button.className = 'assigned-button'; // Ensure class is correctly applied
-            button.disabled = true; // Optionally disable the button after assignment
+        } else {
+            echo "<option value=''>No DN found</option>";
         }
-    </script>
+        ?>
+    </select>
+
+    <label for="associate">Assign To:</label>
+    <select id="associate" name="associate">
+        <option value="">Select Associate</option>
+        <?php
+        if ($result_associates->num_rows > 0) {
+            while ($row = $result_associates->fetch_assoc()) {
+                echo "<option value='" . htmlspecialchars($row['username']) . "'>" . htmlspecialchars($row['username']) . "</option>";
+            }
+        } else {
+            echo "<option value=''>No associates found</option>";
+        }
+        ?>
+    </select>
+    
+    <input type="submit" name="assign" value="Assign">
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>DN</th>
+            <th>Assigned To</th>
+            <th>DN Qty</th>
+            <th>Picked Qty</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        if ($result_table->num_rows > 0) {
+            while ($row = $result_table->fetch_assoc()) {
+                echo "<tr>";
+                echo "<td>" . htmlspecialchars($row['dn_number']) . "</td>";
+                echo "<td>" . htmlspecialchars($row['assigned_to']) . "</td>";
+                echo "<td>" . htmlspecialchars($row['dn_quantity']) . "</td>";
+                echo "<td>" . htmlspecialchars($row['picked_quantity']) . "</td>";
+                echo "</tr>";
+            }
+        } else {
+            echo "<tr><td colspan='4'>No records found</td></tr>";
+        }
+        ?>
+    </tbody>
+</table>
+
 </body>
 </html>
+
+<?php
+// Close database connection
+$conn->close();
+?>

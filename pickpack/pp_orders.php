@@ -1,12 +1,17 @@
 <?php
-// Database connection details
-include('../Includes/connection.php');
+include('../includes/connection.php');
 
-// Fetch data from the database
-$sql = "SELECT count, po, customer_name, dn_status, po_quantity FROM pp_orders";
+$sql = "SELECT t.count, t.po_number, t.customer_name, t.quantity, 
+               CASE WHEN d.assigned_to IS NOT NULL AND d.assigned_to <> '' THEN 'Assigned' ELSE 'On Hold' END AS assigned_to_status
+        FROM pp_orders t
+        LEFT JOIN dn_details d ON t.po_number = d.dn_number
+        ORDER BY t.count";
+
 $result = $conn->query($sql);
-?>
 
+// Counter for serial number
+$serialNumber = 1;
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,14 +29,15 @@ $result = $conn->query($sql);
         }
         table, th, td {
             border: 1px solid #ddd;
+
         }
         th, td {
             padding: 15px;
-            text-align: left;
+            text-align: center; 
         }
         th {
-            background-color: #f2f2f2;
-            color: #333;
+            background-color:  #45a049;
+            color: #fff;
         }
         tr:nth-child(even) {
             background-color: #f9f9f9;
@@ -47,77 +53,13 @@ $result = $conn->query($sql);
             margin-top: 20px;
             color: #333;
         }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0,0,0);
-            background-color: rgba(0,0,0,0.4);
-            padding-top: 60px;
+        .status-assigned {
+            color: green;
         }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .btn-open {
-            background-color: #4CAF50; /* Green */
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 12px;
-        }
-        .btn-open:hover {
-            background-color: #45a049;
+        .status-on-hold {
+            color: blue;
         }
     </style>
-    <script>
-        function openModal(si_no) {
-            fetch('todn.php?count=' + count)
-                .then(response => response.json())
-                .then(data => {
-                    let modalContent = document.getElementById('modalContent');
-                    modalContent.innerHTML = `<h2>Order Details for ${data.customer_name}</h2>
-                                              <p>Customer Address: ${data.customer_address}</p>`;
-                    data.items.forEach(item => {
-                        modalContent.innerHTML += `<p>Article Number: ${item.article_number}</p>
-                                                    <p>Quantity: ${item.quantity}</p>
-                                                    <p>Description: ${item.description}</p>
-                                                    <p>Color: ${item.color}</p>
-                                                    <hr>`;
-                    });
-                    document.getElementById('myModal').style.display = "block";
-                });
-        }
-        function closeModal() {
-            document.getElementById('myModal').style.display = "none";
-        }
-    </script>
 </head>
 <body>
     <h1>Order List</h1>
@@ -128,28 +70,33 @@ $result = $conn->query($sql);
             <th>Customer Name</th>
             <th>DN Status</th>
             <th>PO Quantity</th>
-            <th>Details</th>
         </tr>
         <?php
         if ($result->num_rows > 0) {
-            // Output data of each row
-            while($row = $result->fetch_assoc()) {
-                echo "<tr><td>" . $row["count"]. "</td><td>" . $row["po"]. "</td><td>" . $row["customer_name"]. "</td><td>" . $row["dn_status"]. "</td><td>" . $row["po_quantity"]. "</td>";
-                echo "<td><button class='btn-open' onclick=\"openModal(" . $row["count"] . ")\"> Open</button></td></tr>";
+            while ($row = $result->fetch_assoc()) {
+                // Check if assigned_to_status is 'Assigned' or 'On Hold'
+                $dnStatus = ($row['assigned_to_status'] == 'Assigned') ? '<span class="status-assigned"><b>Assigned</b></span>' : '<span class="status-on-hold"><b>On Hold</b></span>';
+                
+                // Output row data with serial number
+                echo "<tr>";
+                echo "<td>" . $serialNumber . "</td>";
+                echo "<td>" . htmlspecialchars($row["po_number"]) . "</td>";
+                echo "<td>" . htmlspecialchars($row["customer_name"]) . "</td>";
+                echo "<td>" . $dnStatus . "</td>";
+                echo "<td>" . htmlspecialchars($row["quantity"]) . "</td>";
+                echo "</tr>";
+
+                // Increment serial number
+                $serialNumber++;
             }
         } else {
-            echo "<tr><td colspan='6'>No orders found</td></tr>";
+            echo "<tr><td colspan='5'>No orders found</td></tr>";
         }
-        $conn->close();
         ?>
     </table>
 
-    <!-- The Modal -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <div id="modalContent"></div>
-        </div>
-    </div>
+    <?php
+    $conn->close();
+    ?>
 </body>
 </html>

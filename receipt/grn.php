@@ -1,58 +1,37 @@
 <?php
 session_start();
-include('../includes/connection.php');
-
-// Function to sanitize user input
-function sanitize($data) {
-    return htmlspecialchars(stripslashes(trim($data)));
-}
+include('../includes/connection.php'); // Assuming this file connects to your database
 
 // Initialize variables
 $po_number = "";
 $order_details = [];
 
-// Check if form was submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Validate and sanitize PO number input
-    $po_number = sanitize($_POST["po_number"]);
+// Handle form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['po_number'])) {
+    $po_number = $_POST['po_number'];
 
-    // Query to fetch order details based on PO number
-    $sql = "SELECT po, vendor, phone, email, gst, date_of_delivery, article_no, color, size, quantity 
-            FROM orders 
-            WHERE po = ?";
-    
-    // Prepare statement
+    // Fetch order details for the selected PO number where approved is empty or null
+    $sql = "SELECT po, vendor, phone, email, gst, date_of_delivery, article_no, color, size, quantity FROM orders WHERE (approved_by IS NULL OR approved_by = '') AND po = ?";
     $stmt = $conn->prepare($sql);
-    
-    if ($stmt) {
-        // Bind parameters
-        $stmt->bind_param("s", $po_number);
-        
-        // Execute statement
-        $stmt->execute();
-        
-        // Get result
-        $result = $stmt->get_result();
-        
-        // Fetch data into array
+    $stmt->bind_param("s", $po_number);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             $order_details[] = $row;
         }
-        
-        // Close statement
-        $stmt->close();
-    } else {
-        echo "Error preparing statement: " . $conn->error;
     }
+    $stmt->close();
 }
-
-// Close connection
-$conn->close();
 ?>
 
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Goods Receipt Note (GRN)</title>
     <style>
         body {
@@ -62,13 +41,34 @@ $conn->close();
         }
         h2 {
             color: #333;
+            text-align: center;
         }
         form {
+            text-align: center;
             margin-bottom: 20px;
         }
+        label {
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+        select, button {
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
         }
         table, th, td {
             border: 1px solid #ddd;
@@ -86,23 +86,6 @@ $conn->close();
         }
         td {
             vertical-align: middle;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        input[type=text], button {
-            padding: 8px;
-            font-size: 16px;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
         }
 
         /* Modal styles */
@@ -126,20 +109,23 @@ $conn->close();
             width: 80%; /* Could be more or less, depending on screen size */
             max-width: 500px; /* Max width */
             box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            position: relative;
         }
 
         .close {
             color: #aaa;
-            float: right;
+            position: absolute;
+            right: 20px;
+            top: 10px;
             font-size: 28px;
             font-weight: bold;
+            cursor: pointer;
         }
 
         .close:hover,
         .close:focus {
             color: black;
             text-decoration: none;
-            cursor: pointer;
         }
 
         /* Adjust form inside modal */
@@ -152,10 +138,11 @@ $conn->close();
             margin-bottom: 5px;
         }
 
-        #approveForm input[type=text] {
+        #approveForm input[type=text], #approveForm button {
             padding: 8px;
             font-size: 16px;
-            width: 95%;
+            width: 100%;
+            box-sizing: border-box; /* Ensure padding and border do not increase element width */
             margin-bottom: 10px;
         }
 
@@ -175,124 +162,154 @@ $conn->close();
 </head>
 <body>
     
-<h2 style="text-align: center;">GRN</h2>
-<center>
-<form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-  <label for="po_number" style="display: inline-block; margin-right: 10px;">Enter PO Number:</label>
-  <input type="text" id="po_number" name="po_number" value="<?php echo htmlspecialchars($po_number); ?>" style="display: inline-block; width: 20%; padding: 10px; border: 1px solid #ccc; font-size: 16px;">
-  <button type="submit" style="display: inline-block; padding: 10px; border: none; background-color: #4CAF50; color: white; cursor: pointer;">Fetch PO</button>
-</form>
-</center>
-    
-    <hr>
+<h2>Goods Receipt Note (GRN)</h2>
+<form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+    <label for="po_number">Select PO Number:</label>
+    <select name="po_number" id="po_number">
+        <option value="" selected disabled>Select PO Number</option>
+        <?php
+        // Assuming you have a database connection already established ($conn)
+        $sql = "SELECT DISTINCT po FROM orders WHERE approved_by IS NULL OR approved_by = ''";
+        $result = $conn->query($sql);
 
-    <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($order_details)): ?>
-        <h2>Order Details for PO Number: <?php echo htmlspecialchars($po_number); ?></h2>
-        <table>
-            <tr>
-                <th>PO Number</th>
-                <th>Vendor</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>GST</th>
-                <th>Date of Delivery</th>
-                <th>Article Number</th>
-                <th>Color</th>
-                <th>Size</th>
-                <th>Quantity</th>
-                <th>Action</th>
-            </tr>
-            <?php foreach ($order_details as $row): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($row['po']); ?></td>
-                    <td><?php echo htmlspecialchars($row['vendor']); ?></td>
-                    <td><?php echo htmlspecialchars($row['phone']); ?></td>
-                    <td><?php echo htmlspecialchars($row['email']); ?></td>
-                    <td><?php echo htmlspecialchars($row['gst']); ?></td>
-                    <td><?php echo htmlspecialchars($row['date_of_delivery']); ?></td>
-                    <td><?php echo htmlspecialchars($row['article_no']); ?></td>
-                    <td><?php echo htmlspecialchars($row['color']); ?></td>
-                    <td><?php echo htmlspecialchars($row['size']); ?></td>
-                    <td><?php echo htmlspecialchars($row['quantity']); ?></td>
-                    <td><button class="approve-btn" data-po="<?php echo htmlspecialchars($row['po']); ?>" data-article="<?php echo htmlspecialchars($row['article_no']); ?>" data-color="<?php echo htmlspecialchars($row['color']); ?>" data-size="<?php echo htmlspecialchars($row['size']); ?>" data-qty="<?php echo htmlspecialchars($row['quantity']); ?>">Approve</button></td>
-                </tr>
-            <?php endforeach; ?>
-        </table>
-    <?php elseif ($_SERVER["REQUEST_METHOD"] == "POST"): ?>
-        <p>No orders found for PO Number: <?php echo htmlspecialchars($po_number); ?></p>
-    <?php endif; ?>
-
-    <!-- Modal -->
-    <div id="approveModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Approve Order</h2>
-            <form id="approveForm">
-                <input type="hidden" id="modal-po" name="modal-po">
-                <label for="modal-article">Article Number:</label>
-                <input type="text" id="modal-article" name="modal-article" readonly>
-                <label for="modal-color">Color:</label>
-                <input type="text" id="modal-color" name="modal-color" readonly>
-                <label for="modal-size">Size:</label>
-                <input type="text" id="modal-size" name="modal-size" readonly>
-                <label for="modal-qty">Quantity:</label>
-                <input type="text" id="modal-qty" name="modal-qty">
-                <label for="modal-approved-by">Approved By:</label>
-                <input type="text" id="modal-approved-by" name="modal-approved-by" required>
-                <button type="submit" id="modal-approve-btn">Approve</button>
-            </form>
-        </div>
-    </div>
-
-    <script>
-    // Modal script
-    var modal = document.getElementById('approveModal');
-    var approveBtns = document.getElementsByClassName('approve-btn');
-    var span = document.getElementsByClassName("close")[0];
-
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function() {
-        modal.style.display = "none";
-    }
-
-    // When the user clicks the button, open the modal 
-    for (var i = 0; i < approveBtns.length; i++) {
-        approveBtns[i].onclick = function() {
-            var po = this.getAttribute('data-po');
-            var article = this.getAttribute('data-article');
-            var color = this.getAttribute('data-color');
-            var size = this.getAttribute('data-size');
-            var qty = this.getAttribute('data-qty');
-
-            document.getElementById('modal-po').value = po;
-            document.getElementById('modal-article').value = article;
-            document.getElementById('modal-color').value = color;
-            document.getElementById('modal-size').value = size;
-            document.getElementById('modal-qty').value = qty;
-
-            modal.style.display = "block";
-        }
-    }
-
-    // When the user submits the approval form
-    document.getElementById('approveForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        var po = document.getElementById('modal-po').value;
-        // Implement AJAX to update the status in the database
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'approve_order.php', true);
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                // Update button text and disable further clicks
-                var approveBtn = document.querySelector('button[data-po="' + po + '"]');
-                approveBtn.textContent = 'Approved';
-                approveBtn.disabled = true;
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $po = htmlspecialchars($row['po']);
+                echo "<option value='$po' " . ($po_number == $po ? 'selected' : '') . ">$po</option>";
             }
-        };
-        xhr.send('po=' + encodeURIComponent(po));
-        modal.style.display = "none";
-    });
-    </script>
+        } else {
+            echo "<option value=''>No PO numbers found</option>";
+        }
+        ?>
+    </select>
+    <button type="submit">Get Details</button>
+</form>
+
+<hr>
+
+<?php if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($order_details)): ?>
+    <h2>Order Details for PO Number: <?php echo htmlspecialchars($po_number); ?></h2>
+    <table>
+        <tr>
+            <th>PO Number</th>
+            <th>Vendor</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>GST</th>
+            <th>Date of Delivery</th>
+            <th>Article Number</th>
+            <th>Color</th>
+            <th>Size</th>
+            <th>Quantity</th>
+            <th>Action</th>
+        </tr>
+        <?php foreach ($order_details as $row): ?>
+            <tr>
+                <td><?php echo htmlspecialchars($row['po']); ?></td>
+                <td><?php echo htmlspecialchars($row['vendor']); ?></td>
+                <td><?php echo htmlspecialchars($row['phone']); ?></td>
+                <td><?php echo htmlspecialchars($row['email']); ?></td>
+                <td><?php echo htmlspecialchars($row['gst']); ?></td>
+                <td><?php echo htmlspecialchars($row['date_of_delivery']); ?></td>
+                <td><?php echo htmlspecialchars($row['article_no']); ?></td>
+                <td><?php echo htmlspecialchars($row['color']); ?></td>
+                <td><?php echo htmlspecialchars($row['size']); ?></td>
+                <td><?php echo htmlspecialchars($row['quantity']); ?></td>
+                <td><button class="approve-btn" data-po="<?php echo htmlspecialchars($row['po']); ?>" data-article="<?php echo htmlspecialchars($row['article_no']); ?>" data-color="<?php echo htmlspecialchars($row['color']); ?>" data-size="<?php echo htmlspecialchars($row['size']); ?>" data-qty="<?php echo htmlspecialchars($row['quantity']); ?>">Approve</button></td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+<?php elseif ($_SERVER["REQUEST_METHOD"] == "POST"): ?>
+    <p>No orders found for PO Number: <?php echo htmlspecialchars($po_number); ?></p>
+<?php endif; ?>
+
+<!-- Modal -->
+<div id="approveModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Approve Order</h2>
+        <form id="approveForm">
+            <input type="hidden" id="modal-po" name="modal-po"> 
+            <label for="modal-po-display">PO Number:</label>
+            <input type="text" id="modal-po-display" name="modal-po-display" readonly> 
+            <label for="modal-article">Article Number:</label>
+            <input type="text" id="modal-article" name="modal-article" readonly>
+            <label for="modal-color">Color:</label>
+            <input type="text" id="modal-color" name="modal-color" readonly>
+            <label for="modal-size">Size:</label>
+            <input type="text" id="modal-size" name="modal-size" readonly>
+            <label for="modal-qty">Quantity:</label>
+            <input type="text" id="modal-qty" name="modal-qty">
+            <label for="modal-approved-by">Approved By:</label>
+            <input type="text" id="modal-approved-by" name="modal-approved-by" required>
+            <button type="submit" id="modal-approve-btn">Approve</button>
+        </form>
+    </div>
+</div>
+
+<script>
+// Modal script
+var modal = document.getElementById('approveModal');
+var approveBtns = document.getElementsByClassName('approve-btn');
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+    modal.style.display = "none";
+}
+
+// When the user clicks the button, open the modal 
+for (var i = 0; i < approveBtns.length; i++) {
+    approveBtns[i].onclick = function() {
+        var po = this.getAttribute('data-po');
+        var article = this.getAttribute('data-article');
+        var color = this.getAttribute('data-color');
+        var size = this.getAttribute('data-size');
+        var qty = this.getAttribute('data-qty');
+
+        // Populate modal fields
+        document.getElementById('modal-po').value = po;
+        document.getElementById('modal-po-display').value = po;
+        document.getElementById('modal-article').value = article;
+        document.getElementById('modal-color').value = color;
+        document.getElementById('modal-size').value = size;
+        document.getElementById('modal-qty').value = qty;
+
+        modal.style.display = "block";
+    }
+}
+
+// When the user submits the approval form
+document.getElementById('approveForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var po = document.getElementById('modal-po').value;
+    var article = document.getElementById('modal-article').value;
+    var color = document.getElementById('modal-color').value;
+    var size = document.getElementById('modal-size').value;
+    var qty = document.getElementById('modal-qty').value;
+    var approvedBy = document.getElementById('modal-approved-by').value;
+
+    // Implement AJAX to update the status in the database
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'approve_order.php', true);
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            // Update button text and disable further clicks
+            var approveBtn = document.querySelector('button[data-po="' + po + '"]');
+            approveBtn.textContent = 'Approved';
+            approveBtn.disabled = true;
+            // Optionally, display a message or perform additional actions upon success
+            alert(xhr.responseText); // Display response from PHP script
+        } else {
+            // Handle errors if any
+            alert('Error: ' + xhr.statusText);
+        }
+    };
+    xhr.send('po=' + encodeURIComponent(po) + '&article_no=' + encodeURIComponent(article) + '&color=' + encodeURIComponent(color) + '&size=' + encodeURIComponent(size) + '&qty=' + encodeURIComponent(qty) + '&approved_by=' + encodeURIComponent(approvedBy));
+    modal.style.display = "none";
+});
+</script>
+
 </body>
 </html>

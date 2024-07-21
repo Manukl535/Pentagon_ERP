@@ -1,177 +1,234 @@
+<?php
+session_start();
+include('../includes/connection.php');
+
+// Function to sanitize input data
+function sanitize_input($data) {
+    $data = trim($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
+
+// Function to handle SQL errors
+function handle_sql_error($conn) {
+    echo "Error: " . $conn->error;
+    exit(); // Stop further execution
+}
+
+// Process form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['assign'])) {
+    // Sanitize inputs
+    $dn_number = sanitize_input($_POST['bin']);
+    $associate = sanitize_input($_POST['associate']);
+
+    // Validate inputs (basic validation)
+    if (empty($dn_number) || empty($associate)) {
+        echo "<script>alert('Please select both PO and Associate'); window.location.href = 'putaway.php';</script>";
+        exit(); // Stop further execution
+    }
+
+    // Check if the PO is already assigned
+    $sql_check_assigned = "SELECT * FROM putaway WHERE po = ?";
+    $stmt_check_assigned = $conn->prepare($sql_check_assigned);
+    $stmt_check_assigned->bind_param("s", $dn_number);
+    $stmt_check_assigned->execute();
+    $result_check_assigned = $stmt_check_assigned->get_result();
+
+    if ($result_check_assigned->num_rows > 0) {
+        echo "<script>alert('This PO is already assigned.'); window.location.href = 'putaway.php';</script>";
+        exit(); // Stop further execution
+    }
+
+    // Fetch PO details from approved_po table
+    $sql_fetch_po_details = "SELECT po_number, article, size, quantity, color FROM approved_po WHERE po_number = ?";
+    $stmt_fetch_po_details = $conn->prepare($sql_fetch_po_details);
+    $stmt_fetch_po_details->bind_param("s", $dn_number);
+    $stmt_fetch_po_details->execute();
+    $result_fetch_po_details = $stmt_fetch_po_details->get_result();
+
+    if ($result_fetch_po_details->num_rows > 0) {
+        // Insert into putaway table
+        $row = $result_fetch_po_details->fetch_assoc();
+        $article = $row['article'];
+        $size = $row['size'];
+        $quantity = $row['quantity'];
+        $color = $row['color'];
+
+        $sql_insert = "INSERT INTO putaway (po, article, size, po_quantity, color, assigned_to) VALUES (?, ?, ?, ?, ?, ?)";
+        $stmt_insert = $conn->prepare($sql_insert);
+        $stmt_insert->bind_param("ssssss", $dn_number, $article, $size, $quantity, $color, $associate);
+
+        if ($stmt_insert->execute()) {
+            echo "<script>alert('PO assigned successfully');</script>";
+        } else {
+            handle_sql_error($conn);
+        }
+
+        // Close statement
+        $stmt_insert->close();
+    } else {
+        echo "<script>alert('PO details not found in approved_po table');</script>";
+    }
+
+    // Close statement
+    $stmt_fetch_po_details->close();
+}
+
+// Fetch data for the main table
+$sql_main_table = "SELECT po, article, size, color, assigned_to, po_quantity, processed_qty FROM putaway";
+$result_table = $conn->query($sql_main_table);
+
+// Check if the query was successful
+if (!$result_table) {
+    handle_sql_error($conn);
+}
+
+// Fetch data from approved_po table for dropdown, excluding already assigned POs
+$sql_dns = "SELECT po_number, article, size, quantity, color FROM approved_po WHERE po_number NOT IN (SELECT po FROM putaway)";
+$result_dns = $conn->query($sql_dns);
+
+// Check if the query was successful
+if (!$result_dns) {
+    handle_sql_error($conn);
+}
+
+// Fetch associate options for dropdown
+$sql_associates = "SELECT username FROM associates";
+$result_associates = $conn->query($sql_associates);
+
+// Check if the query was successful
+if (!$result_associates) {
+    handle_sql_error($conn);
+}
+
+// Close database connection
+$conn->close();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>putaway Table</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 90vh;
-            margin: 0;
-            padding: 10px;
-        }
-        h2 {
-            margin-bottom: 10px;
-        }
-        .table-container {
-            width: 80%;
-            padding: 10px;
-            background-color: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            color: #333;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        .assign-button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        .assign-button:hover {
-            background-color: #45a049;
-        }
-        .assigned-button {
-            background-color: red;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            cursor: not-allowed;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        .associate-cell {
-            position: relative;
-        }
-        select {
-            width: 100%;
-            padding: 6px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #fff;
-            appearance: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        select:hover {
-            background-color: #f1f1f1;
-        }
-        .assigned-select {
-            border: none;
-            background: none;
-            pointer-events: none;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assign For Putaway</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    padding: 20px;
+}
+h2 {
+    color: #333;
+    text-align:center;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+th {
+    background-color:  #4CAF50;
+    color:#fff;
+}
+label {
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: block;
+}
+select {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+input[type="submit"]:hover {
+    background-color: #45a049;
+}
+</style>
 </head>
 <body>
-    <h2>Assign Work For Putaway</h2>
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>SI. No</th>
-                    <th>PO Number</th>
-                    <th>Associate Name</th>
-                    <th>Action</th>
-                    <th>PO Quantity</th>
-                    <th>Processed Quantity</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                session_start();
-                include('../includes/connection.php');
-                
-                $sql = "SELECT * FROM associates";
-                $result = $conn->query($sql);
-                $associates = [];
-                if ($result->num_rows > 0) {
-                    while($row = $result->fetch_assoc()) {
-                        $associates[] = $row;
-                    }
-                }
+<h2>Assign For Putaway</h2>
 
-                $rows = 10; // Number of rows you want in the table
-                for ($i = 1; $i <= $rows; $i++) {
-                    // Random quantities for demonstration
-                    $poQuantity = rand(1, 100);
-                    $processedQuantity = rand(0, $poQuantity);
-
-                    echo "<tr>";
-                    echo "<td>" . $i . "</td>";
-                    echo "<td>" . "PO" . sprintf("%03d", $i) . "</td>";
-                    echo "<td class='associate-cell'>";
-                    echo "<select>";
-                    echo "<option value=''>Select Associate</option>";
-                    foreach ($associates as $associate) {
-                        echo "<option value='" . $associate['id'] . "'>" . $associate['username'] . "</option>";
-                    }
-                    echo "</select>";
-                    echo "</td>";
-                    echo "<td><button class='assign-button' onclick='assignButtonClick(this)'>Assign</button></td>";
-                    echo "<td class='po-quantity'>" . $poQuantity . "</td>";
-                    echo "<td class='processed-quantity'>" . $processedQuantity . "</td>";
-                    echo "</tr>";
-                }
-
-                $conn->close();
-                ?>
-            </tbody>
-        </table>
-    </div>
-    <script>
-        function assignButtonClick(button) {
-            const row = button.closest('tr');
-            const select = row.querySelector('select');
-            const selectedValue = select.value;
-            const selectedOption = select.options[select.selectedIndex].text;
-
-            if (selectedValue === '') {
-                alert('Please select an associate before assigning.');
-                return;
+<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" style="max-width: 400px; margin: 0 auto; background: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+    <label for="bin">PO:</label>
+    <select id="bin" name="bin">
+        <option value="">Select PO</option>
+        <?php
+        if ($result_dns->num_rows > 0) {
+            while($row = $result_dns->fetch_assoc()) {
+                echo "<option value='" . htmlspecialchars($row['po_number']) . "'>" . htmlspecialchars($row['po_number']) . " - " . htmlspecialchars($row['article']) . " - " . htmlspecialchars($row['size']) . " - " . htmlspecialchars($row['quantity']) . " - " . htmlspecialchars($row['color']) . "</option>";
             }
-
-            // Update the Processed Quantity to 0
-            const processedQuantityCell = row.querySelector('.processed-quantity');
-            processedQuantityCell.textContent = '0'; 
-
-            // Disable the select and show only the assigned name
-            const assignedSelect = document.createElement('div');
-            assignedSelect.textContent = selectedOption;
-            assignedSelect.className = 'assigned-select';
-
-            select.replaceWith(assignedSelect);
-
-            // Change button appearance
-            button.textContent = 'Assigned';
-            button.className = 'assigned-button'; // Ensure class is correctly applied
-            button.disabled = true; // Optionally disable the button after assignment
+        } else {
+            echo "<option value=''>No PO found</option>";
         }
-    </script>
+        ?>
+    </select>
+
+    <label for="associate">Assign To:</label>
+    <select id="associate" name="associate">
+        <option value="">Select Associate</option>
+        <?php
+        if ($result_associates->num_rows > 0) {
+            while ($row = $result_associates->fetch_assoc()) {
+                echo "<option value='" . htmlspecialchars($row['username']) . "'>" . htmlspecialchars($row['username']) . "</option>";
+            }
+        } else {
+            echo "<option value=''>No associates found</option>";
+        }
+        ?>
+    </select>
+    
+    <input type="submit" name="assign" value="Assign">
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>PO</th>
+            <th>Article</th>
+            <th>Size</th>
+            <th>Color</th>
+            <th>Assigned To</th>
+            <th>PO Qty</th>
+            <th>Processed Qty</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        if ($result_table->num_rows > 0) {
+            while ($row = $result_table->fetch_assoc()) {
+                echo "<tr>";
+                echo "<td>" . htmlspecialchars($row['po']) . "</td>";
+                echo "<td>" . htmlspecialchars($row['article']) . "</td>";
+                echo "<td>" . htmlspecialchars($row['size']) . "</td>";
+                echo "<td>" . htmlspecialchars($row['color']) . "</td>";
+                echo "<td>" . htmlspecialchars($row['assigned_to']) . "</td>";
+                echo "<td>" . htmlspecialchars($row['po_quantity']) . "</td>";
+                echo "<td>" . htmlspecialchars($row['processed_qty']) . "</td>";
+                echo "</tr>";
+            }
+        } else {
+            echo "<tr><td colspan='8'>No records found</td></tr>";
+        }
+        ?>
+    </tbody>
+</table>
+
 </body>
 </html>
