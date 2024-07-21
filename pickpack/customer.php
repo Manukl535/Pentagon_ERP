@@ -1,67 +1,51 @@
 <?php
-// Database connection details
-include('../Includes/connection.php');
+session_start();
+include('../includes/connection.php');
 
-
-// Handle form submission
+// Check if form is submitted for adding new customer
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["delete_id"])) {
-        // Handle delete request
-        $delete_id = $_POST["delete_id"];
-        $stmt = $conn->prepare("DELETE FROM pp_customers WHERE count=?");
-        $stmt->bind_param("i", $delete_id);
-        
-        if ($stmt->execute()) {
-            $alertMessage = "Record successfully deleted.";
-        } else {
-            $alertMessage = "Error: " . $stmt->error;
-        }
-        $stmt->close();
+    // Retrieve and sanitize input
+    $customer_id = mysqli_real_escape_string($conn, $_POST['customer_id']);
+    $customer_name = mysqli_real_escape_string($conn, $_POST['customer_name']);
+    $address = mysqli_real_escape_string($conn, $_POST['address']);
+    $phone = mysqli_real_escape_string($conn, $_POST['phone']);
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $gstin = mysqli_real_escape_string($conn, $_POST['gstin']);
+
+    // Check if customer ID already exists
+    $check_sql = "SELECT * FROM pp_customer WHERE customer_id = '$customer_id'";
+    $check_result = $conn->query($check_sql);
+    if ($check_result->num_rows > 0) {
+        echo '<script>alert("Customer ID already exists. Please choose a different Customer ID.");</script>';
     } else {
-        // Handle add/update request
-        $customer_id = $_POST["customer_id"];
-        $customer_name = $_POST["customer_name"];
-        $address = $_POST["address"];
-        $phone = $_POST["phone"];
-        $email = $_POST["email"];
-        $gstin = $_POST["gstin"];
-        $row_index = $_POST["row_index"];
-
-        if (!empty($row_index)) {
-            // Update existing record
-            $stmt = $conn->prepare("UPDATE pp_customers SET customer_id=?, customer_name=?, address=?, phone=?, email=?, gstin=? WHERE count=?");
-            $stmt->bind_param("ssssssi", $customer_id, $customer_name, $address, $phone, $email, $gstin, $row_index);
+        // Insert into database
+        $insert_sql = "INSERT INTO pp_customer (customer_id, customer_name, address, phone, email, gstin) 
+                       VALUES ('$customer_id', '$customer_name', '$address', '$phone', '$email', '$gstin')";
+        if ($conn->query($insert_sql) === TRUE) {
+            echo '<script>alert("New customer added successfully.");</script>';
         } else {
-            // Add new record
-            $stmt = $conn->prepare("INSERT INTO pp_customers (customer_id, customer_name, address, phone, email, gstin) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("ssssss", $customer_id, $customer_name, $address, $phone, $email, $gstin);
+            echo "Error: " . $insert_sql . "<br>" . $conn->error;
         }
-
-        if ($stmt->execute()) {
-            if (!empty($row_index)) {
-                // Record updated successfully
-                $alertMessage = "Record successfully updated.";
-                $alertType = "updated";
-            } else {
-                // Record added successfully
-                $alertMessage = "Record successfully added.";
-                $alertType = "added";
-            }
-        } else {
-            $alertMessage = "Error: " . $stmt->error;
-        }
-        $stmt->close();
     }
-
-    // Redirect to the same page to prevent form resubmission
-    header("Location: customer.php?alertMessage=" . urlencode($alertMessage));
-    exit();
 }
 
-// Retrieve customer data
-$result = $conn->query("SELECT * FROM pp_customers");
+// Fetch data from the pp_customer table
+$sql = "SELECT * FROM pp_customer";
+$result = $conn->query($sql);
 
-$conn->close();
+// Check for delete success session message
+$delete_message = "";
+if (isset($_SESSION['delete_success'])) {
+    $delete_message = $_SESSION['delete_success'];
+    unset($_SESSION['delete_success']); // Unset the session variable
+}
+
+// Check for update success session message
+$update_message = "";
+if (isset($_SESSION['update_success'])) {
+    $update_message = $_SESSION['update_success'];
+    unset($_SESSION['update_success']); // Unset the session variable
+}
 ?>
 
 <!DOCTYPE html>
@@ -69,193 +53,301 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Details</title>
+    <title>Customer List</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        .form-container {
-            background-color: #ffffff;
             padding: 20px;
-            border: 2px solid #000;
-            border-radius: 10px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             margin-bottom: 20px;
         }
-        .form-container form {
+        .form-row {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            margin-bottom: 20px;
         }
-        .form-container form input {
-            margin-bottom: 10px;
+        .form-row .form-group {
+            flex-basis: calc(50% - 10px); /* Adjust width of each form group */
+        }
+        .form-row .form-group label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-row .form-group input, .form-row .form-group select {
+            width: 100%;
             padding: 8px;
+            font-size: 16px;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 4px;
+            box-sizing: border-box;
         }
-        .form-container form button {
-            padding: 10px;
+        input[type="submit"] {
             background-color: #4CAF50;
             color: white;
+            padding: 10px 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
+            font-size: 16px;
         }
-        .form-container form button:hover {
+        input[type="submit"]:hover {
             background-color: #45a049;
         }
         table {
-            border-collapse: collapse;
             width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff; /* Add background color for the table */
         }
         th, td {
-            text-align: left;
+            border: 1px solid #ddd;
             padding: 8px;
-            border: 1px solid #000;
-        }
-        tr:nth-child(odd) {
-            background-color: #f9f9f9;
-        }
-        tr:nth-child(even) {
-            background-color: #e0e0e0;
+            text-align: left;
         }
         th {
+            background-color: #4caf50;
+            color: #fff;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .edit-button{
             background-color: #4CAF50;
             color: white;
-        }
-        .action-button {
-            display:inline; 
-            padding: 5px 10px;
-            margin: 0 5px;
-            color: white;
+            padding: 8px 16px; /* Adjust padding as needed */
             border: none;
-            border-radius: 3px;
             cursor: pointer;
-        }
-        .edit-button {
-            background-color: #008CBA;
-        }
-        .edit-button:hover {
-            background-color: #007bb5;
-        }
+            border-radius: 4px; /* Rounded corners */
+            transition: background-color 0.3s ease; /* Smooth transition on hover */
+        } 
         .delete-button {
-            background-color: #f44336;
+            background-color: red;
+            color: white;
+            padding: 8px 16px; /* Adjust padding as needed */
+            border: none;
+            cursor: pointer;
+            border-radius: 4px; /* Rounded corners */
+            transition: background-color 0.3s ease; /* Smooth transition on hover */
+        }
+
+        .edit-button:hover {
+            background-color: #45a049; /* Darker shade on hover */
         }
         .delete-button:hover {
-            background-color: #e53935;
+            background-color: red; /* Darker shade on hover */
         }
-        .form-group {
-            display:inline-table;
-            margin-bottom: 10px;
+
+        /* Optional: Center buttons horizontally */
+        .button-container {
+            text-align: center;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 8px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
         }
     </style>
     <script>
-        function editCustomer(row) {
-            var cells = row.getElementsByTagName("td");
-            document.getElementById("row_index").value = row.dataset.id; 
-            document.getElementById("customer_id").value = cells[0].innerHTML;
-            document.getElementById("customer_name").value = cells[1].innerHTML;
-            document.getElementById("address").value = cells[2].innerHTML;
-            document.getElementById("phone").value = cells[3].innerHTML;
-            document.getElementById("email").value = cells[4].innerHTML;
-            document.getElementById("gstin").value = cells[5].innerHTML;
-            document.getElementById("submitButton").innerText = "Update Customer"; // Change button text to "Update Customer"
+        // JavaScript to display delete success message if present
+        <?php if (!empty($delete_message)): ?>
+            alert("<?php echo $delete_message; ?>");
+        <?php endif; ?>
+
+        // JavaScript to display update success message if present
+        <?php if (!empty($update_message)): ?>
+            alert("<?php echo $update_message; ?>");
+        <?php endif; ?>
+
+        // Function to display modal and populate fields
+        function openEditModal(customerId, customerName, address, phone, email, gstin) {
+            // Get the modal
+            var modal = document.getElementById("editModal");
+
+            // Populate fields with customer data
+            document.getElementById("edit_customer_id").value = customerId;
+            document.getElementById("edit_customer_name").value = customerName;
+            document.getElementById("edit_address").value = address;
+            document.getElementById("edit_phone").value = phone;
+            document.getElementById("edit_email").value = email;
+            document.getElementById("edit_gstin").value = gstin;
+
+            // Display the modal
+            modal.style.display = "block";
         }
 
-        function deleteCustomer(row) {
-            var rowIndex = row.dataset.id; // Use data-id attribute for the row index
-            if (confirm("Are you sure you want to delete this record?")) {
-                var form = document.createElement("form");
-                form.method = "POST";
-                form.action = "customer.php";
+        // Function to close modal
+        function closeEditModal() {
+            // Get the modal
+            var modal = document.getElementById("editModal");
 
-                var input = document.createElement("input");
-                input.type = "hidden";
-                input.name = "delete_id";
-                input.value = rowIndex;
-                form.appendChild(input);
-
-                document.body.appendChild(form);
-                form.submit();
-            }
+            // Close the modal
+            modal.style.display = "none";
         }
     </script>
 </head>
 <body>
 
-<?php if (isset($_GET['alertMessage'])): ?>
-    <script>alert('<?php echo $_GET['alertMessage']; ?>');</script>
-<?php endif; ?>
-
-<div class="form-container">
+<div class="container">
     <form id="customerForm" method="POST" action="customer.php">
-        <div class="form-group">
-            <input type="hidden" id="row_index" name="row_index">
-            <label for="customer_id">Customer ID</label>
-            <input type="text" id="customer_id" name="customer_id" placeholder="Customer ID" required>&nbsp;&nbsp;
-            <label for="customer_name">Customer Name</label>
-            <input type="text" id="customer_name" name="customer_name" placeholder="Customer Name" required>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="customer_id">Customer ID</label>
+                <input type="text" id="customer_id" name="customer_id" placeholder="Customer ID" required>
+            </div>
+            <div class="form-group">
+                <label for="customer_name">Customer Name</label>
+                <input type="text" id="customer_name" name="customer_name" placeholder="Customer Name" required>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="address">Address</label> 
-            &nbsp; &nbsp;&nbsp;&nbsp;
-            <input type="text" id="address" name="address" placeholder="Address" required>&nbsp;&nbsp;
-            <label for="phone">Phone</label>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <input type="tel" id="phone" name="phone" placeholder="Phone" pattern="[0-9]{10}" title="Please enter 10 digits" required>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input type="text" id="address" name="address" placeholder="Address" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone</label>
+                <input type="tel" id="phone" name="phone" placeholder="Phone" pattern="[0-9]{10}" title="Please enter 10 digits" required>
+            </div>
         </div>
-        <div class="form-group"> 
-            <label for="email">Email</label>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <input type="email" id="email" name="email" placeholder="Email" pattern="^[a-zA-Z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,}$" title="Please enter a valid email address (eg. 0Bqz9@example.com)$" required>
-            &nbsp;
-            <label for="gstin">GSTIN</label>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <input type="text" id="gstin" name="gstin" placeholder="GSTIN" required>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Email" pattern="^[a-zA-Z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$" title="Please enter a valid email address (eg. example@example.com)" required>
+            </div>
+            <div class="form-group">
+                <label for="gstin">GSTIN</label>
+                <input type="text" id="gstin" name="gstin" placeholder="GSTIN" required>
+            </div>
         </div>
-        <button id="submitButton" type="submit">Add Customer</button>
+        <input type="submit" id="submitButton" value="Add Customer">
     </form>
 </div>
 
-<table>
-    <thead>
-        <tr>
-            <th>Customer ID</th>
-            <th>Customer Name</th>
-            <th>Address</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th>GSTIN</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody id="customerTableBody">
-        <?php if ($result->num_rows > 0): ?>
-            <?php while($row = $result->fetch_assoc()): ?>
-                <tr data-id="<?php echo $row["count"]; ?>"> <!-- Add data-id attribute for row index -->
-                    <td><?php echo $row["customer_id"]; ?></td>
-                    <td><?php echo $row["customer_name"]; ?></td>
-                    <td><?php echo $row["address"]; ?></td>
-                    <td><?php echo $row["phone"]; ?></td>
-                    <td><?php echo $row["email"]; ?></td>
-                    <td><?php echo $row["gstin"]; ?></td>
-                    <td>
-                        <button class="action-button edit-button" onclick="editCustomer(this.parentElement.parentElement)">Edit</button>
-                        <button class="action-button delete-button" onclick="deleteCustomer(this.parentElement.parentElement)">Delete</button>
-                    </td>
-                </tr>
-            <?php endwhile; ?>
-        <?php else: ?>
-            <tr>
-                <td colspan="8">No customers found</td>
-            </tr>
-        <?php endif; ?>
-    </tbody>
-</table>
+<?php
+if ($result->num_rows > 0) {
+    echo '<table>';
+    echo '<thead>';
+    echo '<tr>';
+    echo '<th>Customer ID</th>';
+    echo '<th>Customer Name</th>';
+    echo '<th>Address</th>';
+    echo '<th>Phone</th>';
+    echo '<th>Email</th>';
+    echo '<th>GSTIN</th>';
+    echo '<th>Action</th>';
+    echo '</tr>';
+    echo '</thead>';
+    echo '<tbody>';
+    // Output data of each row
+    while ($row = $result->fetch_assoc()) {
+        echo '<tr>';
+        echo '<td>' . htmlspecialchars($row["customer_id"]) . '</td>';
+        echo '<td>' . htmlspecialchars($row["customer_name"]) . '</td>';
+        echo '<td>' . htmlspecialchars($row["address"]) . '</td>';
+        echo '<td>' . htmlspecialchars($row["phone"]) . '</td>';
+        echo '<td>' . htmlspecialchars($row["email"]) . '</td>';
+        echo '<td>' . htmlspecialchars($row["gstin"]) . '</td>';
+        echo '<td class="button-container">';
+        
+        // Edit Button
+        echo '<button class="edit-button" onclick="openEditModal(\'' . htmlspecialchars($row["customer_id"]) . '\', \'' . htmlspecialchars($row["customer_name"]) . '\', \'' . htmlspecialchars($row["address"]) . '\', \'' . htmlspecialchars($row["phone"]) . '\', \'' . htmlspecialchars($row["email"]) . '\', \'' . htmlspecialchars($row["gstin"]) . '\')">Edit</button>';
+        
+        // Delete Button
+        echo '<form action="delete_customer.php" method="POST" style="display: inline; margin-left: 5px;">';
+        echo '<input type="hidden" name="customer_id" value="' . htmlspecialchars($row["customer_id"]) . '">';
+        echo '<button type="submit" class="delete-button" onclick="return confirm(\'Are you sure you want to delete this customer?\')">Delete</button>';
+        echo '</form>';
+        
+        echo '</td>';
+        echo '</tr>';
+    }
+    echo '</tbody>';
+    echo '</table>';
+} else {
+    echo "0 results";
+}
+?>
+<!-- The Modal -->
+<div id="editModal" class="modal">
 
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close" onclick="closeEditModal()">&times;</span>
+    <h2>Edit Customer</h2>
+    <form action="update_customer.php" method="POST">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="edit_customer_id">Customer ID</label>
+                <input type="text" id="edit_customer_id" name="customer_id" readonly>
+            </div>
+            <div class="form-group">
+                <label for="edit_customer_name">Customer Name</label>
+                <input type="text" id="edit_customer_name" name="customer_name" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="edit_address">Address</label>
+                <input type="text" id="edit_address" name="address" required>
+            </div>
+            <div class="form-group">
+                <label for="edit_phone">Phone</label>
+                <input type="tel" id="edit_phone" name="phone" pattern="[0-9]{10}" title="Please enter 10 digits" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="edit_email">Email</label>
+                <input type="email" id="edit_email" name="email" pattern="^[a-zA-Z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$" title="Please enter a valid email address (eg. example@example.com)" required>
+            </div>
+            <div class="form-group">
+                <label for="edit_gstin">GSTIN</label>
+                <input type="text" id="edit_gstin" name="gstin" required>
+            </div>
+        </div>
+        <input type="submit" value="Update">
+    </form>
+  </div>
+
+</div>
 </body>
 </html>
