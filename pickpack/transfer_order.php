@@ -196,7 +196,7 @@
                 <div class="row">
                     <label>
                         <span>Article No:</span>
-                        <select name="article_no" id="article_no" required onchange="fetchArticleDetails()">
+                        <select name="article_no" id="article_no" required onchange="fetchArticleDetails(this.value, this.parentNode.parentNode)">
                             <option value="">Select Article No</option>
                             <!-- PHP code to fetch article numbers from database -->
                             <?php
@@ -261,144 +261,144 @@
     </div>
 
     <script>
-    function fetchCustomerDetails() {
-    var customerName = document.getElementById('customer_name').value;
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'fetch_customer_details.php?customer_name=' + encodeURIComponent(customerName), true);
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-            var data = JSON.parse(xhr.responseText);
-            if (data.hasOwnProperty('error')) {
-                console.error('Error fetching customer details:', data.error);
-                // Optionally clear fields if no customer found
-                document.getElementById('address').value = '';
-                document.getElementById('phone').value = '';
-                document.getElementById('email').value = '';
-                document.getElementById('gst').value = '';
-            } else {
-                document.getElementById('address').value = data.address;
-                document.getElementById('phone').value = data.phone;
-                document.getElementById('email').value = data.email;
-                document.getElementById('gst').value = data.gstin;
-            }
-        } else {
-            console.error('Request failed. Status: ' + xhr.status);
-        }
-    };
-    xhr.send();
-}
-
-function fetchArticleDetails() {
-        var articleNo = document.getElementById('article_no').value;
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'fetch_article_details.php?article_no=' + encodeURIComponent(articleNo), true);
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                var data = JSON.parse(xhr.responseText);
-                populateSelect('color', data.colors); // Assuming 'colors' is an array of color options
-                populateSelect('size', data.sizes);   // Assuming 'sizes' is an array of size options
-            }
-        };
-        xhr.send();
-    }
-
-    function fetchArticleDetails() {
-        var articleNo = document.getElementById('article_no').value;
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'fetch_article_details.php?article_no=' + encodeURIComponent(articleNo), true);
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                var data = JSON.parse(xhr.responseText);
-                populateSelect('color', data.colors); // Assuming 'colors' is an array of color options
-                populateSelect('size', data.sizes);   // Assuming 'sizes' is an array of size options
-            }
-        };
-        xhr.send();
-    }
-
-    // Helper function to populate select options
-    function populateSelect(id, options) {
-        var select = document.getElementById(id);
-        select.innerHTML = '<option value="">Select ' + id.charAt(0).toUpperCase() + id.slice(1) + '</option>';
-        options.forEach(function(option) {
-            var optionElem = document.createElement('option');
-            optionElem.value = option;
-            optionElem.textContent = option;
-            select.appendChild(optionElem);
-        });
-    }
-
-    function openModal() {
-        document.getElementById('myModal').style.display = 'block';
-    }
-
-    function closeModal() {
-        document.getElementById('myModal').style.display = 'none';
-    }
-
-    function addItems() {
-        var quantity = document.getElementById('quantityInput').value;
-        var articleSelect = document.getElementById('article_no');
-        var colorSelect = document.getElementById('color');
-        var sizeSelect = document.getElementById('size');
-        var quantityInput = document.getElementById('quantity');
-
-        var form = document.querySelector('form');
-        var submitButton = form.querySelector('button[type="submit"]');
-        var container = form.querySelector('.center');
-
-        for (var i = 0; i < quantity; i++) {
-            // Create a new row
-            var row = document.createElement('div');
-            row.classList.add('row');
-
-            // Article No
-            var articleClone = articleSelect.cloneNode(true);
-            articleClone.removeAttribute('id');
-            articleClone.removeAttribute('onchange');
-            row.appendChild(articleClone);
-
-            // Color
-            var colorClone = colorSelect.cloneNode(true);
-            colorClone.removeAttribute('id');
-            row.appendChild(colorClone);
-
-            // Size
-            var sizeClone = sizeSelect.cloneNode(true);
-            sizeClone.removeAttribute('id');
-            row.appendChild(sizeClone);
-
-            // Quantity
-            var quantityClone = quantityInput.cloneNode(true);
-            quantityClone.removeAttribute('id');
-            row.appendChild(quantityClone);
-
-            // Delete button
-            var deleteButton = document.createElement('button');
-            deleteButton.innerHTML = 'X';
-            deleteButton.classList.add('delete-button');
-            deleteButton.type = 'button'; // Ensure it doesn't submit the form
-            deleteButton.onclick = (function (currentRow) {
-                return function() {
-                    currentRow.remove();
-                };
-            })(row); // Immediately invoked function to capture current row
-
-            row.appendChild(deleteButton);
-
-            // Insert the new row above the existing submit button
-            form.insertBefore(row, submitButton.parentNode);
-
-            // Add a margin for spacing between rows
-            row.style.marginBottom = '15px';
+        function fetchCustomerDetails() {
+            var customerName = document.getElementById('customer_name').value;
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'fetch_customer_details.php?customer_name=' + encodeURIComponent(customerName), true);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    var data = JSON.parse(xhr.responseText);
+                    if (data.hasOwnProperty('error')) {
+                        console.error('Error fetching customer details:', data.error);
+                        // Optionally clear fields if no customer found
+                        document.getElementById('address').value = '';
+                        document.getElementById('phone').value = '';
+                        document.getElementById('email').value = '';
+                        document.getElementById('gst').value = '';
+                    } else {
+                        document.getElementById('address').value = data.address;
+                        document.getElementById('phone').value = data.phone;
+                        document.getElementById('email').value = data.email;
+                        document.getElementById('gst').value = data.gstin;
+                    }
+                } else {
+                    console.error('Request failed. Status: ' + xhr.status);
+                }
+            };
+            xhr.send();
         }
 
-        // Update the hidden input value with the current count of dynamic rows
-        document.getElementById('dynamicRowsCount').value = document.querySelectorAll('.row').length - 1;
+        function fetchArticleDetails(articleNo, container) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'fetch_article_details.php?article_no=' + encodeURIComponent(articleNo), true);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    var data = JSON.parse(xhr.responseText);
+                    populateSelect(container.querySelector('#color'), data.colors);
+                    populateSelect(container.querySelector('#size'), data.sizes);
+                }
+            };
+            xhr.send();
+        }
 
-        // Close the modal and reset the quantity input
-        closeModal();
-    }
-        </script>
+        // Helper function to populate select options
+        function populateSelect(select, options) {
+            select.innerHTML = '<option value="">Select ' + select.id.charAt(0).toUpperCase() + select.id.slice(1) + '</option>';
+            options.forEach(function(option) {
+                var optionElem = document.createElement('option');
+                optionElem.value = option;
+                optionElem.textContent = option;
+                select.appendChild(optionElem);
+            });
+        }
+
+        function openModal() {
+            document.getElementById('myModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('myModal').style.display = 'none';
+        }
+
+        function addItems() {
+            var quantity = document.getElementById('quantityInput').value;
+            var articleSelect = document.getElementById('article_no');
+            var colorSelect = document.getElementById('color');
+            var sizeSelect = document.getElementById('size');
+            var quantityInput = document.getElementById('quantity');
+
+            var form = document.querySelector('form');
+            var submitButton = form.querySelector('button[type="submit"]');
+            var container = form.querySelector('.center');
+
+            for (var i = 0; i < quantity; i++) {
+                // Create a new row
+                var row = document.createElement('div');
+                row.classList.add('row');
+
+                // Article No
+                var articleClone = articleSelect.cloneNode(true);
+                articleClone.removeAttribute('id');
+                articleClone.removeAttribute('onchange');
+                row.appendChild(articleClone);
+
+                // Color
+                var colorClone = colorSelect.cloneNode(true);
+                colorClone.removeAttribute('id');
+                row.appendChild(colorClone);
+
+                // Size
+                var sizeClone = sizeSelect.cloneNode(true);
+                sizeClone.removeAttribute('id');
+                row.appendChild(sizeClone);
+
+                // Quantity
+                var quantityClone = quantityInput.cloneNode(true);
+                quantityClone.removeAttribute('id');
+                row.appendChild(quantityClone);
+
+                // Delete button
+                var deleteButton = document.createElement('button');
+                deleteButton.innerHTML = 'X';
+                deleteButton.classList.add('delete-button');
+                deleteButton.type = 'button'; // Ensure it doesn't submit the form
+                deleteButton.onclick = (function (currentRow) {
+                    return function() {
+                        currentRow.remove();
+                    };
+                })(row); // Immediately invoked function to capture current row
+
+                row.appendChild(deleteButton);
+
+                // Insert the new row above the existing submit button
+                form.insertBefore(row, submitButton.parentNode);
+
+                // Add a margin for spacing between rows
+                row.style.marginBottom = '15px';
+
+                // Fetch article details for the newly added row
+                fetchArticleDetails(articleClone.value, row);
+            }
+
+            // Update the hidden input value with the current count of dynamic rows
+            document.getElementById('dynamicRowsCount').value = document.querySelectorAll('.row').length - 1;
+
+            // Close the modal and reset the quantity input
+            closeModal();
+        }
+
+        // Function to check for success parameter in URL and display alert
+        function displayAlert() {
+            var urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('success') && urlParams.get('success') === '1') {
+                alert("Order has been transferred. Ready for picking.");
+            }
+        }
+
+        // Execute the function on page load
+        window.onload = function() {
+            displayAlert();
+        };
+    </script>
 </body>
 </html>
