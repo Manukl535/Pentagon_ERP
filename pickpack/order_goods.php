@@ -126,16 +126,16 @@
             text-decoration: none;
         }
         .delete-button {
-            font-size: 14px; 
-            padding: 6px 10px;
-            margin-left: 5px;
+        font-size: 14px; 
+        padding: 6px 10px;
+        margin-left: 5px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="title">
-            <h2>Transfer Order</h2>
+            <h2>Goods Order</h2>
         </div>
         <div class="order-form">
             <form action="submit_order.php" method="post">
@@ -150,12 +150,12 @@
                             include('../includes/connection.php');
 
                             // Fetch vendors from the database
-                            $query = "SELECT DISTINCT customer_name FROM pp_customer";
+                            $query = "SELECT DISTINCT name FROM vendors";
                             $result = $conn->query($query);
 
                             if ($result->num_rows > 0) {
                                 while ($row = $result->fetch_assoc()) {
-                                    echo '<option value="' . htmlspecialchars($row['customer_name']) . '">' . htmlspecialchars($row['customer_name']) . '</option>';
+                                    echo '<option value="' . htmlspecialchars($row['name']) . '">' . htmlspecialchars($row['name']) . '</option>';
                                 }
                             } else {
                                 echo '<option value="">No vendors found</option>';
@@ -262,30 +262,20 @@
 
     <script>
     function fetchVendorDetails() {
-    var vendorName = document.getElementById('vendor').value;
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'fetch_vendor_details.php?vendor=' + encodeURIComponent(vendorName), true);
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-            var data = JSON.parse(xhr.responseText);
-            console.log('Response from fetch_vendor_details.php:', data);
-
-            // Check if data is valid
-            if (data && data.Address && data.Phone && data.Email && data.GST) {
-                document.getElementById('address').value = data.Address;
-                document.getElementById('phone').value = data.Phone;
-                document.getElementById('email').value = data.Email;
-                document.getElementById('gst').value = data.GST;
-            } else {
-                console.log('Invalid data received:', data);
+        var vendorName = document.getElementById('vendor').value;
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'fetch_vendor_details.php?vendor=' + encodeURIComponent(vendorName), true);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                var data = JSON.parse(xhr.responseText);
+                document.getElementById('address').value = data.address;
+                document.getElementById('phone').value = data.phone;
+                document.getElementById('email').value = data.email;
+                document.getElementById('gst').value = data.gst;
             }
-        } else {
-            console.log('Request failed. Status:', xhr.status);
-        }
-    };
-    xhr.send();
-}
-
+        };
+        xhr.send();
+    }
 
     function fetchArticleDetails() {
         var articleNo = document.getElementById('article_no').value;
@@ -384,7 +374,8 @@
         // Close the modal and reset the quantity input
         closeModal();
     }
-    </script>
+</script>
+
 
 </body>
 </html>
