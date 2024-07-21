@@ -96,10 +96,11 @@
                 <tr>
                     <th>SI. No</th>
                     <th>DN Number</th>
+                    <th>Associate</th>
+                    <th>Actions</th>
                     <th>DN Quantity</th>
                     <th>Picked Quantity</th>
-                    <th>Associate Name</th>
-                    <th>Actions</th>
+                    
                 </tr>
             </thead>
             <tbody>
@@ -125,8 +126,6 @@
                     echo "<tr>";
                     echo "<td>" . $i . "</td>";
                     echo "<td>" . "DN" . sprintf("%03d", $i) . "</td>";
-                    echo "<td class='dn-quantity'>" . $dnQuantity . "</td>";
-                    echo "<td class='picked-quantity'>" . $pickedQuantity . "</td>";
                     echo "<td class='associate-cell'>";
                     echo "<select>";
                     echo "<option value=''>Select Associate</option>";
@@ -136,6 +135,8 @@
                     echo "</select>";
                     echo "</td>";
                     echo "<td><button class='assign-button' onclick='assignButtonClick(this)'>Assign</button></td>";
+                    echo "<td class='dn-quantity'>" . $dnQuantity . "</td>";
+                    echo "<td class='picked-quantity'>" . $pickedQuantity . "</td>";
                     echo "</tr>";
                 }
 
