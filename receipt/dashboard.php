@@ -86,9 +86,9 @@ function getReceivedOrders(){
             <div style="margin-top: 10px;"></div>
             <a href="vendors.php" class="w3-bar-item w3-button w3-padding w3-brown"><i style="font-size:15px" class="fa"> &#xf0c0;</i>&nbsp;Vendors(<?php echo getTotalVendors(); ?>)</a>
             <div style="margin-top: 10px;"></div>
-            <a href="#" class="w3-bar-item w3-button w3-padding w3-red"><i style="font-size:15px" class="fa">&#xf0ae;</i>&nbsp; Ordered goods(<?php echo getTotalOrders(); ?>)</a>
+            <a href="goods_ordered.php" class="w3-bar-item w3-button w3-padding w3-red"><i style="font-size:15px" class="fa">&#xf0ae;</i>&nbsp; Ordered goods(<?php echo getTotalOrders(); ?>)</a>
             <div style="margin-top: 10px;"></div>
-            <a href="approve_order.php" class="w3-bar-item w3-button w3-padding w3-green"><span style='font-size:15px;'>&#10004;</span>&nbsp; Received Goods(<?php echo getReceivedOrders(); ?>)</a>
+            <a href="goods_received.php" class="w3-bar-item w3-button w3-padding w3-green"><span style='font-size:15px;'>&#10004;</span>&nbsp; Received Goods(<?php echo getReceivedOrders(); ?>)</a>
             <div style="margin-top: 10px;"></div>
             <a href="#" class="w3-bar-item w3-button w3-padding w3-yellow"><i class="fa fa-heartbeat" style="font-size:24px"></i>&nbsp; Safety Report()</a>
         </div>
