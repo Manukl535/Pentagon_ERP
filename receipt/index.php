@@ -42,7 +42,7 @@ if (!isset($_SESSION['email'])) {
                 <div class="dropdown-content">
                     <a href="grn.php">GRN</a>
                     <a href="order_goods.php">Order Goods</a>
-                    <a href="#">Putaway</a>
+                    <a href="putaway.php">Putaway</a>
 
                 </div>
             </div>
