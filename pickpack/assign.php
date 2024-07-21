@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Table</title>
+    <title>Assign Work</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -21,7 +21,6 @@
         }
         .table-container {
             width: 80%;
-            padding: 10px;
             background-color: #ffffff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
@@ -82,9 +81,10 @@
             background-color: #f1f1f1;
         }
         .assigned-select {
-            border: none;
-            background: none;
-            pointer-events: none;
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f1f1f1;
         }
     </style>
 </head>
@@ -100,7 +100,6 @@
                     <th>Actions</th>
                     <th>DN Quantity</th>
                     <th>Picked Quantity</th>
-                    
                 </tr>
             </thead>
             <tbody>
@@ -108,24 +107,35 @@
                 session_start();
                 include('../includes/connection.php');
                 
-                $sql = "SELECT * FROM associates";
-                $result = $conn->query($sql);
-                $associates = [];
-                if ($result->num_rows > 0) {
-                    while($row = $result->fetch_assoc()) {
-                        $associates[] = $row;
+                // Fetch DN Numbers from dn_details table
+                $sql_dn = "SELECT dn_number FROM dn_details";
+                $result_dn = $conn->query($sql_dn);
+                $dn_numbers = [];
+                if ($result_dn->num_rows > 0) {
+                    while ($row_dn = $result_dn->fetch_assoc()) {
+                        $dn_numbers[] = $row_dn['dn_number'];
                     }
                 }
 
-                $rows = 10; // Number of rows you want in the table
-                for ($i = 1; $i <= $rows; $i++) {
+                // Fetch Associates from associates table
+                $sql_assoc = "SELECT id, username FROM associates";
+                $result_assoc = $conn->query($sql_assoc);
+                $associates = [];
+                if ($result_assoc->num_rows > 0) {
+                    while ($row_assoc = $result_assoc->fetch_assoc()) {
+                        $associates[] = $row_assoc;
+                    }
+                }
+
+                $rows = count($dn_numbers); // Number of rows based on DN Numbers fetched
+                for ($i = 0; $i < $rows; $i++) {
                     // Random quantities for demonstration
                     $dnQuantity = rand(1, 100);
                     $pickedQuantity = rand(0, $dnQuantity);
 
                     echo "<tr>";
-                    echo "<td>" . $i . "</td>";
-                    echo "<td>" . "DN" . sprintf("%03d", $i) . "</td>";
+                    echo "<td>" . ($i + 1) . "</td>";
+                    echo "<td>" . $dn_numbers[$i] . "</td>";
                     echo "<td class='associate-cell'>";
                     echo "<select>";
                     echo "<option value=''>Select Associate</option>";
