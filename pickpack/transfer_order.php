@@ -141,16 +141,16 @@
             <form action="submit_order.php" method="post">
                 <div class="row">
                     <label>
-                        <span>Vendor:</span>
-                        <select name="vendor" id="vendor" required onchange="fetchVendorDetails()">
-                            <option value="">Select Vendor</option>
-                            <!-- PHP code to fetch vendors from database -->
+                        <span>Customer Name:</span>
+                        <select name="customer_name" id="customer_name" required onchange="fetchCustomerDetails()">
+                            <option value="">Select Customer</option>
+                            <!-- PHP code to fetch customers from database -->
                             <?php
                             // Include the database connection
                             include('../includes/connection.php');
 
-                            // Fetch vendors from the database
-                            $query = "SELECT DISTINCT customer_name FROM pp_customer";
+                            // Fetch customers from the database
+                            $query = "SELECT customer_name FROM pp_customer";
                             $result = $conn->query($query);
 
                             if ($result->num_rows > 0) {
@@ -158,7 +158,7 @@
                                     echo '<option value="' . htmlspecialchars($row['customer_name']) . '">' . htmlspecialchars($row['customer_name']) . '</option>';
                                 }
                             } else {
-                                echo '<option value="">No vendors found</option>';
+                                echo '<option value="">No customers found</option>';
                             }
 
                             // Close the database connection
@@ -261,31 +261,46 @@
     </div>
 
     <script>
-    function fetchVendorDetails() {
-    var vendorName = document.getElementById('vendor').value;
+    function fetchCustomerDetails() {
+    var customerName = document.getElementById('customer_name').value;
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'fetch_vendor_details.php?vendor=' + encodeURIComponent(vendorName), true);
+    xhr.open('GET', 'fetch_customer_details.php?customer_name=' + encodeURIComponent(customerName), true);
     xhr.onload = function () {
         if (xhr.status === 200) {
             var data = JSON.parse(xhr.responseText);
-            console.log('Response from fetch_vendor_details.php:', data);
-
-            // Check if data is valid
-            if (data && data.Address && data.Phone && data.Email && data.GST) {
-                document.getElementById('address').value = data.Address;
-                document.getElementById('phone').value = data.Phone;
-                document.getElementById('email').value = data.Email;
-                document.getElementById('gst').value = data.GST;
+            if (data.hasOwnProperty('error')) {
+                console.error('Error fetching customer details:', data.error);
+                // Optionally clear fields if no customer found
+                document.getElementById('address').value = '';
+                document.getElementById('phone').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('gst').value = '';
             } else {
-                console.log('Invalid data received:', data);
+                document.getElementById('address').value = data.address;
+                document.getElementById('phone').value = data.phone;
+                document.getElementById('email').value = data.email;
+                document.getElementById('gst').value = data.gstin;
             }
         } else {
-            console.log('Request failed. Status:', xhr.status);
+            console.error('Request failed. Status: ' + xhr.status);
         }
     };
     xhr.send();
 }
 
+function fetchArticleDetails() {
+        var articleNo = document.getElementById('article_no').value;
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'fetch_article_details.php?article_no=' + encodeURIComponent(articleNo), true);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                var data = JSON.parse(xhr.responseText);
+                populateSelect('color', data.colors); // Assuming 'colors' is an array of color options
+                populateSelect('size', data.sizes);   // Assuming 'sizes' is an array of size options
+            }
+        };
+        xhr.send();
+    }
 
     function fetchArticleDetails() {
         var articleNo = document.getElementById('article_no').value;
@@ -384,7 +399,6 @@
         // Close the modal and reset the quantity input
         closeModal();
     }
-    </script>
-
+        </script>
 </body>
 </html>

@@ -306,7 +306,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 var greeting;
 if (currentHour >= 5 && currentHour < 12) {
     greeting = "Good morning!";
-} else if (currentHour >= 12 && currentHour < 18) {
+} else if (currentHour >= 12 && currentHour < 16) {
     greeting = "Good afternoon!";
 } else {
     greeting = "Good evening!";
