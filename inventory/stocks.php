@@ -185,7 +185,7 @@ $result = $conn->query($query);
                             <td><?php echo $row['article_no']; ?></td>
                             <td><?php echo $row['article_description']; ?></td>
                             <td><?php echo $row['color']; ?></td>
-                            <td><?php echo $row['available_quantity']; ?></td> <!-- Use correct column name -->
+                            <td><?php echo $row['available_quantity']; ?></td> 
                             <td><?php echo $row['category']; ?></td>
                             <td><?php echo $row['article_size']; ?></td>
                             <!-- <td><?php echo $row['status']; ?></td> -->

@@ -12,23 +12,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['assign'])) {
     // Check if both dropdowns are selected
     if (!empty($bin) && !empty($associate)) {
         // Generate CC ID
-        $cc_id = generateCCID($bin);
+        $audit_id = generateCCID($bin);
 
-        // Check if CC ID already exists
-        $sql_check = "SELECT cc_id FROM cc_data WHERE cc_id = '$cc_id'";
-        $result_check = $conn->query($sql_check);
-        
-        if ($result_check->num_rows > 0) {
-            echo "<script>alert('This location is already assigned for cycle count.'); window.location.href = 'cycle_count.php';</script>";
-        } else {
-            // Insert data into cc_data
-            $sql_insert = "INSERT INTO cc_data (cc_id, location, available_qty, associate_name) 
-                           VALUES ('$cc_id', '$bin', (SELECT available_quantity FROM inv_location WHERE location='$bin'), '$associate')";
-            
-            if ($conn->query($sql_insert) === TRUE) {
-                echo "<script>alert('Cycle count assigned successfully'); window.location.href = 'cycle_count.php';</script>"; 
+        // Check if location already exists in audit_log
+        $sql_check = "SELECT audit_id FROM audit_log WHERE location = ?";
+        $stmt_check = $conn->prepare($sql_check);
+        $stmt_check->bind_param("s", $bin);
+        $stmt_check->execute();
+        $stmt_check->store_result();
+
+        if ($stmt_check->num_rows > 0) {
+            // Location exists, update the record
+            $sql_update = "UPDATE audit_log SET audit_id = ?, associate = ? WHERE location = ?";
+            $stmt_update = $conn->prepare($sql_update);
+            $stmt_update->bind_param("sss", $audit_id, $associate, $bin);
+
+            if ($stmt_update->execute()) {
+                echo "<script>alert('Audit assignment updated successfully'); window.location.href = 'stocks_audit.php';</script>";
             } else {
-                echo "Error: " . $sql_insert . "<br>" . $conn->error;
+                echo "Error updating record: " . $stmt_update->error;
+            }
+        } else {
+            // Location does not exist, insert new record
+            $sql_insert = "INSERT INTO audit_log (audit_id, location, associate) VALUES (?, ?, ?)";
+            $stmt_insert = $conn->prepare($sql_insert);
+            $stmt_insert->bind_param("sss", $audit_id, $bin, $associate);
+
+            if ($stmt_insert->execute()) {
+                echo "<script>alert('Audit assignment inserted successfully'); window.location.href = 'stocks_audit.php';</script>";
+            } else {
+                echo "Error inserting record: " . $stmt_insert->error;
             }
         }
     } else {
@@ -38,17 +51,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['assign'])) {
 
 // Handle delete request
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete'])) {
-    // Retrieve cc_id to delete
-    $cc_id = $_POST['cc_id'];
+  // Retrieve audit_id to delete
+  $audit_id = $_POST['audit_id'];
 
-    // Delete data from cc_data
-    $sql_delete = "DELETE FROM cc_data WHERE cc_id='$cc_id'";
-    
-    if ($conn->query($sql_delete) === TRUE) {
-        echo "<script>alert('Cycle count deleted successfully'); window.location.href = 'cycle_count.php';</script>"; 
-    } else {
-        echo "Error: " . $sql_delete . "<br>" . $conn->error;
-    }
+  // Update data in audit_log
+  $sql_delete = "UPDATE audit_log SET associate = NULL, audit_quantity = NULL, audit_id = NULL WHERE audit_id=?";
+  $stmt_delete = $conn->prepare($sql_delete);
+  $stmt_delete->bind_param("s", $audit_id);
+
+  if ($stmt_delete->execute()) {
+      echo "<script>alert('Audit data deleted successfully'); window.location.href = 'stocks_audit.php';</script>"; 
+  } else {
+      echo "Error deleting record: " . $stmt_delete->error;
+  }
 }
 
 // Function to generate CC ID
@@ -61,9 +76,9 @@ function generateCCID($location) {
     $year = date('y'); // 2-digit year
 
     // Format the CC ID
-    $cc_id = $location_prefix . sprintf('%02d', $day) . $year;
+    $audit_id = $location_prefix . sprintf('%02d', $day) . $year;
     
-    return $cc_id;
+    return $audit_id;
 }
 ?>
 
@@ -72,7 +87,7 @@ function generateCCID($location) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Assign Bin for Cycle Count</title>
+<title>Assign Bin for Audit</title>
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -126,7 +141,10 @@ function generateCCID($location) {
 </style>
 </head>
 <body>
-  <h2>Cycle Count</h2>
+  <?php
+  include('start_audit.php');
+  ?>
+  <h2>Stock Audit</h2>
   
   <form action="#" method="post" style="    max-width: 400px;
     margin: 0 auto;
@@ -139,7 +157,7 @@ function generateCCID($location) {
       <option value="">Select Location</option>
       <?php
       // Query to fetch bin locations with available_qty > 0
-      $sql = "SELECT location FROM inv_location WHERE available_quantity > 0";
+      $sql = "SELECT location FROM audit_log WHERE qty_23_24 > 0";
       $result = $conn->query($sql);
       
       if ($result->num_rows > 0) {
@@ -176,10 +194,10 @@ function generateCCID($location) {
   <table>
     <thead>
       <tr>
-        <th>CC ID</th>
+        <th>Audit ID</th>
+        <th>Assigned To</th>
         <th>Location</th>
         <th>Location Qty</th>
-        <th>Assign To</th>
         <th>Scanned Qty</th>
         <th>Difference</th>
         <th>Location Status</th>
@@ -188,38 +206,34 @@ function generateCCID($location) {
     </thead>
     <tbody>
       <?php
-      // Query to fetch bin data from cc_data
-      $sql = "SELECT cc_id, location, available_qty, associate_name, scanned_qty FROM cc_data";
+      // Example logic to fetch and display audit details
+      $sql = "SELECT audit_id, associate, location, qty_23_24, audit_quantity as scanned_qty FROM audit_log WHERE qty_23_24 > 0";
       $result = $conn->query($sql);
 
       if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-          echo "<tr>";
-          echo "<td>" . htmlspecialchars($row['cc_id']) . "</td>";
-          echo "<td>" . htmlspecialchars($row['location']) . "</td>";
-          echo "<td>" . htmlspecialchars($row['available_qty']) . "</td>";
-          echo "<td>" . htmlspecialchars($row['associate_name']) . "</td>";
-          echo "<td>" . htmlspecialchars($row['scanned_qty']) . "</td>";
-          // Calculate available quantity minus scanned quantity
-          $available_qty = intval($row['available_qty']);
-          $scanned_qty = intval($row['scanned_qty']);
-          $remaining_qty = $available_qty - $scanned_qty;
-          echo "<td>" . $remaining_qty . "</td>";
-          // Assuming 'Normal' is static; otherwise, calculate based on conditions
-          echo "<td>Normal</td>";
-          echo "<td>
-                  <form action='#' method='post' style='display:inline;'>
-                      <input type='hidden' name='cc_id' value='" . htmlspecialchars($row['cc_id']) . "'>
-                      <input type='submit' name='delete' value='Delete'>
-                  </form>
-                </td>";
-          echo "</tr>";
-        }
+          while ($row = $result->fetch_assoc()) {
+              echo "<tr>";
+              echo "<td>" . htmlspecialchars($row['audit_id']) . "</td>";
+              echo "<td>" . htmlspecialchars($row['associate']) . "</td>";
+              echo "<td>" . htmlspecialchars($row['location']) . "</td>";
+              echo "<td>" . htmlspecialchars($row['qty_23_24']) . "</td>";
+              echo "<td>" . htmlspecialchars($row['scanned_qty']) . "</td>";
+              // Calculate difference if needed
+              $difference = intval($row['qty_23_24']) - intval($row['scanned_qty']);
+              echo "<td>" . $difference . "</td>";
+              // Assuming 'Normal' is static; otherwise, calculate based on conditions
+              echo "<td>Normal</td>";
+              echo "<td>
+                        <form action='#' method='post' style='display:inline;'>
+                            <input type='hidden' name='audit_id' value='" . htmlspecialchars($row['audit_id']) . "'>
+                            <input type='submit' name='delete' value='Delete'>
+                        </form>
+                    </td>";
+              echo "</tr>";
+          }
       } else {
-        echo "<tr><td colspan='8'>No Works Found</td></tr>";
+          echo "<tr><td colspan='8'>No audit data found</td></tr>";
       }
-
-      $conn->close();
       ?>
     </tbody>
   </table>

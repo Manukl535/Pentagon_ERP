@@ -166,8 +166,30 @@ if (!isset($_SESSION['email'])) {
                         <form id="deleteForm" action="delete_location.php" method="POST">
                             <div class="form-group">
                                 <label for="delete_location" style="font-size: 15px;">Location Name:</label>
-                                <input type="text" id="delete_location" name="delete_location" class="form-control" style="width: 350px;" required>
-                            </div>
+                                
+                                <select id="location" name="location" class="form-control" style="width: 350px;" required>
+    <option value="">Select Location</option>
+    <?php
+    // Include the database connection
+    include('../includes/connection.php');
+
+    $query = "SELECT location FROM inv_location WHERE available_quantity < 0 OR available_quantity IS NULL";
+    $result = $conn->query($query);
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            echo '<option value="' . htmlspecialchars($row['location']) . '">' . htmlspecialchars($row['location']) . '</option>';
+        }
+    } else {
+        echo '<option value="">No empty locations found</option>';
+    }
+
+    // Close database connection
+    $conn->close();
+    ?>
+</select>
+
+                    </div>
                             <div class="form-group">
                                 <label for="remarks" style="font-size: 15px;">Remarks:</label>
                                 <input type="text" id="remarks" name="remarks" class="form-control" required>

@@ -44,7 +44,9 @@ if (!isset($_SESSION['email'])) {
                     <a href="manage_loc.php">Manage Locations</a>
                     <a href="bin_transfer.php">Bin Transfer</a>
                     <a href="cycle_count.php">Cycle Count</a>
+                    <a href="stocks_audit.php">Stock Audit</a>
                     <a href="safety_report.php">Report Issues</a>
+
                 </div>
             </div>
         </div>
@@ -67,7 +69,7 @@ if (!isset($_SESSION['email'])) {
         </div>
     </nav>
 
-    <!-- <?php include('');?> -->
+    <?php include('ama.php');?>
 
 </body>
 </html>

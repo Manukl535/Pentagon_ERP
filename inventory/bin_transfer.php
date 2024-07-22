@@ -78,7 +78,7 @@ if (!isset($_SESSION['email'])) {
                         <option value="">Select Location</option>
                         <?php
                         // Fetch locations from inv_location table
-                        $query = "SELECT location FROM inv_location";
+                        $query = "SELECT location FROM inv_location WHERE available_quantity > 0";
                         $result = $conn->query($query);
 
                         if ($result->num_rows > 0) {

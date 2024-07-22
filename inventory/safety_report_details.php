@@ -89,7 +89,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                 echo "</tr>";
             }
             ?>
-            <?php echo "<tr><td colspan='5' style='text-align:center;'>No data found</td></tr>"; ?>
+            
 
         </tbody>
     </table>

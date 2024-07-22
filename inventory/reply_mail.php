@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Handle success or failure
     if ($stmt->affected_rows > 0) {
-        echo "success";
+        echo "<script>alert('Reply sent successfully'); window.location.href = 'mail.php';</script>";
     } else {
         echo "error";
     }

@@ -1,0 +1,31 @@
+Operation,Description,Example Utterance,Answer,Category,Intent
+Order Goods,Requesting to order goods for the warehouse,I need to order goods.,Login in to receipt using credentials provided by your organisation and in work select the order goods and fill the order form with necessary stock list.,Order Goods,order_goods
+Receive Goods,Inquiry about receiving goods into the warehouse,Can you help me with GRN,"Login in to receipt using credentials provided by your organisation and in work select the GRN, Enter the PO to get the order details and Approve the required order.",Receive goods,receive_goods
+Putaway,Request to allocate received goods to their designated storage locations,How to do putaway,Assign the works to associate using Putaway unit and If location capacity is not meeted ask Inventory for new location.,Inventory,putaway_goods
+Dispatch Order,Inquiry or instruction regarding dispatching orders to customers or other destinations,How do I dispatch orders?,Enter the PO to get the order details and do dispatch.,Dispatch,dispatch_order
+Update Inventory,"Requesting to update inventory records (e.g., adjustments, transfers)",I need to update the inventory count.,Navigate to Manage inventory and edit the quantity as required.,Inventory,update_inventory
+Greetings,Greetings on user input,Hi,Hello! How can I assist you today?,General,Greetings
+Greetings,Greetings on user input,hi,Hello! How can I assist you today?,General,Greetings
+Greetings,Greetings on user input,HAI,Hello! How can I assist you today?,General,Greetings
+Greetings,Greetings on user input,Hai,Hello! How can I assist you today?,General,Greetings
+Greetings,Greetings on user input,hai,Hello! How can I assist you today?,General,Greetings
+Greetings,Greetings on user input,hello,Hello! How can I help you today?,General,Greetings
+Greetings,Greetings on user input,HELLO,Hello! How can I help you today?,General,Greetings
+Greetings,Greetings on user input,Hello,Hello! How can I help you today?,General,Greetings
+Greetings,Greetings on user input,Good morning,Morning! Ready to tackle the day? How can I assist you?,General,Greetings
+Greetings,Greetings on user input,Good afternoon,Afternoon! What can I do to make your day better?,General,Greetings
+Greetings,Greetings on user input,Good evening,Evening! Need a night owl's assistance?,General,Greetings
+Greetings,Greetings on user input,Good night,Good night! Have a good sleep and sweet dreams!,General,Greetings
+Greetings,Greetings on user input,Howdy,"Howdy, partner! What's on your mind today?",General,Greetings
+Farewell,Farewell on user input,Goodbye,Goodbye! Don't forget to come back soon!,General,Farewell
+Farewell,Farewell on user input,Bye,Bye! Stay awesome!,General,Farewell
+Farewell,Farewell on user input,See you later,Catch you later! Have a fun day!,General,Farewell
+Small Talk,Small talk on user input,How are you?,"I'm a bot, so always tip-top! How about you?",General,Small Talk
+Small Talk,Small talk on user input,What's up?,Just hanging out in the digital world. You?,General,Small Talk
+Small Talk,Small talk on user input,Where do you live?,"I live in the cloud, floating around the internet!",General,Small Talk
+Small Talk,Small talk on user input,Are you married?,"I'm married to my work, helping awesome people like you!",General,Small Talk
+Small Talk,Small talk on user input,Did you eat?,"I'm a bot, so no food for me. But I hope you had something tasty!",General,Small Talk
+Information,Asking for help,I need help,Help is my middle name! What do you need?,General,Information
+Thanks,	Responding to expressions of gratitude,	Thank you!,	You're welcome! Glad I could help.,	General,Thanks
+Who are you,	Inquiry about identity,	Who are you?,	I'm AMA! How can I assist you today?.,	General,	Identity Disclosure
+What is your name,	Inquiry about identity,	What is your name?,	My name is AMA.,	General,	Identity Disclosure
