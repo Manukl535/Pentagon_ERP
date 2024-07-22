@@ -33,6 +33,29 @@ function getReceivedOrders(){
     $row = mysqli_fetch_assoc($result);
     return $row['po_number'];
 }
+
+function getTopSellingProducts() {
+    global $conn;
+    $sql = "SELECT article_no AS product_name, SUM(quantity) AS total_ordered FROM orders GROUP BY product_name ORDER BY total_ordered DESC LIMIT 5";
+    $result = mysqli_query($conn, $sql);
+    $products = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $products[] = [
+            'product_name' => $row['product_name'],
+            'total_ordered' => $row['total_ordered']
+        ];
+    }
+    return $products;
+}
+
+// Fetch data for Ordered goods and Received Goods
+$orderedGoods = getTotalOrders();
+$receivedGoods = getReceivedOrders();
+
+// Fetch top selling products data
+$topSellingProducts = getTopSellingProducts();
+$productNames = array_column($topSellingProducts, 'product_name');
+$totalOrdered = array_column($topSellingProducts, 'total_ordered');
 ?>
 
 <!DOCTYPE html>
@@ -47,7 +70,6 @@ function getReceivedOrders(){
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 
     <style>
         html,
@@ -86,9 +108,9 @@ function getReceivedOrders(){
             <div style="margin-top: 10px;"></div>
             <a href="vendors.php" class="w3-bar-item w3-button w3-padding w3-brown"><i style="font-size:15px" class="fa"> &#xf0c0;</i>&nbsp;Vendors(<?php echo getTotalVendors(); ?>)</a>
             <div style="margin-top: 10px;"></div>
-            <a href="goods_ordered.php" class="w3-bar-item w3-button w3-padding w3-red"><i style="font-size:15px" class="fa">&#xf0ae;</i>&nbsp; Ordered goods(<?php echo getTotalOrders(); ?>)</a>
+            <a href="goods_ordered.php" class="w3-bar-item w3-button w3-padding w3-red"><i style="font-size:15px" class="fa">&#xf0ae;</i>&nbsp; Ordered goods(<?php echo $orderedGoods; ?>)</a>
             <div style="margin-top: 10px;"></div>
-            <a href="goods_received.php" class="w3-bar-item w3-button w3-padding w3-green"><span style='font-size:15px;'>&#10004;</span>&nbsp; Received Goods(<?php echo getReceivedOrders(); ?>)</a>
+            <a href="goods_received.php" class="w3-bar-item w3-button w3-padding w3-green"><span style='font-size:15px;'>&#10004;</span>&nbsp; Received Goods(<?php echo $receivedGoods; ?>)</a>
             <div style="margin-top: 10px;"></div>
             <a href="#" class="w3-bar-item w3-button w3-padding w3-yellow"><i class="fa fa-heartbeat" style="font-size:24px"></i>&nbsp; Safety Report()</a>
         </div>
@@ -107,11 +129,10 @@ function getReceivedOrders(){
                 <div class="w3-container w3-brown w3-padding-16">
                     <div class="w3-left"><i style="font-size:58px" class="fa"> &#xf0c0;</i></div>
                     <div class="w3-right">
-                        <h3></h3>
+                        <h3><?php echo getTotalVendors(); ?></h3>
                     </div>
                     <div class="w3-clear"></div>
-                    <h4>Vendors (<?php echo getTotalVendors(); ?>)</h4>
-
+                    <h4>Vendors</h4>
                 </div>
             </div>
 
@@ -119,10 +140,10 @@ function getReceivedOrders(){
                 <div class="w3-container w3-red w3-padding-16">
                     <div class="w3-left"><i style="font-size:58px" class="fa">&#xf0ae;</i></div>
                     <div class="w3-right">
-                        <h3></h3>
+                        <h3><?php echo $orderedGoods; ?></h3>
                     </div>
                     <div class="w3-clear"></div>
-                    <h4>Ordered goods(<?php echo getTotalOrders(); ?>)</h4>
+                    <h4>Ordered goods</h4>
                 </div>
             </div>
 
@@ -130,10 +151,10 @@ function getReceivedOrders(){
                 <div class="w3-container w3-green w3-padding-16">
                     <div class="w3-left"><span style='font-size:40px;'>&#10004;</span></div>
                     <div class="w3-right">
-                        <h3></h3>
+                        <h3><?php echo $receivedGoods; ?></h3>
                     </div>
                     <div class="w3-clear"></div>
-                    <h4>Received Goods(<?php echo getReceivedOrders(); ?>)</h4>
+                    <h4>Received Goods</h4>
                 </div>
             </div>
             
@@ -141,58 +162,125 @@ function getReceivedOrders(){
                 <div class="w3-container w3-yellow w3-padding-16">
                     <div class="w3-left"><i style="font-size:58px" class="fa">&#xf21e;</i></div>
                     <div class="w3-right">
-                        <h3></h3>
+                        <h3>---</h3>
                     </div>
                     <div class="w3-clear"></div>
-                    <h4>Safety Report()</h4>
+                    <h4>Safety Report</h4>
                 </div>
             </div>
         </div>
-        <div class="w3-container">
-            <h4>General Stats</h4>
 
-            <div class="w3-row">
-                <div class="w3-half">
+        <div class="w3-row-padding w3-margin-bottom">
+            <div class="w3-half">
+                <div class="w3-container w3-card w3-white w3-margin-bottom">
+                    <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-bar-chart fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>Stock Ordered vs Received</h2>
                     <div class="w3-container">
-                        <h5>Weekly Stock Movement</h5>
-                        <canvas id="stockChart" style="max-width: 100%;"></canvas>
-                    </div>
-                </div>
-                <div class="w3-half">
-                    <div class="w3-container">
-                        <h5>Top Products</h5>
-                        <canvas id="topProductsChart" style="max-width: 100%;"></canvas>
+                        <canvas id="stockChart"></canvas>
                     </div>
                 </div>
             </div>
-            <script src="script.js"></script>
+
+            <div class="w3-half">
+                <div class="w3-container w3-card w3-white w3-margin-bottom">
+                    <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-bar-chart fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>Top Vs Least Ordered</h2>
+                    <div class="w3-container">
+                        <canvas id="topProductsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <center>
+    <div style="padding: 10px auto">
+        <p>2024 © All Rights Reserved | Developed and Maintained by <b>Pentagon</b></p>
+    </div>
+</center>
+
         </div>
-
-        <center>
-            <br />
-            <p>2024 &#169; All Rights Reserved | Developed and Maintained by <b>Pentagon</b></p>
-
-        </center>
-
 
         <script>
-            //Real time formats
+            // Chart.js code for Stock Ordered vs Received
+            document.addEventListener("DOMContentLoaded", function() {
+                var ctx = document.getElementById('stockChart').getContext('2d');
+
+                var data = {
+                    labels: ['Ordered Goods', 'Received Goods'],
+                    datasets: [{
+                        label: 'Comparison',
+                        data: [<?php echo $orderedGoods; ?>, <?php echo $receivedGoods; ?>],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)', // Red color with opacity
+                            'rgba(54, 162, 235, 0.2)' // Blue color with opacity
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)', // Red border color
+                            'rgba(54, 162, 235, 1)' // Blue border color
+                        ],
+                        borderWidth: 1
+                    }]
+                };
+
+                var options = {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                };
+
+                var stockChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: data,
+                    options: options
+                });
+            });
+
+            // Chart.js code for Top Selling Products
+            document.addEventListener("DOMContentLoaded", function() {
+                var ctx = document.getElementById('topProductsChart').getContext('2d');
+
+                var data = {
+                    labels: <?php echo json_encode($productNames); ?>,
+                    datasets: [{
+                        label: 'Total Ordered',
+                        data: <?php echo json_encode($totalOrdered); ?>,
+                        backgroundColor: 'rgba(255, 159, 64, 0.2)', // Orange color with opacity
+                        borderColor: 'rgba(255, 159, 64, 1)', // Orange border color
+                        borderWidth: 1
+                    }]
+                };
+
+                var options = {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                };
+
+                var topProductsChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: data,
+                    options: options
+                });
+            });
+
+            // Real time formats
             function updateTimeAndGreeting() {
-                // Get current time
                 var now = new Date();
                 var hours = now.getHours();
                 var minutes = now.getMinutes();
                 var seconds = now.getSeconds();
 
-                // Format hours, minutes, and seconds to have leading zeros if needed
                 hours = (hours < 10 ? "0" : "") + hours;
                 minutes = (minutes < 10 ? "0" : "") + minutes;
                 seconds = (seconds < 10 ? "0" : "") + seconds;
 
-                // Display the time in the format "10:10:00"
                 document.getElementById("real-time").textContent = "Time: " + hours + ":" + minutes + ":" + seconds;
 
-                // Determine the greeting based on the current hour
                 var greeting;
                 if (hours < 12) {
                     greeting = "Good Morning!";
@@ -202,18 +290,15 @@ function getReceivedOrders(){
                     greeting = "Good Evening!";
                 }
 
-                // Display the greeting
                 document.getElementById("greeting").textContent = greeting;
             }
 
-            // Call updateTimeAndGreeting function every second to update the clock and greeting
             setInterval(updateTimeAndGreeting, 1000);
-
-            // Initial call to display time and greeting immediately
             updateTimeAndGreeting();
-
         </script>
 
+    </div>
+    
 </body>
 
 </html>
