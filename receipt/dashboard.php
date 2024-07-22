@@ -95,7 +95,7 @@ $totalOrdered = array_column($topSellingProducts, 'total_ordered');
     <nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;" id="mySidebar"><br>
         <div class="w3-container w3-row">
             <div class="w3-col s8 w3-bar">
-                <span style="padding-top:0">Welcome <?php echo isset($_SESSION['name']) ? $_SESSION['name'] : ''; ?>,</span><br>
+                <span style="padding-top:0">Welcome <?php echo isset($_SESSION['name']) ? ucfirst($_SESSION['name']) : ''; ?>,</span><br>
                 <span id="greeting"></span><br>
                 <span id="real-time"></span>
             </div>
@@ -236,7 +236,7 @@ $totalOrdered = array_column($topSellingProducts, 'total_ordered');
                 });
             });
 
-            // Chart.js code for Top Selling Products
+            // Chart.js code for Top ordered Products
             document.addEventListener("DOMContentLoaded", function() {
                 var ctx = document.getElementById('topProductsChart').getContext('2d');
 
