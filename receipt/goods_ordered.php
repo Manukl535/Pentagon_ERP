@@ -98,7 +98,7 @@ $serialNumber = 1;
                 }
                 
                 
-                echo "<td>" . htmlspecialchars($row["received_by"]) . "</td>";
+                echo "<td>" . htmlspecialchars(ucfirst($row["received_by"])) . "</td>";($row["received_by"]) . "</td>";
                 echo "</tr>";
 
                 // Increment serial number

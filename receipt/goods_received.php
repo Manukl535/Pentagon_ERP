@@ -103,7 +103,7 @@ function getApprovedQty($po_number){
                 } else {
                     echo "<td class='status-on-hold'>" . htmlspecialchars($row["status_text"]) . "</td>";
                 }
-                echo "<td>" . htmlspecialchars($row["received_by"]) . "</td>";
+                echo "<td>" . htmlspecialchars(ucfirst($row["received_by"])) . "</td>";
                 echo "</tr>";
                 
                 // Increment serial number
