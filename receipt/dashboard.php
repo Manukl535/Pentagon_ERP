@@ -112,7 +112,7 @@ $totalOrdered = array_column($topSellingProducts, 'total_ordered');
             <div style="margin-top: 10px;"></div>
             <a href="goods_received.php" class="w3-bar-item w3-button w3-padding w3-green"><span style='font-size:15px;'>&#10004;</span>&nbsp; Received Goods(<?php echo $receivedGoods; ?>)</a>
             <div style="margin-top: 10px;"></div>
-            <a href="#" class="w3-bar-item w3-button w3-padding w3-yellow"><i class="fa fa-heartbeat" style="font-size:24px"></i>&nbsp; Safety Report()</a>
+            <a href="safety_report_details.php" class="w3-bar-item w3-button w3-padding w3-yellow"><i class="fa fa-heartbeat" style="font-size:24px"></i>&nbsp; Safety Report()</a>
         </div>
     </nav>
 

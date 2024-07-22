@@ -43,6 +43,7 @@ if (!isset($_SESSION['email'])) {
                     <a href="grn.php">GRN</a>
                     <a href="order_goods.php">Order Goods</a>
                     <a href="putaway.php">Putaway</a>
+                    <a href="safety_report.php">Report Issues</a>
 
                 </div>
             </div>

@@ -44,6 +44,7 @@ if (!isset($_SESSION['email'])) {
                     <a href="manage_loc.php">Manage Locations</a>
                     <a href="bin_transfer.php">Bin Transfer</a>
                     <a href="cycle_count.php">Cycle Count</a>
+                    <a href="safety_report.php">Report Issues</a>
                 </div>
             </div>
         </div>

@@ -92,7 +92,7 @@ $conn->close();
         <a href="#" class="w3-bar-item w3-button w3-padding w3-light-blue"><i style="font-size:24px" class="fa">&#xf4ad;</i> Feedbacks</a>
         <div style="margin-top: 10px;"></div>
 
-        <a href="#" class="w3-bar-item w3-button w3-padding w3-yellow"><i class="fa fa-heartbeat" style="font-size:24px"></i>&nbsp; Safety Report</a>
+        <a href="safety_report_details.php" class="w3-bar-item w3-button w3-padding w3-yellow"><i class="fa fa-heartbeat" style="font-size:24px"></i>&nbsp; Safety Report</a>
     </div>
 </nav>
 

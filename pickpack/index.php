@@ -43,6 +43,7 @@ if (!isset($_SESSION['email'])) {
                 <div class="dropdown-content">
                     <a href="assign.php">Assign Orders</a>
                     <a href="transfer_order.php">Transfer Order</a>
+                    <a href="safety_report.php">Report Issues</a>
                    
                 </div>
             </div>

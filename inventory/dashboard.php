@@ -95,7 +95,7 @@ $auditReportStatus = getAuditReportStatus($conn);
             <div style="margin-top: 10px;"></div>
             <a href="audit_report.php" class="w3-bar-item w3-button w3-padding w3-red"><i class="fa fa-list" style="font-size:15px"></i>&nbsp; Audit Report (<?php echo $auditReportStatus; ?>)</a>
             <div style="margin-top: 10px;"></div>   
-            <a href="#" class="w3-bar-item w3-button w3-padding w3-yellow"><i class="fa fa-heartbeat" style="font-size:24px"></i>&nbsp; Safety Report</a>
+            <a href="safety_report_details.php" class="w3-bar-item w3-button w3-padding w3-yellow"><i class="fa fa-heartbeat" style="font-size:24px"></i>&nbsp; Safety Report</a>
         </div>
     </nav>
 
