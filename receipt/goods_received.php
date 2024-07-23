@@ -1,5 +1,14 @@
 <?php
-include('../includes/connection.php');
+session_start();
+include('../Includes/connection.php');
+
+// Check if user is logged in and session variable is set
+if (!isset($_SESSION['email'])) {
+    // Redirect to login page or handle unauthorized access
+    header("Location: ../index.php");
+    exit(); // Ensure script stops executing after redirection
+}
+
 
 $sql = "SELECT orders.*, 
                CASE WHEN approved_po.po_number IS NOT NULL THEN 'Received' ELSE 'Not Received' END AS status_text,

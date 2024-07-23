@@ -8,6 +8,7 @@ if (!isset($_SESSION['email'])) {
     header("Location: ../index.php");
     exit(); // Ensure script stops executing after redirection
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

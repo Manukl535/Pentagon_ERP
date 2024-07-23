@@ -1,9 +1,13 @@
 <?php
-// fetch_customer_details.php
+session_start();
+include('../Includes/connection.php');
 
-// Include the database connection
-include('../includes/connection.php');
-
+// Check if user is logged in and session variable is set
+if (!isset($_SESSION['email'])) {
+    // Redirect to login page or handle unauthorized access
+    header("Location: ../index.php");
+    exit(); // Ensure script stops executing after redirection
+}
 // Check if customer_name is set and not empty
 if (isset($_GET['customer_name']) && !empty($_GET['customer_name'])) {
     // Get the selected customer name from GET parameter

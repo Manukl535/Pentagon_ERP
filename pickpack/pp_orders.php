@@ -1,5 +1,13 @@
 <?php
-include('../includes/connection.php');
+session_start();
+include('../Includes/connection.php');
+
+// Check if user is logged in and session variable is set
+if (!isset($_SESSION['email'])) {
+    // Redirect to login page or handle unauthorized access
+    header("Location: ../index.php");
+    exit(); // Ensure script stops executing after redirection
+}
 
 $sql = "SELECT t.count, t.po_number, t.customer_name, t.quantity, 
                CASE WHEN d.assigned_to IS NOT NULL AND d.assigned_to <> '' THEN 'Assigned' ELSE 'On Hold' END AS assigned_to_status
