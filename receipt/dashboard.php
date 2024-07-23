@@ -8,7 +8,8 @@ if (!isset($_SESSION['email'])) {
     header("Location: ../index.php");
     exit(); // Ensure script stops executing after redirection
 }
-
+// Retrieve the logged-in user's email from session
+$user_email = $_SESSION['email'];
 function getTotalVendors()
 {
     global $conn;
@@ -56,6 +57,16 @@ $receivedGoods = getReceivedOrders();
 $topSellingProducts = getTopSellingProducts();
 $productNames = array_column($topSellingProducts, 'product_name');
 $totalOrdered = array_column($topSellingProducts, 'total_ordered');
+
+function toGetReportedIssues() {
+    global $conn;
+    $sql = "SELECT COUNT(*) AS total_issues FROM safety_reports";
+    $result = mysqli_query($conn, $sql);
+    $row = mysqli_fetch_assoc($result);
+    return $row['total_issues'];    
+
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -112,7 +123,7 @@ $totalOrdered = array_column($topSellingProducts, 'total_ordered');
             <div style="margin-top: 10px;"></div>
             <a href="goods_received.php" class="w3-bar-item w3-button w3-padding w3-green"><span style='font-size:15px;'>&#10004;</span>&nbsp; Received Goods(<?php echo $receivedGoods; ?>)</a>
             <div style="margin-top: 10px;"></div>
-            <a href="safety_report_details.php" class="w3-bar-item w3-button w3-padding w3-yellow"><i class="fa fa-heartbeat" style="font-size:24px"></i>&nbsp; Safety Report()</a>
+            <a href="safety_report_details.php" class="w3-bar-item w3-button w3-padding w3-yellow"><i class="fa fa-heartbeat" style="font-size:24px"></i>&nbsp; Safety Report(<?php echo toGetReportedIssues(); ?>)</a>
         </div>
     </nav>
 
@@ -162,7 +173,7 @@ $totalOrdered = array_column($topSellingProducts, 'total_ordered');
                 <div class="w3-container w3-yellow w3-padding-16">
                     <div class="w3-left"><i style="font-size:58px" class="fa">&#xf21e;</i></div>
                     <div class="w3-right">
-                        <h3>---</h3>
+                    <h3><?php echo toGetReportedIssues(); ?></h3>
                     </div>
                     <div class="w3-clear"></div>
                     <h4>Safety Report</h4>

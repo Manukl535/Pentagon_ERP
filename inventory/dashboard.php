@@ -167,7 +167,100 @@ $auditReportStatus = getAuditReportStatus($conn);
                     </div>
                 </div>
             </div>
-            <script src="script.js"></script>
+            <script>
+                // Dashboard graphs using Chart.js
+
+// Sample data for weekly stock movement
+const weeklyStockData = {
+    labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    datasets: [{
+        label: "Stock Movement",
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1,
+        data: [50, 60, 70, 65, 55], // Sample data for stock movement
+    }]
+};
+
+// Function to render the stock chart
+function renderStockChart() {
+    const ctx = document.getElementById('stockChart').getContext('2d');
+    const stockChart = new Chart(ctx, {
+        type: 'line',
+        data: weeklyStockData,
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+}
+
+// Sample data for top products
+const topProductsData = {
+    labels: ["APT101", "APK104", "FSA107", "FSA107", "AWC121"],
+    datasets: [{
+        label: "Top Products",
+        backgroundColor: "rgba(54, 162, 235, 0.2)",
+        borderColor: "rgba(54, 162, 235, 1)",
+        borderWidth: 1,
+        data: [100, 80, 120, 90, 110], // Sample data for top products
+    }]
+};
+
+// Function to render the top products chart
+function renderTopProductsChart() {
+    const ctx = document.getElementById('topProductsChart').getContext('2d');
+    const topProductsChart = new Chart(ctx, {
+        type: 'bar',
+        data: topProductsData,
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+}
+
+// Functions for sidebar navigation
+function w3_open() {
+    document.getElementById("mySidebar").style.display = "block";
+    document.getElementById("myOverlay").style.display = "block";
+}
+
+function w3_close() {
+    document.getElementById("mySidebar").style.display = "none";
+    document.getElementById("myOverlay").style.display = "none";
+}
+
+// Function for toggling mail display
+function openMail(personName) {
+    var i;
+    var x = document.getElementsByClassName("person");
+    for (i = 0; i < x.length; i++) {
+        x[i].style.display = "none";
+    }
+    x = document.getElementsByClassName("test");
+    for (i = 0; i < x.length; i++) {
+        x[i].className = x[i].className.replace(" w3-light-grey", "");
+    }
+    document.getElementById(personName).style.display = "block";
+    event.currentTarget.className += " w3-light-grey";
+}
+
+// Render the charts when the page loads
+renderStockChart();
+renderTopProductsChart();
+
+            </script>
         </div>
 
         <center>

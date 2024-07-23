@@ -196,35 +196,42 @@ while ($audit_row = $result1->fetch_assoc()) {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while ($row = $result->fetch_assoc()) { ?>
-                        <tr>
-                            <td><?php echo $row['location']; ?></td>
-                            <td><?php echo $row['article_no']; ?></td>
-                            <td>
-                                <?php 
-                                    // Query to fetch size based on article_no and location
-                                    $article_no = $row['article_no'];
-                                    $location = $row['location'];
-                                    $query_size = "SELECT article_size FROM inv_location WHERE article_no = '$article_no' AND location = '$location'";
-                                    $result_size = $conn->query($query_size);
-                                    $row_size = $result_size->fetch_assoc();
-                                    echo ($row_size) ? $row_size['article_size'] : 'N/A';
-                                ?>
-                            </td>
-                            <td><?php echo $row['qty_23_24']; ?></td>
-                            <td><?php echo $row['audit_quantity']; ?></td>
-                            
-                            <?php 
-                                $remaining_qty = (int)$row['audit_quantity'] - $row['qty_23_24'];
-                                $audit_status = ($remaining_qty == 0) ? 'Normal' : 'Abnormal';
-                                $status_color = ($remaining_qty == 0) ? 'normal' : 'abnormal'; 
-                            ?>
-                            <td><?php echo $remaining_qty; ?></td>
-                            <td class="<?php echo $status_color; ?>"><?php echo $audit_status; ?></td>
+    <?php while ($row = $result->fetch_assoc()) { ?>
+        <tr>
+            <td><?php echo htmlspecialchars($row['location']); ?></td>
+            <td><?php echo htmlspecialchars($row['article_no']); ?></td>
+            <td>
+                <?php 
+                    // Query to fetch size based on article_no and location
+                    $article_no = $row['article_no'];
+                    $location = $row['location'];
+                    $query_size = "SELECT article_size FROM inv_location WHERE article_no = '$article_no' AND location = '$location'";
+                    $result_size = $conn->query($query_size);
+                    $row_size = $result_size->fetch_assoc();
+                    echo ($row_size) ? htmlspecialchars($row_size['article_size']) : 'N/A';
+                ?>
+            </td>
+            <td><?php echo htmlspecialchars($row['qty_23_24']); ?></td>
+            <td><?php echo htmlspecialchars($row['audit_quantity']); ?></td>
+            
+            <?php 
+                // Convert to integers before subtraction
+                $audit_quantity = (int)$row['audit_quantity'];
+                $qty_23_24 = (int)$row['qty_23_24'];
+                
+                // Perform subtraction
+                $remaining_qty = $audit_quantity - $qty_23_24;
+                
+                // Determine audit status
+                $audit_status = ($remaining_qty == 0) ? 'Normal' : 'Abnormal';
+                $status_color = ($remaining_qty == 0) ? 'normal' : 'abnormal'; 
+            ?>
+            <td><?php echo $remaining_qty; ?></td>
+            <td class="<?php echo $status_color; ?>"><?php echo $audit_status; ?></td>
+        </tr>
+    <?php } ?>
+</tbody>
 
-                        </tr>
-                    <?php } ?>
-                </tbody>
             </table>
         </div>
     </div>

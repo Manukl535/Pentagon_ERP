@@ -67,7 +67,7 @@ function w3_close() {
 
 // Sample data for top products
 const topProductsData = {
-    labels: ["Product A", "Product B", "Product C", "Product D", "Product E"],
+    labels: ["APT101", "APK104", "FSA107", "FSA107", "AWC121"],
     datasets: [{
         label: "Top Products",
         backgroundColor: "rgba(54, 162, 235, 0.2)",
