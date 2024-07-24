@@ -2,22 +2,25 @@
 session_start();
 include('Includes/connection.php');
 
+// Define email to role mappings (can be fetched from database or configuration file)
+$email_roles = [
+    'admin@pentagon.com' => './admin/index.php',
+    'receipt@pentagon.com' => './receipt/index.php',
+    'dispatch@pentagon.com' => './dispatch/index.php',
+    'hr@pentagon.com' => './hr/index.php',
+    'pickpack@pentagon.com' => './pickpack/index.php',
+    'inventory@pentagon.com' => './inventory/index.php',
+];
+
 if(isset($_SESSION['logged-in'])){
-    if ($_SESSION['email'] === 'admin@pentagon.com') {
-        header('location:./admin/index.php');
-    } elseif ($_SESSION['email'] === 'receipt@pentagon.com') {
-        header('location:./receipt/index.php');
-    } elseif ($_SESSION['email'] === 'dispatch@pentagon.com') {
-        header('location:./dispatch/index.php');
-    } elseif ($_SESSION['email'] === 'hr@pentagon.com') {
-        header('location:./hr/index.php');
-    } elseif ($_SESSION['email'] === 'pickpack@pentagon.com') {
-        header('location:./pickpack/index.php');
-    } elseif ($_SESSION['email'] === 'inventory@pentagon.com') {
-        header('location:./inventory/index.php');
+    $email = $_SESSION['email'];
+    
+    // Check if email exists in the mappings
+    if(isset($email_roles[$email])) {
+        header('Location: ' . $email_roles[$email]);
     } else {
         // Redirect to some default page if email doesn't match any specific case
-        header('location:./default/index.php');
+        header('Location: ./default/index.php');
     }
     exit;
 }
@@ -42,32 +45,22 @@ if(isset($_POST['login-btn'])){
             $_SESSION['phone'] = $phone;
             $_SESSION['logged-in'] = true;
 
-            if ($email === 'admin@pentagon.com') {
-                header('location:./admin/index.php?messages=Logged in Successfully');
-            } elseif ($email === 'receipt@pentagon.com') {
-                header('location:./receipt/index.php?messages=Logged in Successfully');
-            } elseif ($email === 'dispatch@pentagon.com') {
-                header('location:./dispatch/index.php?messages=Logged in Successfully');
-            } elseif ($email === 'hr@pentagon.com') {
-                header('location:./hr/index.php?messages=Logged in Successfully');
-            } elseif ($email === 'pickpack@pentagon.com') {
-                header('location:./pickpack/index.php?messages=Logged in Successfully');
-            } elseif ($email === 'inventory@pentagon.com') {
-                header('location:./inventory/index.php?messages=Logged in Successfully');
+            // Check email role dynamically
+            if(isset($email_roles[$email])) {
+                header('Location: ' . $email_roles[$email] . '?messages=Logged in Successfully');
             } else {
                 // Redirect to some default page if email doesn't match any specific case
-                header('location:./default/index.php?messages=Logged in Successfully');
+                header('Location: ./default/index.php?messages=Logged in Successfully');
             }
         }
         else{
-            header('location:./index.php?error=Invalid Email or Password');
+            header('Location: ./index.php?error=Invalid Email or Password');
         }
     } else {
-        header('location:./index.php?error=Something Went Wrong');
+        header('Location: ./index.php?error=Something Went Wrong');
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -84,7 +77,7 @@ if(isset($_POST['login-btn'])){
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <style>
-    body {
+ body {
         color: #999;
 		background: #f5f5f5;
 		font-family: 'Varela Round', sans-serif;
@@ -181,10 +174,9 @@ if(isset($_POST['login-btn'])){
 </head>
 <body>
 <div class="login-form"> 
-<br><br><br>   
     <form id="login-form" action="index.php" method="POST">
-    <center><img src="assets/images/logo1.png" alt="logo" width="200" height="100"></center>
-    	<h4 class="modal-title">Login to Your Account</h4>
+        <center><img src="assets/images/logo1.png" alt="logo" width="200" height="100"></center>
+        <h4 class="modal-title">Login to Your Account</h4>
         <center><p style="color:red;"><?php if(isset($_GET['error'])) { echo $_GET['error']; } ?></p></center>
         <div class="form-group">
             <input type="email" class="form-control" placeholder="Email" id="Email" name="email" required="required">
@@ -194,25 +186,23 @@ if(isset($_POST['login-btn'])){
         </div>
         <div class="form-group small clearfix">
             <label class="checkbox-inline"><input type="checkbox"> Remember me</label>
-            
             <a href="forgot_password.php" class="forgot-link">Forgot Password?</a>
         </div> 
-        
         <input type="submit" class="btn btn-primary btn-block btn-lg" name="login-btn" value="Login">              
     </form>			
-    </div><br/>
+</div><br/>
 
 <center>
     <footer>
         <div class="copyright">
             <p>2024 &#169; All Rights Reserved</p><p>Developed and Maintained by <b>Pentagon</b></p>
         </div>
-    
-    </footer></center>
+    </footer>
+</center>
 
-    <?php include('ama.php');?>
-    <?php
+<?php include('ama.php'); ?>
 
+<?php
 if (isset($_SESSION['login_message'])) {
     echo "<script>alert('{$_SESSION['login_message']}');</script>";
     unset($_SESSION['login_message']); // Clear the message after displaying it

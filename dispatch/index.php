@@ -41,14 +41,15 @@ if (!isset($_SESSION['email'])) {
             <div class="dropdown">
                 <div>Works <i class="fa" style="font-size: 15px;color: black; ">&#11167;</i></div>
                 <div class="dropdown-content">
-                    <a href="order_dispatch.html">Dispatch Order</a>
+                    <a href="order_dispatch.php">Dispatch Order</a>
                     <a href="#">Dispatch History</a>
+                    <a href="#">FG Check</a>
                 </div>
             </div>
         </div>
 
         <div class="item">
-            <a href="#"><i class="fa fa-gear fa-spin" style="font-size:100px;color: black;"></i></a>
+            <a href="settings.php"><i class="fa fa-gear fa-spin" style="font-size:100px;color: black;"></i></a>
             <div>Settings</div>
         </div>
     </section>
