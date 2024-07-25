@@ -12,6 +12,7 @@ if (!isset($_SESSION['email'])) {
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <title>Report Safety Issues</title>
   <style>
     body {
@@ -96,6 +97,9 @@ if (!isset($_SESSION['email'])) {
 </head>
 <body>
   <div class="container">
+  <a href="#" onclick="window.history.back(); return false;"><i style="font-size:24px;color:blue" class="fa">&#xf190;</i></a>
+        &nbsp;
+        <a href="index.php"><i style="font-size:24px;color:blue" class="fa">&#xf015;</i></a>
     <h1>Report Safety Issues</h1>
     <form method="post" action="safety_report_db.php">
     <form>

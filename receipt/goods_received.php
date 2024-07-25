@@ -34,6 +34,7 @@ function getApprovedQty($po_number){
 <head>
     <title>Goods Ordered</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -79,6 +80,9 @@ function getApprovedQty($po_number){
     </style>
 </head>
 <body>
+<a href="#" onclick="window.history.back(); return false;"><i style="font-size:24px;color:blue" class="fa">&#xf190;</i></a>
+        &nbsp;
+        <a href="index.php"><i style="font-size:24px;color:blue" class="fa">&#xf015;</i></a>
     <h1>Goods Received</h1>
     <table>
         <tr>

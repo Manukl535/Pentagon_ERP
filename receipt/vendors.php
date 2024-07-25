@@ -23,6 +23,7 @@ $result = $conn->query($query);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Vendors List</title>
     <style>
         body {
@@ -174,6 +175,9 @@ $result = $conn->query($query);
 <body>
 
 <div class="container">
+<a href="#" onclick="window.history.back(); return false;"><i style="font-size:24px;color:blue" class="fa">&#xf190;</i></a>
+        &nbsp;
+        <a href="index.php"><i style="font-size:24px;color:blue" class="fa">&#xf015;</i></a>
     <form id="vendorForm" method="POST" action="add_vendor.php">
         <div class="form-row">
             <div class="form-group">

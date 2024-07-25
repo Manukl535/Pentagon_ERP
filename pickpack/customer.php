@@ -60,6 +60,7 @@ if (isset($_SESSION['update_success'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Customer List</title>
     <style>
         body {
@@ -234,6 +235,9 @@ if (isset($_SESSION['update_success'])) {
 <body>
 
 <div class="container">
+    <a href="#" onclick="window.history.back(); return false;"><i style="font-size:24px;color:blue" class="fa">&#xf190;</i></a>
+        &nbsp;
+        <a href="index.php"><i style="font-size:24px;color:blue" class="fa">&#xf015;</i></a>
     <form id="customerForm" method="POST" action="customer.php">
         <div class="form-row">
             <div class="form-group">
