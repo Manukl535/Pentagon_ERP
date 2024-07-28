@@ -9,7 +9,7 @@ from difflib import get_close_matches, SequenceMatcher
 logging.basicConfig(filename='ama.log', level=logging.DEBUG)
 
 # Weather API credentials
-API_KEY = '2fd7c4ec296b4c8da6b74927241807'
+API_KEY = ''
 
 try:
     # Load dataset

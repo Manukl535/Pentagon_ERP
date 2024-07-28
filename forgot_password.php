@@ -11,9 +11,9 @@ function function_alert($message, $redirectUrl) {
 require_once 'C:\xampp\htdocs\twilio-php\src\Twilio\autoload.php';
 use Twilio\Rest\Client;
 
-$sid = "ACc19e6f7c595a7dfbab5f868199db6853"; // Your Twilio Account SID
-$token = "6dd18aa992d932cb6d3dacbb39b463a8"; // Your Twilio Auth Token
-$twilioPhoneNumber = '+13313214657'; // Your Twilio Phone Number
+$sid = ""; // Your Twilio Account SID
+$token = ""; // Your Twilio Auth Token
+$twilioPhoneNumber = ''; // Your Twilio Phone Number
 
 $twilio = new Client($sid, $token);
 

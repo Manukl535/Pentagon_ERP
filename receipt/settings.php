@@ -83,9 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 
 <div class="container">
-<a href="#" onclick="window.history.back(); return false;"><i style="font-size:24px;color:blue" class="fa">&#xf190;</i></a>
-        &nbsp;
-        <a href="index.php"><i style="font-size:24px;color:blue" class="fa">&#xf015;</i></a>
+
     <center>
         <a href="#" onclick="window.history.back(); return false;"><i style="font-size:24px" class="fa">&#xf190;</i></a>
         &nbsp;
