@@ -77,12 +77,15 @@ $conn->close();
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Inventory Management System</title>
 <script src="script.js"></script>
 <style>
 /* CSS styles */
+
 body {
     font-family: 'Arial', sans-serif;
     margin: 0;
@@ -240,6 +243,9 @@ tbody tr:nth-child(even) {
 <body>
 
 <div class="main-content">
+<a href="#" onclick="window.history.back(); return false;"><i style="font-size:24px;color:blue" class="fa">&#xf190;</i></a>
+        &nbsp;
+        <a href="index.php"><i style="font-size:24px;color:blue" class="fa">&#xf015;</i></a>
     <h1>Inventory Management</h1>
 
     <!-- Button to add new item -->

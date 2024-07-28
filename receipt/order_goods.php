@@ -16,6 +16,7 @@ if (!isset($_SESSION['email'])) {
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <meta charset="UTF-8">
     <title>Goods Order Form</title>
     <style>
@@ -148,6 +149,9 @@ if (!isset($_SESSION['email'])) {
 </head>
 <body>
     <div class="container">
+    <a href="#" onclick="window.history.back(); return false;"><i style="font-size:24px;color:blue" class="fa">&#xf190;</i></a>
+        &nbsp;
+        <a href="index.php"><i style="font-size:24px;color:blue" class="fa">&#xf015;</i></a>
         <div class="title">
             <h2>Goods Order Form</h2>
         </div>

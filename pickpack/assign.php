@@ -67,6 +67,7 @@ $result_table = $conn->query($sql_table);
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <title>Assign for picking</title>
 <style>
 body {
@@ -242,8 +243,7 @@ table td button.approved {
 </style>
 </head>
 <body>
-<div class="container">
-    <h2>Assign Order</h2>
+<h2>Assign Order</h2>
 
     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
         <label for="bin">Delivery Note:</label>

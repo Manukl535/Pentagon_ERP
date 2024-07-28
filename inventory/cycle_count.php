@@ -76,6 +76,7 @@ function generateCCID($location) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Assign Bin for Cycle Count</title>
@@ -132,8 +133,11 @@ function generateCCID($location) {
 </style>
 </head>
 <body>
+<a href="#" onclick="window.history.back(); return false;"><i style="font-size:24px;color:blue" class="fa">&#xf190;</i></a>
+        &nbsp;
+        <a href="index.php"><i style="font-size:24px;color:blue" class="fa">&#xf015;</i></a>
   <h2>Cycle Count</h2>
-  
+      
   <form action="#" method="post" style="    max-width: 400px;
     margin: 0 auto;
     background: #f9f9f9;

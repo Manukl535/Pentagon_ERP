@@ -47,9 +47,38 @@ $mailsTrash = $resultTrash->fetch_all(MYSQLI_ASSOC);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         /* Add your custom styles here if needed */
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #2980b9;
+        }
+        hr {
+            border: none;
+            height: 1px;
+            background-color: #3498db;
+            margin: 20px auto;
+        }
     </style>
 </head>
 <body>
+<main>
+        <div class="nav-item">
+            <button class="button"><a href="./index.php" style="text-decoration:none;"><i class="fa fa-home" style="font-size:15px;"></i> Home</a></button>
+            <button class="button"><a href="../logout.php" style="text-decoration:none;">Logout <i class="fa fa-sign-out" style="font-size:15px;"></i></a></button>
+        </div>
+    </main>
     <!-- Sidebar Compose,Inbox,Sent,Draft,Trash -->
     <nav class="w3-sidebar w3-bar-block w3-collapse w3-white w3-animate-left w3-card" style="z-index:3;width:320px;" id="mySidebar">
         <a href="javascript:void(0)" class="w3-bar-item w3-button w3-dark-grey w3-button w3-hover-black w3-left-align" onclick="document.getElementById('id01').style.display='block'">New Message <i class="w3-padding fa fa-pencil"></i></a>
